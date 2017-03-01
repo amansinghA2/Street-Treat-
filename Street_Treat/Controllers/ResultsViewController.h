@@ -25,7 +25,7 @@
 
 #import "UPStackMenu.h"
 
-@interface ResultsViewController : UIViewController<UITableViewDataSource,UITableViewDelegate,UITabBarControllerDelegate,commonProtocol,CCKFNavDrawerDelegate,GMSAutocompleteViewControllerDelegate,UPStackMenuDelegate,UITextFieldDelegate,CZPickerViewDelegate,CZPickerViewDataSource,CLLocationManagerDelegate>{
+@interface ResultsViewController : UIViewController<UITableViewDataSource,UITableViewDelegate,UITabBarControllerDelegate,commonProtocol,CCKFNavDrawerDelegate,GMSAutocompleteViewControllerDelegate,UPStackMenuDelegate,UITextFieldDelegate,CZPickerViewDelegate,CZPickerViewDataSource,CLLocationManagerDelegate , UIScrollViewDelegate>{
     Common * commonclass;
     AppDelegate * delegate;
     NSMutableData *searchData,* extraData,* categoriesData;
@@ -45,7 +45,7 @@
     NSString * awayDist;
     UIView * flyoutView;
     int temppremiumCnt;
-    
+    BOOL isUpdate;
     UILabel * premiumStoreNamelabel;
     NSString * time;
 

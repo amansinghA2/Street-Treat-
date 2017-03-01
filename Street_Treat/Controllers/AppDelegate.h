@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import <Google/SignIn.h>
-#import <FacebookSDK/FacebookSDK.h>
+//#import <FacebookSDK/FacebookSDK.h>
 #import <CoreLocation/CoreLocation.h>
+//#import <FBSDKCoreKit/FBSDKCoreKit.h>
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate,GIDSignInDelegate,CLLocationManagerDelegate>{
     NSString * locality;

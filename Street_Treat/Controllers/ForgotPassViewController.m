@@ -376,8 +376,6 @@
      }
 }
 
-
-
 //-(void)ForgotResponse:(NSData *)data{
 //    NSMutableArray *result = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
 //    NSLog(@"result..%@",result);
@@ -390,7 +388,7 @@
 //        [self clearAll];
 //        [indicator stopAnimating];
 //    });
-//}
+//  }
 
 -(void)clearAll{
     Email.text = nil;

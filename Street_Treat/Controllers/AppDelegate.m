@@ -10,9 +10,11 @@
 @import GoogleMaps;
 #import <GoogleMaps/GoogleMaps.h>
 #import <GooglePlaces/GooglePlaces.h>
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
 
 @interface AppDelegate (){
     GMSPlacesClient *_placesClient;
+    NSDictionary *dUserInfo;
 }
 
 @end
@@ -20,14 +22,11 @@
 @implementation AppDelegate
 @synthesize defaults,locationManager;
 
-
-
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
    
 //    NSString * tempstr = @"qwerty\nrwererer\nqwerwerwerwer\n";
 //    tempstr = [tempstr stringByReplacingOccurrencesOfString:@"\n" withString:@""];
 //    NSLog(@"tempstr.. %@",tempstr);
-    
     
   /*  NSMutableArray * A_arr = [[NSMutableArray alloc]init];
     [A_arr addObject:@"3"];
@@ -37,6 +36,22 @@
     
     NSLog(@"b_arr.. %@",B_Arr);
      NSLog(@"a_arr.. %@",A_arr);*/
+    
+   // [FBSDKProfile enableUpdatesOnAccessTokenChange:YES];
+//    if (FBSDKAccessToken.currentAccessToken() != nil) {
+//      NSLog(@"%@","@"Hello");
+//    }
+    
+    
+    if (launchOptions != nil)
+    {
+        //Store the data from the push.
+        dUserInfo = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
+        if (dUserInfo != nil)
+        {
+            //Do whatever you need
+        }
+    }
     
     NSString *appFolderPath = [[NSBundle mainBundle] resourcePath];
     NSLog(@"%@", appFolderPath);
@@ -49,8 +64,8 @@
     [locationManager startUpdatingLocation];
     defaults = [NSUserDefaults standardUserDefaults];
     [defaults synchronize];
-    [FBLoginView class];
-    [FBProfilePictureView class];
+//    [FBLoginView class];
+//    [FBProfilePictureView class];
     
     NSError* configureError;
     [[GGLContext sharedInstance] configureWithError: &configureError];
@@ -80,11 +95,10 @@
     //[defaults setValue:@"Mahape" forKey:@"loc_name"];
     [defaults setValue:@"3" forKey:@"radius"];
     [defaults synchronize];
-
-    //end
     
     // Override point for customization after application launch.
-    return YES;
+    return [[FBSDKApplicationDelegate sharedInstance] application:application
+                                    didFinishLaunchingWithOptions:launchOptions];;
 }
 
 - (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken
@@ -108,17 +122,60 @@
 - (BOOL)application:(UIApplication *)app
             openURL:(NSURL *)url
             options:(NSDictionary *)options {
-    return [[GIDSignIn sharedInstance] handleURL:url
-                               sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey]
-                                      annotation:options[UIApplicationOpenURLOptionsAnnotationKey]];
+    NSLog(@"%@",[defaults valueForKey:@"fborgoogle"]);
+    if([[defaults valueForKey:@"fborgoogle"] isEqualToString:@"fb"]){
+        return [[FBSDKApplicationDelegate sharedInstance] application:app
+                                                              openURL:url
+                                                    sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey]
+                                                           annotation:options[UIApplicationOpenURLOptionsAnnotationKey]];
+    }else{
+        return [[GIDSignIn sharedInstance] handleURL:url
+                                   sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey]
+                                          annotation:options[UIApplicationOpenURLOptionsAnnotationKey]];
+    }
 }
 
-
--(BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation{
+- (void)application:(UIApplication*)application didReceiveRemoteNotification:(nonnull NSDictionary *)userInfo{
     
-    return [FBAppCall handleOpenURL:url
-                  sourceApplication:sourceApplication];
+    if ( application.applicationState == UIApplicationStateActive ){
+        if (userInfo != nil)
+        {
+            dUserInfo = userInfo;
+        }
+        
+        // app was already in the foreground
+    }else{
+        if (userInfo != nil)
+        {
+            dUserInfo = userInfo;
+        }
+        id data = [dUserInfo objectForKey:@"data"];
+        // app was just brought from background to foreground
+    }
+    
 }
+
+//
+//-(BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation{
+//    return [[GIDSignIn sharedInstance] handleURL:url
+//                               sourceApplication:sourceApplication
+//                                      annotation:annotation];
+////    return [FBAppCall handleOpenURL:url
+////                  sourceApplication:sourceApplication];
+//}
+
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
+  sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+    
+    BOOL handled = [[FBSDKApplicationDelegate sharedInstance] application:application
+                                                                  openURL:url
+                                                        sourceApplication:sourceApplication
+                                                               annotation:annotation
+                    ];
+    //BOOL wasHandled = [FBAppCall handleOpenURL:url sourceApplication:sourceApplication];
+    // Add any custom logic here.
+    return handled;
+} 
 
 - (void)signIn:(GIDSignIn *)signIn
 didSignInForUser:(GIDGoogleUser *)user
@@ -184,6 +241,7 @@ didDisconnectWithUser:(GIDGoogleUser *)user
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
+    [FBSDKAppEvents activateApp];
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
 }
@@ -198,6 +256,12 @@ didDisconnectWithUser:(GIDGoogleUser *)user
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
+     [FBSDKAppEvents activateApp];
+    
+    if (dUserInfo != nil)
+    {
+        //Do whatever you need
+    }
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
 }
 

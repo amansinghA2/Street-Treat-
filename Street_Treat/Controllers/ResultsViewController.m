@@ -47,6 +47,8 @@
 -(void)viewWillAppear:(BOOL)animated{
     [delegate.defaults setObject:@"ResultsViewController" forKey:@"internetdisconnect"];
     //[self allocateRequired];
+    [self setupMobileVerificationPopup];
+    Popupmainview.hidden = true;
    // [resultTable setContentOffset:CGPointZero animated:YES];
 //    promoArr = [[NSMutableArray alloc]initWithObjects:[UIImage imageNamed:@"Promo1.png"],[UIImage imageNamed:@"Promo2.png"],[UIImage imageNamed:@"Promo3.png"],[UIImage imageNamed:@"Promo4.png"],nil];
     self.rootNav = (CCKFNavDrawer *)self.navigationController;
@@ -236,15 +238,16 @@
     [self allocateRequired];
     [self CurrentLocationIdentifier];
     exhibitionsBtn.hidden = TRUE;
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidShow:) name:UIKeyboardDidShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidHide:) name:UIKeyboardDidHideNotification object:nil];
 //    promoArr = [[NSMutableArray alloc]initWithObjects:[UIImage imageNamed:@"Promo1.png"],[UIImage imageNamed:@"Promo2.png"],[UIImage imageNamed:@"Promo3.png"],[UIImage imageNamed:@"Promo4.png"],nil];
     
     currentLatitude = [[delegate.defaults valueForKey:@"latitude"] floatValue];
     currentLongitude = [[delegate.defaults valueForKey:@"longitude"] floatValue];
     userRadius = [[delegate.defaults valueForKey:@"radius"] floatValue];
     
-    [self setupMobileVerificationPopup];
-    Popupmainview.hidden = true;
-    OTPView.hidden = true;
+    
     
     searchField = [search valueForKey:@"_searchField"];
     
@@ -285,7 +288,6 @@
             [selectedcategoriesIDArr addObject:[categoriesArr[row] valueForKey:@"id"]];
             [selectedcategoriesArr addObject:[categoriesArr[row] valueForKey:@"title"]];
         }
-    
     NSString * filterSCategories = [selectedcategoriesArr componentsJoinedByString:@","];
     NSLog(@"filterCategoriesIDs %@",filterSCategories);
     SelectedCategoriesLbl.text = filterSCategories;
@@ -639,17 +641,20 @@
             else if([seg_string isEqualToString:@"UpdateMobile"]){
                 if([[data valueForKey:@"status"]intValue] == 1){
                     NSString * mobile = mobileFld.text;
+                    [delegate.defaults setBool:true forKey:@"updateMobile"];
                     [delegate.defaults setValue:mobile forKey:@"mobile"];
                     [delegate.defaults synchronize];
                     [self ValidateOTP];
                 }else if([[data valueForKey:@"status"]intValue] == -1){
                     [commonclass logoutFunction];
                 }else{
+                    
                     [self.view makeToast:[data valueForKey:@"message"]];
                 }
             }
             else if([seg_string isEqualToString:@"UpdateOTP"]){
                 if([[data valueForKey:@"status"]intValue] == 1){
+                    [delegate.defaults setBool:true forKey:@"otp_verified"];
                     Popupmainview.hidden = true;
                     [self.view makeToast:[data valueForKey:@"message"]];
                 }else if([[data valueForKey:@"status"]intValue] == -1){
@@ -1017,7 +1022,6 @@
            // counter ++;
             return cell;
         }
-    
     }
 }
 
@@ -1338,7 +1342,6 @@
 }
 
 -(void)CheckinTapped:(UIButton*)sender{
-    
 //  NSLog(@"brands Arr.. %@",brandedArr[sender.tag]);
 //    if ([time isEqualToString:@"Closed"]){
 //        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Alert" message:@"Store is closed" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
@@ -1348,16 +1351,29 @@
     NSString * mobilenumber = [delegate.defaults valueForKey:@"mobile"];
     NSLog(@"mobilenumber %@",mobilenumber);
     NSLog(@"mobilenumber length %lu",(unsigned long)mobilenumber.length);
-    if(mobilenumber.length == 0){
-        Popupmainview.hidden = false;
+   // NSLog(@"%u",[delegate.defaults boolForKey:@"otp_verified"]);
+    if ([[delegate.defaults valueForKey:@"otp_verified"]boolValue] == false){
+        if([[delegate.defaults valueForKey:@"updateMobile"]boolValue] == false){
+            Popupmainview.hidden = false;
+            verifyView.hidden = false;
+            OTPView.hidden = true;
+        }else{
+            Popupmainview.hidden = false;
+            verifyView.hidden = true;
+            OTPView.hidden = false;
+           // OTPView.hidden = false;
+        }
+        
     }else{
+//    if(mobilenumber.length == 0){
+//    }else{
         if([distAwayArr[sender.tag] doubleValue]<0.25){
             [commonclass Redirect:self.navigationController Identifier:@"GenerateCouponsViewController"];
         }else{
             [self.view makeToast:@"You have to be in 250 meters radius to CHECK IN into the store"];
         }
-    }
-// }
+//}
+   }
 }
 
 -(void)phoneTapped:(UIButton*)sender{
@@ -1402,26 +1418,65 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     NSString * storeNo;
     if([seg_string isEqualToString:@"High Street"]){
-        if ([[highstreetArr[indexPath.row - 1] valueForKey:@"checked_in"]boolValue] == true){
+        if (premiumListArr.count == 0){
+        if ([[highstreetArr[indexPath.row] valueForKey:@"checked_in"]boolValue] == true){
             [commonclass Redirect:self.navigationController Identifier:@"GenerateCouponsViewController"];
         }else{
             [commonclass Redirect:self.navigationController Identifier:@"DetailViewController"];
         }
-        storeNo = [highstreetArr[indexPath.row - 1] valueForKey:@"store_id"];
+        storeNo = [highstreetArr[indexPath.row] valueForKey:@"store_id"];
+        }else{
+            if ([[highstreetArr[indexPath.row - 1] valueForKey:@"checked_in"]boolValue] == true){
+                [commonclass Redirect:self.navigationController Identifier:@"GenerateCouponsViewController"];
+            }else{
+                [commonclass Redirect:self.navigationController Identifier:@"DetailViewController"];
+            }
+            storeNo = [highstreetArr[indexPath.row - 1] valueForKey:@"store_id"];
+        }
     }else if([seg_string isEqualToString:@"Brands"]){
-        if ([[brandedArr[indexPath.row - 1] valueForKey:@"checked_in"]boolValue] == true) {
-            [commonclass Redirect:self.navigationController Identifier:@"GenerateCouponsViewController"];
+//        if ([[brandedArr[indexPath.row - 1] valueForKey:@"checked_in"]boolValue] == true) {
+//            [commonclass Redirect:self.navigationController Identifier:@"GenerateCouponsViewController"];
+//        }else{
+//            [commonclass Redirect:self.navigationController Identifier:@"DetailViewController"];
+//        }
+//        storeNo = [brandedArr[indexPath.row - 1] valueForKey:@"store_id"];
+        if (premiumListArr.count == 0){
+            if ([[brandedArr[indexPath.row] valueForKey:@"checked_in"]boolValue] == true){
+                [commonclass Redirect:self.navigationController Identifier:@"GenerateCouponsViewController"];
+            }else{
+                [commonclass Redirect:self.navigationController Identifier:@"DetailViewController"];
+            }
+            storeNo = [brandedArr[indexPath.row] valueForKey:@"store_id"];
         }else{
-            [commonclass Redirect:self.navigationController Identifier:@"DetailViewController"];
+            if ([[brandedArr[indexPath.row - 1] valueForKey:@"checked_in"]boolValue] == true){
+                [commonclass Redirect:self.navigationController Identifier:@"GenerateCouponsViewController"];
+            }else{
+                [commonclass Redirect:self.navigationController Identifier:@"DetailViewController"];
+            }
+            storeNo = [brandedArr[indexPath.row - 1] valueForKey:@"store_id"];
         }
-        storeNo = [brandedArr[indexPath.row - 1] valueForKey:@"store_id"];
     }else if([seg_string isEqualToString:@"Designers"]){
-        if ([[designerArr[indexPath.row - 1] valueForKey:@"checked_in"]boolValue] == true) {
-            [commonclass Redirect:self.navigationController Identifier:@"GenerateCouponsViewController"];
+   //     if ([[designerArr[indexPath.row - 1] valueForKey:@"checked_in"]boolValue] == true) {
+//            [commonclass Redirect:self.navigationController Identifier:@"GenerateCouponsViewController"];
+//        }else{
+//            [commonclass Redirect:self.navigationController Identifier:@"DetailViewController"];
+//        }
+//        storeNo = [designerArr[indexPath.row - 1] valueForKey:@"store_id"];
+        if (premiumListArr.count == 0){
+            if ([[designerArr[indexPath.row] valueForKey:@"checked_in"]boolValue] == true){
+                [commonclass Redirect:self.navigationController Identifier:@"GenerateCouponsViewController"];
+            }else{
+                [commonclass Redirect:self.navigationController Identifier:@"DetailViewController"];
+            }
+            storeNo = [designerArr[indexPath.row] valueForKey:@"store_id"];
         }else{
-            [commonclass Redirect:self.navigationController Identifier:@"DetailViewController"];
+            if ([[designerArr[indexPath.row - 1] valueForKey:@"checked_in"]boolValue] == true){
+                [commonclass Redirect:self.navigationController Identifier:@"GenerateCouponsViewController"];
+            }else{
+                [commonclass Redirect:self.navigationController Identifier:@"DetailViewController"];
+            }
+            storeNo = [designerArr[indexPath.row - 1] valueForKey:@"store_id"];
         }
-        storeNo = [designerArr[indexPath.row - 1] valueForKey:@"store_id"];
     }else if([seg_string isEqualToString:@"Verticals"]){
 //        if ([[highstreetArr[indexPath.row - 1] valueForKey:@"checked_in"]boolValue] == true {
 //            
@@ -1721,7 +1776,13 @@ didFailAutocompleteWithError:(NSError *)error {
 }
 
 -(void)resendOTPTapped{
-    [self updateMobile];
+    [self resendOTP];
+}
+
+
+-(void)resendOTP {
+    NSString *messageBody = [NSString stringWithFormat:@"mobile=%@",[delegate.defaults valueForKey:@"mobile"]];
+    [commonclass sendRequest:self.view mutableDta:extraData url:commonclass.generateOTPURL msgBody:messageBody];
 }
 
 -(void)cancelSubscribeTapped{
@@ -1757,8 +1818,8 @@ didFailAutocompleteWithError:(NSError *)error {
 }
 
 -(void)SubscribeTapped{
-    NSString * mobilenumber = [delegate.defaults valueForKey:@"mobile"];
-    if(mobilenumber.length == 0){
+ // NSString * mobilenumber = [delegate.defaults valueForKey:@"mobile"];
+    if([[delegate.defaults valueForKey:@"updateMobile"]boolValue] == false){
         [self updateMobile];
     }else{
         [self GetOTP];
@@ -1817,6 +1878,24 @@ didFailAutocompleteWithError:(NSError *)error {
         [commonclass Redirect:self.navigationController Identifier:@"InternetDisconnectViewController"];
         //[self.view makeToast:@"Check your internet connection"];
     }
+}
+
+- (void)keyboardDidShow:(NSNotification *)notification
+{
+    //   if(iskeyboardPresent == YES && iskeyboardAppeared == NO){
+//    iskeyboardAppeared = YES;
+//    LoginScroll.contentSize = CGSizeMake(LoginScroll.frame.size.width, LoginScroll.frame.size.height + 200);
+//    //    }
+//    LoginScroll.scrollEnabled = YES;
+}
+
+-(void)keyboardDidHide:(NSNotification *)notification
+{
+ //    if(iskeyboardPresent == YES && iskeyboardAppeared == NO){
+ //   iskeyboardAppeared = NO;
+//    LoginScroll.contentSize = CGSizeMake(LoginScroll.frame.size.width, LoginScroll.frame.size.height);
+//    //    }
+//    LoginScroll.scrollEnabled = NO;
 }
 
 - (void)didReceiveMemoryWarning {

@@ -27,7 +27,6 @@ int btnwt,btnht;
 @synthesize couponDetMainView,couponDtlSubview,couponValLbl,couponCloseBtn,couponDescLbl,couponSubmitBtn;
 
 -(void)viewDidAppear:(BOOL)animated{
-    
     [self setUpstackMenu];
     
     userLatitude = [[delegate.defaults valueForKey:@"latitude"] floatValue];
@@ -69,6 +68,10 @@ int btnwt,btnht;
     [delegate.defaults setValue:userLatitude1 forKey:@"user_latitude"];
     [delegate.defaults setValue:userLongitude1 forKey:@"user_longitude"];
     [delegate.defaults synchronize];
+    
+//    NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&device_os=%@&device_token=%@",[delegate.defaults valueForKey:@"logid"],@"ios",[delegate.defaults valueForKey:@"deviceToken"]];
+//    NSLog(@"messageBody.. %@",messageBody);
+//    [constant sendRequest:self.view mutableDta:dealsdata url:constant.updateDeviceToken msgBody:messageBody];
     
     float duration = 0.5;
     timer = [NSTimer scheduledTimerWithTimeInterval:duration target:self selector:@selector(showLocName) userInfo:nil repeats: YES];
@@ -187,8 +190,8 @@ int btnwt,btnht;
                 [self.view makeToast:@"Some problem occured"];
             }
         }*/
-        [[UIApplication sharedApplication] endIgnoringInteractionEvents];
         [indicator stopAnimating];
+        [[UIApplication sharedApplication] endIgnoringInteractionEvents];
      });
 }
 
@@ -1083,6 +1086,7 @@ int btnwt,btnht;
             }
                 break;
             case 14:{
+                
                 NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
                 [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
                 [delegate.defaults setValue:@"19.1183" forKey:@"latitude"];

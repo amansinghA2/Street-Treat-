@@ -10,6 +10,8 @@
 		070DDBDA1E5FF6CE000BB4CE /* nointernet.png in Resources */ = {isa = PBXBuildFile; fileRef = 070DDBD91E5FF6CE000BB4CE /* nointernet.png */; };
 		070DDBDD1E5FF8A9000BB4CE /* InternetDisconnectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 070DDBDC1E5FF8A9000BB4CE /* InternetDisconnectViewController.m */; };
 		070E72A51E5C71050038D29A /* checkmark_icon.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 070E72A41E5C71050038D29A /* checkmark_icon.jpg */; };
+		0738CEA21E65A63A003637F9 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0738CE9F1E65A63A003637F9 /* FBSDKLoginKit.framework */; };
+		0738CEA61E65A8E5003637F9 /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0738CEA51E65A8E5003637F9 /* FBSDKCoreKit.framework */; };
 		08E224CC793BFB6247EDE11F /* Pods_Street_Treat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07828C39158BD7AEAB5DD306 /* Pods_Street_Treat.framework */; };
 		2A0326C81D59AAC000694924 /* NSData+ImageContentType.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A0326A81D59AAC000694924 /* NSData+ImageContentType.m */; };
 		2A0326C91D59AAC000694924 /* SDImageCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A0326AA1D59AAC000694924 /* SDImageCache.m */; };
@@ -123,7 +125,6 @@
 		2AAE39221D7ED738006D42D0 /* help4@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2AAE391E1D7ED738006D42D0 /* help4@2x.png */; };
 		2AAE39251D7F0246006D42D0 /* GenerateCouponsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2AAE39241D7F0246006D42D0 /* GenerateCouponsViewController.m */; };
 		2AB089391D52163200E5E4F3 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2AB089381D52163200E5E4F3 /* SystemConfiguration.framework */; };
-		2AB0893B1D52164600E5E4F3 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2AB0893A1D52164600E5E4F3 /* FacebookSDK.framework */; };
 		2AB3CC1E1D5849DA0027CF02 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2AB3CC1D1D5849DA0027CF02 /* CoreLocation.framework */; };
 		2ABB08531D2E74F8005AC7E3 /* AMTagListView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2ABB08501D2E74F8005AC7E3 /* AMTagListView.m */; };
 		2ABB08541D2E74F8005AC7E3 /* AMTagView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2ABB08521D2E74F8005AC7E3 /* AMTagView.m */; };
@@ -163,6 +164,9 @@
 		070DDBDB1E5FF8A9000BB4CE /* InternetDisconnectViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InternetDisconnectViewController.h; sourceTree = "<group>"; };
 		070DDBDC1E5FF8A9000BB4CE /* InternetDisconnectViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InternetDisconnectViewController.m; sourceTree = "<group>"; };
 		070E72A41E5C71050038D29A /* checkmark_icon.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = checkmark_icon.jpg; path = ../../../../../Downloads/checkmark_icon.jpg; sourceTree = "<group>"; };
+		0738CE9F1E65A63A003637F9 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKLoginKit.framework; path = ../../../../FacebookSDK/FBSDKLoginKit.framework; sourceTree = "<group>"; };
+		0738CEA51E65A8E5003637F9 /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKCoreKit.framework; path = ../../../../FacebookSDK/FBSDKCoreKit.framework; sourceTree = "<group>"; };
+		0738CEA71E65C016003637F9 /* Street_Treat.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Street_Treat.entitlements; sourceTree = "<group>"; };
 		07828C39158BD7AEAB5DD306 /* Pods_Street_Treat.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Street_Treat.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		29AB28DC702C86EEC55EF5F7 /* Pods-Street_Treat.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Street_Treat.release.xcconfig"; path = "Pods/Target Support Files/Pods-Street_Treat/Pods-Street_Treat.release.xcconfig"; sourceTree = "<group>"; };
 		2A0326A71D59AAC000694924 /* NSData+ImageContentType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSData+ImageContentType.h"; path = "Third Party/SDWebImage/NSData+ImageContentType.h"; sourceTree = "<group>"; };
@@ -352,7 +356,6 @@
 		2AAE39231D7F0246006D42D0 /* GenerateCouponsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GenerateCouponsViewController.h; path = Controllers/GenerateCouponsViewController.h; sourceTree = "<group>"; };
 		2AAE39241D7F0246006D42D0 /* GenerateCouponsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GenerateCouponsViewController.m; path = Controllers/GenerateCouponsViewController.m; sourceTree = "<group>"; };
 		2AB089381D52163200E5E4F3 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
-		2AB0893A1D52164600E5E4F3 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = Frameworks/FacebookSDK.framework; sourceTree = "<group>"; };
 		2AB3CC1D1D5849DA0027CF02 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		2ABB084F1D2E74F8005AC7E3 /* AMTagListView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AMTagListView.h; path = "Third Party/Tags/AMTagListView.h"; sourceTree = "<group>"; };
 		2ABB08501D2E74F8005AC7E3 /* AMTagListView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AMTagListView.m; path = "Third Party/Tags/AMTagListView.m"; sourceTree = "<group>"; };
@@ -398,8 +401,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0738CEA61E65A8E5003637F9 /* FBSDKCoreKit.framework in Frameworks */,
 				2AB3CC1E1D5849DA0027CF02 /* CoreLocation.framework in Frameworks */,
-				2AB0893B1D52164600E5E4F3 /* FacebookSDK.framework in Frameworks */,
+				0738CEA21E65A63A003637F9 /* FBSDKLoginKit.framework in Frameworks */,
 				2AB089391D52163200E5E4F3 /* SystemConfiguration.framework in Frameworks */,
 				08E224CC793BFB6247EDE11F /* Pods_Street_Treat.framework in Frameworks */,
 			);
@@ -604,6 +608,7 @@
 		2A4E2D271CE4637E009819AA /* Street_Treat */ = {
 			isa = PBXGroup;
 			children = (
+				0738CEA71E65C016003637F9 /* Street_Treat.entitlements */,
 				2AB089371D52161100E5E4F3 /* Frameworks */,
 				2A625FA61D21083900CAA9F7 /* Fonts */,
 				2A4E2D671CE47CC4009819AA /* Supporting */,
@@ -868,7 +873,8 @@
 		2AB089371D52161100E5E4F3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				2AB0893A1D52164600E5E4F3 /* FacebookSDK.framework */,
+				0738CEA51E65A8E5003637F9 /* FBSDKCoreKit.framework */,
+				0738CE9F1E65A63A003637F9 /* FBSDKLoginKit.framework */,
 				2AB089381D52163200E5E4F3 /* SystemConfiguration.framework */,
 			);
 			name = Frameworks;
@@ -1001,6 +1007,9 @@
 						DevelopmentTeam = 2Z5B84Z5QC;
 						ProvisioningStyle = Manual;
 						SystemCapabilities = {
+							com.apple.Keychain = {
+								enabled = 1;
+							};
 							com.apple.Push = {
 								enabled = 0;
 							};
@@ -1408,6 +1417,7 @@
 			baseConfigurationReference = 3279F5465D9DFA8F30A9633E /* Pods-Street_Treat.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Street_Treat/Street_Treat.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Sahil Nagpal (TA5H22SB2P)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Sahil Nagpal (TA5H22SB2P)";
 				DEVELOPMENT_TEAM = 2Z5B84Z5QC;
@@ -1415,6 +1425,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Street_Treat/Frameworks",
+					"~/Documents/FacebookSDK",
 				);
 				INFOPLIST_FILE = Street_Treat/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
@@ -1432,6 +1443,7 @@
 			baseConfigurationReference = 29AB28DC702C86EEC55EF5F7 /* Pods-Street_Treat.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Street_Treat/Street_Treat.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Sahil Nagpal (TA5H22SB2P)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Sahil Nagpal (TA5H22SB2P)";
 				DEVELOPMENT_TEAM = 2Z5B84Z5QC;
@@ -1439,6 +1451,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Street_Treat/Frameworks",
+					"~/Documents/FacebookSDK",
 				);
 				INFOPLIST_FILE = Street_Treat/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;

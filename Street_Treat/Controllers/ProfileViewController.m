@@ -516,19 +516,20 @@
                         NSLog(@"colorArr count.. %lu",(unsigned long)colorArr.count);
                         NSLog(@"style_prefArr count.. %lu",(unsigned long)style_prefArr.count);
                         
-                        if(colorArr.count>0){
-                            NSLog(@"%@",colorArr);
-                            [self setMyColors:colorArr];
-                        }
-                        if (style_prefArr.count>0){
-                            NSLog(@"%@",style_prefArr);
-                            [self setMyStyleTags:style_prefArr];
-                        }
-                        if (apparel_Arr.count>0){
-                            [self setMyApparels:apparel_Arr];
-                        }
+                 
                     }else{
                         NSLog(@"not contains.. ");
+                    }
+                    if(colorArr.count>0){
+                        NSLog(@"%@",colorArr);
+                        [self setMyColors:colorArr];
+                    }
+                    if (style_prefArr.count>0){
+                        NSLog(@"%@",style_prefArr);
+                        [self setMyStyleTags:style_prefArr];
+                    }
+                    if (apparel_Arr.count>0){
+                        [self setMyApparels:apparel_Arr];
                     }
                 }else if([[data valueForKey:@"status"]intValue] == -1){
                     [constant logoutFunction];
@@ -621,13 +622,13 @@
      for (int j = 0; j < tempclrarr.count; j++) {
        UIView *clrView = [[UIView alloc]initWithFrame:CGRectMake(85 * j, 0, 80,colorPrefScroll.frame.size.height)];
          clrView.tag = j;
-        // clrView.backgroundColor = [UIColor lightGrayColor];
-        
+        clrView.backgroundColor = [UIColor lightGrayColor];
+         clrView.tintColor = [UIColor whiteColor];
         UILabel * clrlabel = [[UILabel alloc]initWithFrame:CGRectMake(5, 0, 15, 15)];
         clrlabel.backgroundColor = [constant getUIColorObjectFromHexString:[tempclrarr[j] valueForKey:@"code"] alpha:1];
 //        [constant roundedImage:(UIImageView *)clrlabel];
 //        [clrView addSubview:clrlabel];
-        
+       // clrlabel.textColor = [UIColor darkGrayColor];
         clrlabel = [[UILabel alloc]initWithFrame:CGRectMake(5, 0, 75, 15)];
         [clrlabel setFont:[UIFont fontWithName:@"Roboto-Regular" size:10]];
         clrlabel.text = [NSString stringWithFormat:@"%@",[tempclrarr[j] valueForKey:@"value"]];
@@ -671,7 +672,7 @@
     }
     
 //    [constant resizeToFitSubviews:_styleView];
-//    [constant changeFrameWRT:_styleView ofview:_apparelView];
+ //   [constant changeFrameWRT:_styleView ofview:_apparelView];
 }
 
 -(void)setMyApparels:(NSMutableArray*)data{
@@ -685,7 +686,7 @@
     }
     for(int i =0;i<userapparel_Arr.count;i++){
         if(![userapparel_Arr[i] isEqualToString:@"userprofile"]){
-           UIView * apaarelTypeView = [[UIView alloc]initWithFrame:CGRectMake(xpos, ypos, _apparelView.frame.size.width/2.15, 20)];
+           UIView * apaarelTypeView = [[UIView alloc]initWithFrame:CGRectMake(xpos, ypos, self.view.frame.size.width/2.15, 20)];
             [apparelSizesViews addObject:apaarelTypeView];
             apaarelTypeView.layer.borderColor = [[UIColor lightGrayColor] CGColor];
             apaarelTypeView.layer.borderWidth = 1;
@@ -702,7 +703,7 @@
             valname.text = [NSString stringWithFormat:@"%@",temparr[0]];
             if([userapparel_Arr[i] isEqualToString:@"SHIRT"]){
                 shirtTxtFld.text = temparr[0];
-            }else if([userapparel_Arr[i] isEqualToString:@"T_SHIRT"]){
+            }else if([userapparel_Arr[i] isEqualToString:@"T SHIRT"]){
                 tShirtTxtFld.text = temparr[0];
             }else if([userapparel_Arr[i] isEqualToString:@"PANTS"]){
                 pantsTxtFld.text = temparr[0];
@@ -992,13 +993,13 @@
         apparelstr =[NSString stringWithFormat:@"SHIRT=%@",shirtTxtFld.text];
     }
     if (tShirtTxtFld.text.length>0){
-        apparelstr =[NSString stringWithFormat:@"SHIRT=%@&T_SHIRT=%@",shirtTxtFld.text,tShirtTxtFld.text];
+        apparelstr =[NSString stringWithFormat:@"SHIRT=%@&T SHIRT=%@",shirtTxtFld.text,tShirtTxtFld.text];
     }
     if (pantsTxtFld.text.length>0){
-        apparelstr =[NSString stringWithFormat:@"SHIRT=%@&T_SHIRT=%@&PANTS=%@",shirtTxtFld.text,tShirtTxtFld.text,pantsTxtFld.text];
+        apparelstr =[NSString stringWithFormat:@"SHIRT=%@&T SHIRT=%@&PANTS=%@",shirtTxtFld.text,tShirtTxtFld.text,pantsTxtFld.text];
     }
     if (shoesTxtFld.text.length>0){
-        apparelstr =[NSString stringWithFormat:@"SHIRT=%@&T_SHIRT=%@&PANTS=%@&SHOES=%@",shirtTxtFld.text,tShirtTxtFld.text,pantsTxtFld.text,shoesTxtFld.text];
+        apparelstr =[NSString stringWithFormat:@"SHIRT=%@&T SHIRT=%@&PANTS=%@&SHOES=%@",shirtTxtFld.text,tShirtTxtFld.text,pantsTxtFld.text,shoesTxtFld.text];
     }
     NSLog(@"apparelstr %@",apparelstr);
 }

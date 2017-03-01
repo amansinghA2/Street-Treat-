@@ -8,17 +8,17 @@
 
 #import <UIKit/UIKit.h>
 #import "Common.h"
-#import <FacebookSDK/FacebookSDK.h>
+//#import <FacebookSDK/FacebookSDK.h>
 #import <Google/SignIn.h>
 #import "VerifyViewController.h"
 #import "DashboardViewController.h"
+#import <FBSDKLoginKit/FBSDKLoginKit.h>
 
-@interface LoginViewController : UIViewController<FBLoginViewDelegate,GIDSignInDelegate,UITextFieldDelegate,commonProtocol,UIGestureRecognizerDelegate,UIScrollViewDelegate>{
+@interface LoginViewController : UIViewController<GIDSignInDelegate,FBSDKLoginButtonDelegate, GIDSignInUIDelegate,UITextFieldDelegate,commonProtocol,UIGestureRecognizerDelegate,UIScrollViewDelegate>{
     float PrevX,nextX,PrevY;
     Common * commonclass;
     AppDelegate * delegate;
     NSString * requestType;
-    
     NSMutableData *LoginData;
     NSMutableData *RegisterData;
     NSMutableData *uniqueMobileData;
@@ -28,16 +28,22 @@
     UITouch *touch;
     NSString * textfeildtype;
 }
-
+- (IBAction)googleSignInAction:(id)sender;
+- (void)loginButton:(FBSDKLoginButton *)loginButton
+didCompleteWithResult:	(FBSDKLoginManagerLoginResult *)result
+              error:	(NSError *)error;
+- (void) loginButtonDidLogOut:(FBSDKLoginButton *)loginButton;
 @property (weak, nonatomic) IBOutlet UIScrollView *LoginScroll;
 @property (weak, nonatomic) IBOutlet UIButton *LoginBtn;
 @property (weak, nonatomic) IBOutlet UIButton *regHdrBtn;
 - (IBAction)LoginHdrTapped:(id)sender;
 - (IBAction)RegisterHdrTapped:(id)sender;
 @property (weak, nonatomic) IBOutlet UILabel *hdr_Underline;
+@property (weak, nonatomic) IBOutlet UIButton *loginButton;
 
 @property (strong, nonatomic) IBOutlet NSString *setRegFlds;
 @property (strong, nonatomic) IBOutlet NSString *SetLoginBody;
+- (IBAction)facebookLoginAction:(id)sender;
 
 @property (weak, nonatomic) IBOutlet UIView *LoginView;
 @property (strong, nonatomic) IBOutlet RPFloatingPlaceholderTextField *usertxtFld;
@@ -45,7 +51,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *submitBtn;
 - (IBAction)submitTapped:(id)sender;
 @property (strong, nonatomic) IBOutlet UIView *LoginGoogleView;
-@property (weak, nonatomic) IBOutlet FBLoginView *LoginFBView;
+//@property (weak, nonatomic) IBOutlet FBLoginView *LoginFBView;
+@property (weak, nonatomic) IBOutlet FBSDKLoginButton *fbloginButton;
 @property (weak, nonatomic) IBOutlet UILabel *fbicon;
 @property (weak, nonatomic) IBOutlet UILabel *gplusicon;
 

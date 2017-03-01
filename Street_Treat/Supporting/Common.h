@@ -206,7 +206,7 @@
 @property (strong, nonatomic) NSString *shareStoreURL;
 @property (strong, nonatomic) NSString *callStoreURL;
 @property (strong, nonatomic) NSString *addReviewsforStoreURL;
-
+@property (strong, nonatomic) NSString *updateDeviceToken;
 @property (strong, nonatomic) NSString *updateMobileURL;
 
 @property (strong, nonatomic) NSString *myCouponsURL;
@@ -232,6 +232,8 @@
 @property (strong, nonatomic) NSString *feedbackURL;
 @property (strong, nonatomic) NSString *reportErrorURL;
 @property (strong, nonatomic) NSString *viewFeedbacksURL;
+@property (strong, nonatomic) NSString *generateOTPURL;
+
 
 @property (strong, nonatomic) NSString *newsEventsURL;
 @property (strong, nonatomic) NSString *termsconditionsURL;

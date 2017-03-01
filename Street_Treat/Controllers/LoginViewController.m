@@ -8,13 +8,15 @@
 
 #import "LoginViewController.h"
 #import "ForgotPassViewController.h"
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
+#import <FBSDKLoginKit/FBSDKLoginKit.h>
 
 @interface LoginViewController ()
 
 @end
 
 @implementation LoginViewController
-@synthesize LoginGoogleView,LoginFBView,submitBtn,passTxtFld,usertxtFld,LoginBtn;
+@synthesize LoginGoogleView,submitBtn,passTxtFld,usertxtFld,LoginBtn;
 @synthesize LoginView,RegisterView,setRegFlds,SetLoginBody;
 @synthesize firstnametxtFld,lastnametxtFld,mobilenotxtFld,emailtxtFld,reg_passtxtFld,reg_cnf_passtxtFld,reg_submitBtn,Malebtn,femaleBtn,hdr_Underline,regHdrBtn,genderStr,fbicon,gplusicon,LoginScroll;
 //float usryPos,passyPos;
@@ -33,21 +35,26 @@
     [delegate.defaults setObject:@"DashboardViewController" forKey:@"internetdisconnect"];
     [delegate.defaults synchronize];
     //self.tabBarController.tabBar.hidden = YES;
-    
+     [GIDSignIn sharedInstance].uiDelegate = self;
     //    [delegate.defaults setValue:@"0" forKey:@"helpScreen"];
-    
     iskeyboardPresent = YES;
     iskeyboardAppeared = NO;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidShow:) name:UIKeyboardDidShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidHide:) name:UIKeyboardDidHideNotification object:nil];
     
+//    FBSDKLoginButton *loginButton = [[FBSDKLoginButton alloc] init];
+//    // Optional: Place the button in the center of your view.
+//    loginButton.center = self.view.center;
+//    [self.view addSubview:loginButton];
      LoginGoogleView.hidden = TRUE;
-     LoginFBView.hidden = TRUE;
-    
+    //LoginFBView.hidden = TRUE;
+    _loginButton.hidden = true;
     LoginGoogleView.layer.cornerRadius = 20.0f;
     LoginGoogleView.layer.masksToBounds = YES;
-    LoginFBView.layer.cornerRadius = 20.0f;
-    LoginFBView.layer.masksToBounds = YES;
+//    LoginFBView.layer.cornerRadius = 20.0f;
+//    LoginFBView.layer.masksToBounds = YES;
+    _loginButton.layer.cornerRadius = 10.0f;
+    _loginButton.layer.masksToBounds= YES;
     submitBtn.layer.cornerRadius = 20.0f;
     submitBtn.layer.masksToBounds = YES;
     PrevX = hdr_Underline.frame.origin.x;
@@ -61,30 +68,38 @@
     LoginFBData = [[NSMutableData alloc]init];
     genderStr = @"Male";
     
+    
+    if ([FBSDKAccessToken currentAccessToken]) {
+        UITabBarController *tabbar = [self.storyboard instantiateViewControllerWithIdentifier:@"Street_TreatTabbar"];
+        [self.navigationController pushViewController:tabbar animated:YES];
+        // User is logged in, do work such as go to next view controller.
+    }
+    
+    
     fbicon.text = commonclass.Fbicon;
     gplusicon.text = commonclass.gPlusicon;
     
     regFlds = [[NSArray alloc]initWithObjects:firstnametxtFld,lastnametxtFld,mobilenotxtFld,emailtxtFld,reg_passtxtFld,reg_cnf_passtxtFld, nil];
     
     // Login feilds
-    usertxtFld = [[RPFloatingPlaceholderTextField alloc]initWithFrame:CGRectMake(LoginFBView.frame.origin.x,[commonclass.usryPos floatValue], LoginGoogleView.frame.size.width, 35)];
+    usertxtFld = [[RPFloatingPlaceholderTextField alloc]initWithFrame:CGRectMake(LoginGoogleView.frame.origin.x,[commonclass.usryPos floatValue], LoginGoogleView.frame.size.width, 35)];
     usertxtFld.delegate=self;
-    usertxtFld.text = @"nityanand.k@digillenceweb.com";
+    usertxtFld.text = @"";
     usertxtFld.placeholder = @"USERNAME";
     usertxtFld.returnKeyType = UIReturnKeyNext;
     [commonclass addfeild:LoginView textfeild:usertxtFld];
     
-    passTxtFld = [[RPFloatingPlaceholderTextField alloc]initWithFrame:CGRectMake(LoginFBView.frame.origin.x, usertxtFld.frame.origin.y+[commonclass.passyPos floatValue], LoginGoogleView.frame.size.width, 35)];
+    passTxtFld = [[RPFloatingPlaceholderTextField alloc]initWithFrame:CGRectMake(LoginGoogleView.frame.origin.x, usertxtFld.frame.origin.y+[commonclass.passyPos floatValue], LoginGoogleView.frame.size.width, 35)];
     passTxtFld.delegate=self;
     passTxtFld.secureTextEntry = YES;
     passTxtFld.returnKeyType = UIReturnKeyDefault;
     passTxtFld.placeholder = @"PASSWORD";
-    passTxtFld.text = @"123";
+    passTxtFld.text = @"";
     [commonclass addfeild:LoginView textfeild:passTxtFld];
     //end
     
     // Registration feilds
-    firstnametxtFld = [[RPFloatingPlaceholderTextField alloc]initWithFrame:CGRectMake(LoginFBView.frame.origin.x,[commonclass.usryPos floatValue], LoginGoogleView.frame.size.width / 2.5, 35)];
+    firstnametxtFld = [[RPFloatingPlaceholderTextField alloc]initWithFrame:CGRectMake(LoginGoogleView.frame.origin.x,[commonclass.usryPos floatValue], LoginGoogleView.frame.size.width / 2.5, 35)];
     firstnametxtFld.delegate=self;
     firstnametxtFld.placeholder = @"FIRSTNAME*";
     firstnametxtFld.text =@"Mahesh";
@@ -98,7 +113,7 @@
     lastnametxtFld.returnKeyType = UIReturnKeyNext;
     [commonclass addfeild:RegisterView textfeild:lastnametxtFld];
     
-    emailtxtFld = [[RPFloatingPlaceholderTextField alloc]initWithFrame:CGRectMake(LoginFBView.frame.origin.x, lastnametxtFld.frame.origin.y+[commonclass.passyPos floatValue], LoginGoogleView.frame.size.width + 16, 35)];
+    emailtxtFld = [[RPFloatingPlaceholderTextField alloc]initWithFrame:CGRectMake(LoginGoogleView.frame.origin.x, lastnametxtFld.frame.origin.y+[commonclass.passyPos floatValue], LoginGoogleView.frame.size.width + 16, 35)];
     emailtxtFld.delegate=self;
     emailtxtFld.returnKeyType = UIReturnKeyNext;
     emailtxtFld.keyboardType = UIKeyboardTypeEmailAddress;
@@ -106,7 +121,7 @@
     emailtxtFld.text =@"mahesh@gmail.com";
     [commonclass addfeild:RegisterView textfeild:emailtxtFld];
     
-    mobilenotxtFld = [[RPFloatingPlaceholderTextField alloc]initWithFrame:CGRectMake(LoginFBView.frame.origin.x, emailtxtFld.frame.origin.y+[commonclass.passyPos floatValue], LoginGoogleView.frame.size.width + 16, 35)];
+    mobilenotxtFld = [[RPFloatingPlaceholderTextField alloc]initWithFrame:CGRectMake(LoginGoogleView.frame.origin.x, emailtxtFld.frame.origin.y+[commonclass.passyPos floatValue], LoginGoogleView.frame.size.width + 16, 35)];
     mobilenotxtFld.delegate=self;
     mobilenotxtFld.placeholder = @"MOBILE NUMBER";
     mobilenotxtFld.keyboardType = UIKeyboardTypeNumberPad;
@@ -114,7 +129,7 @@
    // mobilenotxtFld.text =@"8055642405";
     [commonclass addfeild:RegisterView textfeild:mobilenotxtFld];
     
-    reg_passtxtFld = [[RPFloatingPlaceholderTextField alloc]initWithFrame:CGRectMake(LoginFBView.frame.origin.x, mobilenotxtFld.frame.origin.y+[commonclass.passyPos floatValue], LoginGoogleView.frame.size.width + 16, 35)];
+    reg_passtxtFld = [[RPFloatingPlaceholderTextField alloc]initWithFrame:CGRectMake(LoginGoogleView.frame.origin.x, mobilenotxtFld.frame.origin.y+[commonclass.passyPos floatValue], LoginGoogleView.frame.size.width + 16, 35)];
     reg_passtxtFld.delegate=self;
     reg_passtxtFld.secureTextEntry = YES;
     reg_passtxtFld.returnKeyType = UIReturnKeyNext;
@@ -122,7 +137,7 @@
     reg_passtxtFld.text =@"mahesh123";
     [commonclass addfeild:RegisterView textfeild:reg_passtxtFld];
     
-    reg_cnf_passtxtFld = [[RPFloatingPlaceholderTextField alloc]initWithFrame:CGRectMake(LoginFBView.frame.origin.x, reg_passtxtFld.frame.origin.y+[commonclass.passyPos floatValue], LoginGoogleView.frame.size.width + 16, 35)];
+    reg_cnf_passtxtFld = [[RPFloatingPlaceholderTextField alloc]initWithFrame:CGRectMake(LoginGoogleView.frame.origin.x, reg_passtxtFld.frame.origin.y+[commonclass.passyPos floatValue], LoginGoogleView.frame.size.width + 16, 35)];
     reg_cnf_passtxtFld.delegate=self;
     reg_cnf_passtxtFld.secureTextEntry = YES;
     reg_cnf_passtxtFld.placeholder = @"CONFIRM PASSWORD*";
@@ -162,34 +177,36 @@
     //[[GIDSignIn sharedInstance] signInSilently];
     
     [GIDSignIn sharedInstance].delegate = self;
+    _fbloginButton.delegate = self;
+    _fbloginButton.readPermissions =
+    @[@"public_profile", @"email", @"user_friends"];
+//    self.LoginFBView.delegate = self;
+//    self.LoginFBView.readPermissions = @[@"public_profile", @"email"];
+//    for (id loginObject in self.LoginFBView.subviews)
+//    {
+//        if ([loginObject isKindOfClass:[UIButton class]])
+//        {
+//            UIButton * loginButton =  loginObject;
+//            UIImage *loginImage = [UIImage imageNamed:@"f connect.png"];
+//            [loginButton setBackgroundImage:loginImage forState:UIControlStateNormal];
+//            [loginButton setBackgroundImage:nil forState:UIControlStateSelected];
+//            [loginButton setBackgroundImage:nil forState:UIControlStateHighlighted];
+//            
+//        }
+//        if ([loginObject isKindOfClass:[UILabel class]])
+//        {
+//            UILabel * loginLabel =  loginObject;
+//            if([loginLabel.text isEqualToString:@"Log in with Facebook"]){
+//                loginLabel.text = @"";
+//            }
+//            //loginLabel.hidden=YES;
+//            //loginLabel.text = @"";
+//            //            loginLabel.frame = CGRectMake(0, 0, 0, 0);
+//        }
+//    }
     
-    self.LoginFBView.delegate = self;
-    self.LoginFBView.readPermissions = @[@"public_profile", @"email"];
-    for (id loginObject in self.LoginFBView.subviews)
-    {
-        if ([loginObject isKindOfClass:[UIButton class]])
-        {
-            UIButton * loginButton =  loginObject;
-            UIImage *loginImage = [UIImage imageNamed:@"f connect.png"];
-            [loginButton setBackgroundImage:loginImage forState:UIControlStateNormal];
-            [loginButton setBackgroundImage:nil forState:UIControlStateSelected];
-            [loginButton setBackgroundImage:nil forState:UIControlStateHighlighted];
-            
-        }
-        if ([loginObject isKindOfClass:[UILabel class]])
-        {
-            UILabel * loginLabel =  loginObject;
-            if([loginLabel.text isEqualToString:@"Log in with Facebook"]){
-                loginLabel.text = @"";
-            }
-            //loginLabel.hidden=YES;
-            //loginLabel.text = @"";
-            //            loginLabel.frame = CGRectMake(0, 0, 0, 0);
-        }
-    }
-    
-    LoginFBView.backgroundColor = [UIColor FBColor];
-    self.LoginFBView.loginBehavior=FBSessionLoginBehaviorForcingWebView;
+//    LoginFBView.backgroundColor = [UIColor FBColor];
+//    self.LoginFBView.loginBehavior=FBSessionLoginBehaviorForcingWebView;
     
     //    UITapGestureRecognizer *gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(GPlusLogin)];
     //    [self.LoginGoogleView addGestureRecognizer:gestureRecognizer];
@@ -391,14 +408,24 @@
                 if([[data valueForKey:@"status"]intValue] == 1){
                     NSString * log_id = [[data valueForKey:@"items"] valueForKey:@"log_id"] ;
                    // NSString * log_id = @"4d0054923037ac2b343e804c432679f7";
-                    
                     NSString * log_name = [[data valueForKey:@"items"] valueForKey:@"username"];//name
                     NSString * usr_name = [[data valueForKey:@"items"] valueForKey:@"name"];
                     NSString * mobile = [[data valueForKey:@"items"] valueForKey:@"mobile"];
+                    
+                    if (mobile == nil){
+                        [delegate.defaults setBool:false forKey:@"updateMobile"];
+                    }else{
+                        [delegate.defaults setBool:true forKey:@"updateMobile"];
+                    }
+                    
+                    NSString * otp_Verified = [[data valueForKey:@"items"] valueForKey:@"otp_verified"];
+                    NSLog(@"%@",otp_Verified);
+                    [delegate.defaults setObject:otp_Verified forKey:@"otp_verified"];
                     [delegate.defaults setValue:log_id forKey:@"logid"];
                     [delegate.defaults setValue:mobile forKey:@"mobile"];
                     [delegate.defaults setValue:log_name forKey:@"logname"];
                     [delegate.defaults setValue:usr_name forKey:@"usr_name"];
+                    
                     [delegate.defaults synchronize];
                     [self ClearAll];
                     UITabBarController *tabbar = [self.storyboard instantiateViewControllerWithIdentifier:@"Street_TreatTabbar"];
@@ -425,11 +452,15 @@
                 }
             }else if ([requestType isEqualToString:@"Register"]){
                 if([[data valueForKey:@"status"]intValue] == 1){
+                   
+//                    NSString * otp_Verified = [[data valueForKey:@"items"] valueForKey:@"otp_verified"];
+//                    [delegate.defaults setBool:otp_Verified forKey:@"otp_verified"];
                     [self.view makeToast:[data valueForKey:@"message"] duration:2.0 position:CSToastPositionBottom];
                     requestType = @"Login";
                     NSLog(@"body.. %@",SetLoginBody);
                  //  NSTimer  *timer = [NSTimer scheduledTimerWithTimeInterval: 2.0 target:self selector:@selector(updateCountdown) userInfo:nil repeats:NO];
                     if(mobilenotxtFld.text.length == 10){
+                      //  [delegate.defaults setObject:true forKey:@"otp_verified"];
                         VerifyViewController * result = [self.storyboard instantiateViewControllerWithIdentifier:@"VerifyViewController"];
                         result.getRegFlds = setRegFlds;
                         result.GetLoginBody = SetLoginBody;
@@ -442,6 +473,7 @@
                         [commonclass logoutFunction];
                     }else{
                         if([commonclass isActiveInternet] == YES){
+                       // [delegate.defaults setBool:false forKey:@"otp_verified"];
                         [commonclass sendRequest:self.view mutableDta:LoginData url:commonclass.LoginURL msgBody:SetLoginBody];
                         }else{
                             [commonclass Redirect:self.navigationController Identifier:@"InternetDisconnectViewController"];
@@ -451,9 +483,31 @@
                 }else{
                     [self.view makeToast:[data valueForKey:@"message"]];
                 }
-            }
-        }else{
+            }else if ([requestType isEqualToString:@"GoogleSignIn"]){
+                if([[data valueForKey:@"status"]intValue] == 1){
+            NSLog(@"dsfdsf%@",@"Lol");
+            UITabBarController *tabbar = [self.storyboard instantiateViewControllerWithIdentifier:@"Street_TreatTabbar"];
+            [self.navigationController pushViewController:tabbar animated:YES];
+            [[GIDSignIn sharedInstance] signOut];
+                }else if([[data valueForKey:@"status"]intValue] == -1){
+                    [commonclass logoutFunction];
+                }else{
+                }
+            }else if ([requestType isEqualToString:@"FaceBook"]){
+                if([[data valueForKey:@"status"]intValue] == 1){
+                NSLog(@"dsfdsf%@",@"Lol");
+//                UITabBarController *tabbar = [self.storyboard instantiateViewControllerWithIdentifier:@"Street_TreatTabbar"];
+//                [self.navigationController pushViewController:tabbar animated:YES];
+                 [[FBSDKLoginManager new] logOut];
+                }
+                else if([[data valueForKey:@"status"]intValue] == -1){
+                    [commonclass logoutFunction];
+                }else{
+                    
+                }
+            } else{
             [self.view makeToast:@"Oops server error occured"];
+        }
         }
         [indicator stopAnimating];
         [[UIApplication sharedApplication] endIgnoringInteractionEvents];
@@ -642,37 +696,34 @@
 -(void)toggleHiddenState:(BOOL)shouldHide{
 }
 
-
 #pragma mark - FBLoginView Delegate method implementation
 
--(void)loginViewShowingLoggedInUser:(FBLoginView *)loginView{
-    [self toggleHiddenState:NO];
-}
-
-
--(void)loginViewFetchedUserInfo:(FBLoginView *)loginView user:(id<FBGraphUser>)user{
-    NSString *fbAccessToken = [FBSession activeSession].accessTokenData.accessToken;
-    NSLog(@"%@", fbAccessToken);
-}
-
--(void)loginViewShowingLoggedOutUser:(FBLoginView *)loginView{
-    [self toggleHiddenState:YES];
-}
-
-
--(void)loginView:(FBLoginView *)loginView handleError:(NSError *)error{
-    NSLog(@"%@", [error localizedDescription]);
-    for (id loginObject in self.LoginFBView.subviews)
-    {
-        if ([loginObject isKindOfClass:[UILabel class]])
-        {
-            UILabel * loginLabel =  loginObject;
-            if([loginLabel.text isEqualToString:@"Log in with Facebook"]){
-                loginLabel.text = @"";
-            }
-        }
-    }
-}
+//-(void)loginViewShowingLoggedInUser:(FBLoginView *)loginView{
+//    [self toggleHiddenState:NO];
+//}
+//
+//-(void)loginViewFetchedUserInfo:(FBLoginView *)loginView user:(id<FBGraphUser>)user{
+//    NSString *fbAccessToken = [FBSession activeSession].accessTokenData.accessToken;
+//    NSLog(@"%@", fbAccessToken);
+//}
+//
+//-(void)loginViewShowingLoggedOutUser:(FBLoginView *)loginView{
+//    [self toggleHiddenState:YES];
+//}
+//
+//-(void)loginView:(FBLoginView *)loginView handleError:(NSError *)error{
+//    NSLog(@"%@", [error localizedDescription]);
+//    for (id loginObject in self.LoginFBView.subviews)
+//    {
+//        if ([loginObject isKindOfClass:[UILabel class]])
+//        {
+//            UILabel * loginLabel =  loginObject;
+//            if([loginLabel.text isEqualToString:@"Log in with Facebook"]){
+//                loginLabel.text = @"";
+//            }
+//        }
+//    }
+//}
 
 - (void)signInWillDispatch:(GIDSignIn *)signIn error:(NSError *)error {
     //[myActivityIndicator stopAnimating];
@@ -687,6 +738,9 @@ presentViewController:(UIViewController *)viewController {
 - (void)signIn:(GIDSignIn *)signIn
 didSignInForUser:(GIDGoogleUser *)user
      withError:(NSError *)error {
+    requestType = @"GoogleSignIn";
+    
+    NSLog(@"%@",[delegate.defaults valueForKey:@"fborgoogle"]);
     // Perform any operations on signed in user here.
     NSLog(@"user gplus token..%@",user.authentication.idToken);
     NSString *userId = user.userID;                  // For client-side use only!
@@ -695,6 +749,11 @@ didSignInForUser:(GIDGoogleUser *)user
     NSString *givenName = user.profile.givenName;
     NSString *familyName = user.profile.familyName;
     NSString *email = user.profile.email;
+    
+    NSString *messageBody = [NSString stringWithFormat:@"accesstoken=%@&login_type=%@&device_os=%@&device_token=%@",idToken,@"gmail",@"ios",[delegate.defaults valueForKey:@"deviceToken"]];
+    NSLog(@"messageBody.. %@",messageBody);
+    NSLog(@"constant.searchListURL.. %@",commonclass.searchListURL);
+    [commonclass sendRequest:self.view mutableDta:LoginData url:commonclass.loginFBURL msgBody:messageBody];
     // ...
 }
 
@@ -713,6 +772,48 @@ dismissViewController:(UIViewController *)viewController {
 
 -(void)viewWillDisappear:(BOOL)animated{
     self.navigationController.navigationBar.hidden = true;
+}
+
+- (IBAction)googleSignInAction:(id)sender {
+    [delegate.defaults setObject:@"google" forKey:@"fborgoogle"];
+    [GIDSignIn sharedInstance].delegate=self;
+    [GIDSignIn sharedInstance].uiDelegate=self;
+    [[GIDSignIn sharedInstance] signIn];
+}
+- (IBAction)facebookLoginAction:(id)sender {
+//    self.loginButton.delegate = self;
+//    self.LoginFBView.readPermissions = @[@"public_profile", @"email"];
+}
+
+// FB Delegate Methods
+
+- (void)loginButton:(FBSDKLoginButton *)loginButton
+didCompleteWithResult:	(FBSDKLoginManagerLoginResult *)result
+error:	(NSError *)error{
+    requestType = @"FaceBook";
+
+    NSString *fbAccessToken = [FBSDKAccessToken currentAccessToken].tokenString;
+    
+    NSLog(@"%@",[delegate.defaults valueForKey:@"fborgoogle"]);
+    if (fbAccessToken != nil) {
+        UITabBarController *tabbar = [self.storyboard instantiateViewControllerWithIdentifier:@"Street_TreatTabbar"];
+        [self.navigationController pushViewController:tabbar animated:YES];
+    }
+    NSString *messageBody = [NSString stringWithFormat:@"accesstoken=%@&login_type=%@&device_os=%@&device_token=%@",fbAccessToken,@"facebook",@"ios",[delegate.defaults valueForKey:@"deviceToken"]];
+    NSLog(@"messageBody.. %@",messageBody);
+    NSLog(@"constant.searchListURL.. %@",commonclass.searchListURL);
+    [commonclass sendRequest:self.view mutableDta:LoginData url:commonclass.loginFBURL msgBody:messageBody];
+ 
+    //[[PFFacebookUtils facebookLoginManager] setLoginBehavior:FBSDKLoginBehaviorSystemAccount];
+}
+
+- (void) loginButtonDidLogOut:(FBSDKLoginButton *)loginButton{
+    [[FBSDKLoginManager new] logOut];
+}
+
+- (BOOL) loginButtonWillLogin:(FBSDKLoginButton *)loginButton{
+    [delegate.defaults setObject:@"fb" forKey:@"fborgoogle"];
+    return true;
 }
 
 @end

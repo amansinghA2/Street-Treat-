@@ -15,7 +15,7 @@
 
 @implementation Common
 @synthesize delegate;
-@synthesize rootNav,siteURL,LoginURL,RegisterURL,uniqueFldURL,forgotpasswordURL,staticDataURL,contactURL,getProfileURL,dashboardURL,searchListURL,feedbackURL,reportErrorURL,viewFeedbacksURL,exhibition_listURL,verticalsURL,storeDetailURL,bucketsListURL,otpURL,exhibition_detailURL,loginFBURL,newsEventsURL,termsconditionsURL,generatenewotpURL,verifyOTPURL,changePasswordURL,FAQsURL,privacypolicyURL,CheckinsURL,getOffersURL,generateCouponsURL,AddfavouritesURL,shareStoreURL,bucketsDeatilURL,callStoreURL,changePassfromProfileURL,getParentCategoriesURL,getMastersURL,addReviewsforStoreURL,getstoreDetailsURL,setProfileURL,myCouponsURL,updateMobileURL,userProfImageURL;
+@synthesize rootNav,siteURL,generateOTPURL,updateDeviceToken,LoginURL,RegisterURL,uniqueFldURL,forgotpasswordURL,staticDataURL,contactURL,getProfileURL,dashboardURL,searchListURL,feedbackURL,reportErrorURL,viewFeedbacksURL,exhibition_listURL,verticalsURL,storeDetailURL,bucketsListURL,otpURL,exhibition_detailURL,loginFBURL,newsEventsURL,termsconditionsURL,generatenewotpURL,verifyOTPURL,changePasswordURL,FAQsURL,privacypolicyURL,CheckinsURL,getOffersURL,generateCouponsURL,AddfavouritesURL,shareStoreURL,bucketsDeatilURL,callStoreURL,changePassfromProfileURL,getParentCategoriesURL,getMastersURL,addReviewsforStoreURL,getstoreDetailsURL,setProfileURL,myCouponsURL,updateMobileURL,userProfImageURL;
 
 @synthesize Fbicon,gPlusicon,forgotIcon,telIcon,faxIcon,mailIcon,menIcon,womenIcon,childrenIcon,highStreetIcon,brandedIcon,designerIcon,shareIcon,editIcon,coloreditIcon,locationbaloonIcon,filtersIcon,starIcon,radiofilledIcon,radioemptyIcon,twostarIcon,threestarIcon,fourstarIcon,fivestarIcon,checkboxemptyIcon,checkboxfilledIcon,allreviewsIcon,positivereviewsIcon,negativereviewsIcon,backIcon,notificationIcon,menuIcon,indicatorBlankIcon,indicatorFilledIcon,homeIcon,collectionIcon,nearmeIcon,storeawayIcon,storephoneIcon,addtofavouritesIcon,cameraIcon,amenitiesACIcon,amenitiesLiftIcon,amenitiesCarParkingIcon,amenitiesCreditCardIcon,emptystarIcon,addedtofavouritesIcon;
 
@@ -136,11 +136,16 @@
         //end
         
         //Previous
-        //NSString * masterUrl = @"http://services.streettreat.in/index.php?option=com_konnect&task=";
+       // NSString * masterUrl = @"http://services.streettreat.in/index.php?option=com_konnect&task=";
         
-       //Current
-        siteURL = @"http://www.webtest.streettreat.in";
-        NSString * masterUrl = @"http://www.webtest.streettreat.in/index.php?option=com_konnect&task=";
+       //Test
+       siteURL = @"http://www.webtest.streettreat.in";
+       NSString * masterUrl = @"http://www.webtest.streettreat.in/index.php?option=com_konnect&task=";
+        
+        
+       // LIVE
+       // siteURL = @"http://www.web.streettreat.in";
+       // NSString * masterUrl = @"http://www.web.streettreat.in/index.php?option=com_konnect&task=";
         
         getMastersURL = [NSString stringWithFormat:@"%@getMasterData",masterUrl];
         
@@ -185,7 +190,7 @@
         shareStoreURL = [NSString stringWithFormat:@"%@customer.shareStore",masterUrl];
         callStoreURL = [NSString stringWithFormat:@"%@customer.callStore",masterUrl];
         addReviewsforStoreURL = [NSString stringWithFormat:@"%@customer.addReview",masterUrl];
-       
+        updateDeviceToken = [NSString stringWithFormat:@"%@customer.updateDeviceToken",masterUrl];
         
         verticalsURL = [NSString stringWithFormat:@"%@getVerticals",masterUrl];
         exhibition_listURL = [NSString stringWithFormat:@"%@getExhibitionListing",masterUrl];
@@ -193,18 +198,10 @@
         myCouponsURL = [NSString stringWithFormat:@"%@customer.getMyCoupons",masterUrl];
         
         feedbackURL = [NSString stringWithFormat:@"%@setFeedback",masterUrl];
-        
         updateMobileURL = [NSString stringWithFormat:@"%@customer.updateMobileNumberNGenerateOTP",masterUrl];
-        
-        
-        
-        
-        
+        generateOTPURL = [NSString stringWithFormat:@"%@customer.generateOTP",masterUrl];
         loginFBURL = [NSString stringWithFormat:@"%@socialLogin",masterUrl];
-        
-        
-        
-        
+
         ht = 0;
         ht = [[UIScreen mainScreen] bounds].size.height;
         
@@ -590,8 +587,8 @@
     float h = 0;
     
     for (UIView *v in [mainView subviews]) {
-        float fw = (v.frame.origin.x + v.frame.size.width)+5;
-        float fh = (v.frame.origin.y + v.frame.size.height)+5;
+        float fw = (v.frame.origin.x + v.frame.size.width);
+        float fh = (v.frame.origin.y + v.frame.size.height);
         w = MAX(fw, w);
         h = MAX(fh, h);
     }
@@ -672,6 +669,8 @@
 }
 
 - (void)Drawer_Logout{
+    
+    
     
 }
 

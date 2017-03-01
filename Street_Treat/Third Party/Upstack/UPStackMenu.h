@@ -25,7 +25,6 @@ typedef enum {
 
 @protocol UPStackMenuDelegate;
 
-
 @interface UPStackMenu : UIView <UPStackMenuItemDelegate>
 
 // Vertical spacing between each stack menu item
