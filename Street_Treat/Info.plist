@@ -2,12 +2,27 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>LSApplicationQueriesSchemes</key>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleDisplayName</key>
+	<string>Street Treat</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.0.3</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleURLSchemes</key>
 	<array>
-		<string>fbapi</string>
-		<string>fb-messenger-api</string>
-		<string>fbauth2</string>
-		<string>fbshareextension</string>
+		<string>prefs</string>
 	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
@@ -34,53 +49,38 @@
 			</array>
 		</dict>
 	</array>
+	<key>CFBundleVersion</key>
+	<string>0.0.3</string>
 	<key>FacebookAppID</key>
 	<string>1286981934711860</string>
 	<key>FacebookDisplayName</key>
 	<string>Streat Treat</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>To use library</string>
-	<key>NSCameraUsageDescription</key>
-	<string>using camera in apps</string>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>en</string>
-	<key>CFBundleDisplayName</key>
-	<string>Street Treat</string>
-	<key>CFBundleExecutable</key>
-	<string>$(EXECUTABLE_NAME)</string>
-	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>$(PRODUCT_NAME)</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
-	<key>CFBundleShortVersionString</key>
-	<string>0.0.3</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
-	<key>CFBundleURLSchemes</key>
+	<key>LSApplicationQueriesSchemes</key>
 	<array>
-		<string>prefs</string>
+		<string>fbapi</string>
+		<string>fb-messenger-api</string>
+		<string>fbauth2</string>
+		<string>fbshareextension</string>
 	</array>
-	<key>CFBundleVersion</key>
-	<string>0.0.3</string>
 	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>NSAllowsArbitraryLoads</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
-	<key>NSAllowsArbitraryLoads</key>
-	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>using camera in apps</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>I need Location</string>
 	<key>NSLocationUsageDescription</key>
 	<string>I need Location</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>I need Location</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>To use library</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>FontAwesome.ttf</string>

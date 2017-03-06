@@ -711,6 +711,7 @@
 		2A4E2D5D1CE47CAE009819AA /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				2A4A51F41D8042DB00998B25 /* NotificationsCell.h */,
 				2A4E2D5E1CE47CBF009819AA /* AppDelegate.h */,
 				2A4E2D5F1CE47CBF009819AA /* AppDelegate.m */,
 				2A4E2D601CE47CBF009819AA /* LoginViewController.h */,
@@ -786,11 +787,10 @@
 				2A4E2D691CE47CD9009819AA /* Common.m */,
 				2A50FFAC1D5C56D70014C31E /* NormalListCell.h */,
 				2A50FFAD1D5C56D70014C31E /* NormalListCell.m */,
-				2A6195201D67457300EE105F /* ExhibitionNormalCell.h */,
 				2A6195211D67457300EE105F /* ExhibitionNormalCell.m */,
-				2A22C5391D6B02A600CC1023 /* BucketsListCell.h */,
 				2A22C53A1D6B02A600CC1023 /* BucketsListCell.m */,
-				2A4A51F41D8042DB00998B25 /* NotificationsCell.h */,
+				2A22C5391D6B02A600CC1023 /* BucketsListCell.h */,
+				2A6195201D67457300EE105F /* ExhibitionNormalCell.h */,
 				2A4A51F51D8042DB00998B25 /* NotificationsCell.m */,
 				2A9515B21E54297100BFEA8F /* PremiumListingCell.h */,
 				2A9515B31E54297100BFEA8F /* PremiumListingCell.m */,
@@ -1007,10 +1007,25 @@
 						DevelopmentTeam = 2Z5B84Z5QC;
 						ProvisioningStyle = Manual;
 						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 0;
+							};
+							com.apple.GameCenter = {
+								enabled = 0;
+							};
+							com.apple.InAppPurchase = {
+								enabled = 0;
+							};
+							com.apple.InterAppAudio = {
+								enabled = 0;
+							};
 							com.apple.Keychain = {
-								enabled = 1;
+								enabled = 0;
 							};
 							com.apple.Push = {
+								enabled = 1;
+							};
+							com.apple.WAC = {
 								enabled = 0;
 							};
 						};
@@ -1345,8 +1360,8 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Sahil Nagpal (TA5H22SB2P)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Sahil Nagpal (TA5H22SB2P)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1390,8 +1405,8 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Sahil Nagpal (TA5H22SB2P)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Sahil Nagpal (TA5H22SB2P)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -1428,12 +1443,12 @@
 					"~/Documents/FacebookSDK",
 				);
 				INFOPLIST_FILE = Street_Treat/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Digillence.Street-Treat";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "6d4331f0-fba8-4655-9690-09852a1fe988";
-				PROVISIONING_PROFILE_SPECIFIER = Digillence_Development;
+				PROVISIONING_PROFILE = "66573753-ca70-4626-a5ca-7e18711e4101";
+				PROVISIONING_PROFILE_SPECIFIER = "ApnsTest-Development";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -1454,12 +1469,12 @@
 					"~/Documents/FacebookSDK",
 				);
 				INFOPLIST_FILE = Street_Treat/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Digillence.Street-Treat";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "6d4331f0-fba8-4655-9690-09852a1fe988";
-				PROVISIONING_PROFILE_SPECIFIER = Digillence_Development;
+				PROVISIONING_PROFILE = "66573753-ca70-4626-a5ca-7e18711e4101";
+				PROVISIONING_PROFILE_SPECIFIER = "ApnsTest-Development";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;

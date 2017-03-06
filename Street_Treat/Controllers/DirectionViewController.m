@@ -38,9 +38,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    delegate = (AppDelegate *)[[UIApplication sharedApplication]delegate];
     [delegate.defaults setObject:@"DirectionViewController" forKey:@"internetdisconnect"];
     commonclass = [[Common alloc]init];
-     delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     [commonclass addNavigationBar:self.view];
     
     UIButton *backBtn = (UIButton *)[self.view viewWithTag:1111];

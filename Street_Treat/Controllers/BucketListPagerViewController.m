@@ -16,6 +16,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    delegate = (AppDelegate *)[[UIApplication sharedApplication]delegate];
     [delegate.defaults setObject:@"BucketListPagerViewController" forKey:@"internetdisconnect"];
     UISearchBar * search = (UISearchBar *)[self.view viewWithTag:11111];
     search.hidden = TRUE;

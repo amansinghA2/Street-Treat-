@@ -20,10 +20,11 @@
 
 @synthesize storeName,storeAddress,storeShopForLbl,storeTimeLbl,storeAwayIconLbl,storeAwayLbl,shareButton,addTofavouritesBtn,votesCount,storeStarsLbl,storeRatingLbl,storeChecksCount,storeValidCouponsCount,streetOffersLbl,mobileFld,otpFld,reviewView;
 
-
-
-
 -(void)viewWillAppear:(BOOL)animated{
+    
+    if ([[delegate.defaults valueForKey:@"navigateFromReport"] isEqualToString:@"fromCouponsPage"]){
+        [self.view makeToast:@"Report Submitted Successfully"];
+    }
     [delegate.defaults setObject:@"GenerateCouponsViewController" forKey:@"internetdisconnect"];
     store_ID = [[delegate.defaults valueForKey:@"store_ID"] intValue];
     NSLog(@"store_ID..%ld",store_ID);
@@ -135,12 +136,15 @@
     [commonclass sendRequest:self.view mutableDta:detailsData url:commonclass.getstoreDetailsURL msgBody:messageBody];
      }else{
      [commonclass Redirect:self.navigationController Identifier:@"InternetDisconnectViewController"];
-    //[self.view makeToast:@"Check your internet connection"];
+     //[self.view makeToast:@"Check your internet connection"];
      }
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+   // [delegate.defaults setValue:@"myloc" forKey:@"locupdatefrom"];
+    cameraBtn.hidden = true;
+   // [delegate.defaults setValue:@"b" forKey:@"navigateFromReport"];
     [self AddtoFavourites];
     isDataLoadingCompleted = false;
     self.navigationController.navigationBarHidden =true;
@@ -410,6 +414,7 @@
             }else if([[data valueForKey:@"status"]intValue] == -1){
                 [commonclass logoutFunction];
             }else{
+                
             }
         }else if([responseType isEqualToString:@"StoreDetails"]){
             [detailsArr removeAllObjects];
@@ -527,8 +532,8 @@
     NSString * awayDist = [details valueForKey:@"distance_in_kms"];
     storeAwayLbl.text = [NSString stringWithFormat:@"%.2f Kms away  ",[awayDist doubleValue]];
     
-    storeValidCouponsCount.text = [details valueForKey:@"valid_coupon"];
-    storeChecksCount.text = [details valueForKey:@"checkins"];
+    storeValidCouponsCount.text = [details valueForKey:@"accepted_coupons"];
+    storeChecksCount.text = [details valueForKey:@"no_of_checkins"];
     streetOffersLbl.text = [NSString stringWithFormat:@"%@ %% Street Treat Offers",[details valueForKey:@"exclusive_discount"]];
     
     storeRatingLbl.text = [details valueForKey:@"rating"];
@@ -587,6 +592,7 @@
 }
 
 - (IBAction)ReportTapped:(id)sender{
+    [delegate.defaults setValue:@"fromCouponsPage" forKey:@"navigateFromReport"];
     [commonclass Redirect:self.navigationController Identifier:@"ReportErrorViewController"];
 }
 

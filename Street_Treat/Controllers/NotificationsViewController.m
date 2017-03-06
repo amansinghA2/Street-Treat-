@@ -17,11 +17,11 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    delegate = (AppDelegate *)[[UIApplication sharedApplication]delegate];
     [delegate.defaults setObject:@"NotificationsViewController" forKey:@"internetdisconnect"];
     self.navigationController.navigationBarHidden =true;
     commonclass = [[Common alloc]init];
     commonclass.delegate = self;
-    delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     [commonclass addNavigationBar:self.view];
     NotificationData = [[NSMutableData alloc]init];
     notificationArr = [[NSMutableArray alloc]init];

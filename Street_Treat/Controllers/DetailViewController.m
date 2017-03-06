@@ -38,6 +38,11 @@
 @synthesize TimingsView,MondayTimeLbl,TuesdayTimeLbl,WednesdayTimeLbl,ThursdayTimeLbl,FridayTimeLbl,saturdayTimeLbl,sundayTimeLbl;
 
 -(void)viewWillAppear:(BOOL)animated{
+    
+    if ([[delegate.defaults valueForKey:@"navigateFromReport"] isEqualToString:@"fromDetail"]){
+        [self.view makeToast:@"Report Submitted Successfully"];
+    }
+    
     [delegate.defaults setObject:@"DetailViewController" forKey:@"internetdisconnect"];
     self.navigationController.navigationBarHidden =true;
     self.navigationItem.hidesBackButton = YES;
@@ -50,8 +55,8 @@
     userLatitude = [[delegate.defaults valueForKey:@"latitude"] floatValue];
     userLongitude = [[delegate.defaults valueForKey:@"longitude"] floatValue];
     
-    currentLatitude = [[delegate.defaults valueForKey:@"latitude"] floatValue];
-    currentLongitude = [[delegate.defaults valueForKey:@"longitude"] floatValue];
+    currentLatitude = [[delegate.defaults valueForKey:@"user_latitude"] floatValue];
+    currentLongitude = [[delegate.defaults valueForKey:@"user_longitude"] floatValue];
     
     [self getStoreDetails];
     
@@ -185,7 +190,7 @@
      if([commonclass isActiveInternet] == YES){
     // log_id,store_id,latitude,longitude,radius
     responseType = @"StoreDetails";
-    NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&store_id=%ld&latitude=%f&longitude=%f&current_latitude=%f&current_longitude=%f",[delegate.defaults valueForKey:@"logid"],store_ID,userLatitude,userLongitude,currentLatitude,currentLongitude];
+    NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&store_id=%ld&latitude=%f&longitude=%f&current_latitude=%@&current_longitude=%@",[delegate.defaults valueForKey:@"logid"],store_ID,currentLatitude,currentLongitude,[delegate.defaults valueForKey:@"latitude"],[delegate.defaults valueForKey:@"longitude"]];
     NSLog(@"body.. %@",messageBody);
     NSLog(@"url.. %@",commonclass.getstoreDetailsURL);
     [commonclass sendRequest:self.view mutableDta:detailData url:commonclass.getstoreDetailsURL msgBody:messageBody];
@@ -299,7 +304,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
+   // [delegate.defaults setValue:@"a" forKey:@"navigateFromReport"];
     commonclass = [[Common alloc]init];
     commonclass.delegate = self;
     delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
@@ -482,7 +487,7 @@
                 break;
             case 14:{
                 NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
-                [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
+//                [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
                 [delegate.defaults setValue:@"19.1183" forKey:@"latitude"];
                 [delegate.defaults setValue:@"73.0276" forKey:@"longitude"];
                 //[delegate.defaults setValue:@"Mahape" forKey:@"loc_name"];
@@ -593,7 +598,6 @@
     awayDist = [details valueForKey:@"distance_in_kms"];
     _storeAwayLbl.text = [NSString stringWithFormat:@"%.2f Kms away  ",[awayDist doubleValue]];
     
-    
     storeValidCouponsCount.text = [details valueForKey:@"valid_coupon"];
     storeChecksCount.text = [details valueForKey:@"checkins"];
     _storeStreetOffersLbl.text = [NSString stringWithFormat:@"%@ %% Street Treat Offers",[details valueForKey:@"exclusive_discount"]];
@@ -622,7 +626,7 @@
     
     [self setAmenities:[details valueForKey:@"amenities"]];
     
-    _votesCount.text = [NSString stringWithFormat:@"%@ Votes |",[details valueForKey:@"review_count"]];
+    _votesCount.text = [NSString stringWithFormat:@"%@ Votes |",[details valueForKey:@"no_of_votes"]];
     
     NSString * MonstartTime = [commonclass calculateTimeinAMPM:[details valueForKey:@"Monday_start_time"]];
     NSString * MonendTime = [commonclass calculateTimeinAMPM:[details valueForKey:@"Monday_end_time"]];
@@ -765,62 +769,65 @@
     //------
 }
 
-- (void)locationManager:(CLLocationManager *)manager didEnterRegion:(CLRegion *)region{
-    // Show an alert or otherwise notify the user
-}
-
-- (void)locationManager:(CLLocationManager *)manager didExitRegion:(CLRegion *)region{
-    
-}
-
-- (void)locationManager:(CLLocationManager *)manager monitoringDidFailForRegion:(CLRegion *)region withError:(NSError *)error{
-    
-}
-
--(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
-{
-    NSString * latstring = [NSString stringWithFormat:@"%f", locationManager.location.coordinate.latitude];
-    NSString * longstring = [NSString stringWithFormat:@"%f", locationManager.location.coordinate.longitude];
-    //CLPlacemark *placemark;
-    
-    CLGeocoder *geocoder = [[CLGeocoder alloc] init] ;
-    [geocoder reverseGeocodeLocation:self->locationManager.location
-                   completionHandler:^(NSArray *placemarks, NSError *error) {
-                       NSLog(@"reverseGeocodeLocation:completionHandler: Completion Handler called!");
-                       
-                       if (error){
-                           NSLog(@"Geocode failed with error: %@", error);
-                           return;
-                           
-                       }
-                       
-                       CLPlacemark *placemark = [placemarks objectAtIndex:0];
-                       
-                       //     NSLog(@"placemark.ISOcountryCode %@",placemark.ISOcountryCode);
-                       //     NSLog(@"placemark.country %@",placemark.country);
-                       //     NSLog(@"placemark.locality %@",placemark.locality );
-                       //     NSLog(@"placemark.postalCode %@",placemark.postalCode);
-                       //     NSLog(@"placemark.administrativeArea %@",placemark.administrativeArea);
-                       //     NSLog(@"placemark.locality %@",placemark.subLocality);
-                       locality = [NSString stringWithFormat:@"%@",placemark.subLocality];
-                       //     NSLog(@"placemark.subLocality %@",placemark.subLocality);
-                       //     NSLog(@"placemark.subThoroughfare %@",placemark.subThoroughfare);
-                       
-                   }];
-    
-    // NSLog(@"Locality.. %@",locality);
-    
-    [delegate.defaults setValue:latstring forKey:@"latitude"];
-    [delegate.defaults setValue:longstring forKey:@"longitude"];
-    
-    //    if([[[defaults dictionaryRepresentation] allKeys] containsObject:@"loc_name"]){
-    //        NSLog(@"mykey found");
-    //    }else{
-    [delegate.defaults setValue:locality forKey:@"loc_name"];
-    [delegate.defaults setValue:locality forKey:@"myloc_name"];
-    //}
-    [delegate.defaults synchronize];
-}
+//- (void)locationManager:(CLLocationManager *)manager didEnterRegion:(CLRegion *)region{
+//    // Show an alert or otherwise notify the user
+//}
+//
+//- (void)locationManager:(CLLocationManager *)manager didExitRegion:(CLRegion *)region{
+//    
+//}
+//
+//- (void)locationManager:(CLLocationManager *)manager monitoringDidFailForRegion:(CLRegion *)region withError:(NSError *)error{
+//    
+//}
+//
+//-(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
+//{
+//    NSString * latstring = [NSString stringWithFormat:@"%f", locationManager.location.coordinate.latitude];
+//    NSString * longstring = [NSString stringWithFormat:@"%f", locationManager.location.coordinate.longitude];
+//    //CLPlacemark *placemark;
+//    
+//    CLGeocoder *geocoder = [[CLGeocoder alloc] init] ;
+//    [geocoder reverseGeocodeLocation:self->locationManager.location
+//                   completionHandler:^(NSArray *placemarks, NSError *error) {
+//                       NSLog(@"reverseGeocodeLocation:completionHandler: Completion Handler called!");
+//                       
+//                       if (error){
+//                           NSLog(@"Geocode failed with error: %@", error);
+//                           return;
+//                           
+//                       }
+//                       
+//                       CLPlacemark *placemark = [placemarks objectAtIndex:0];
+//                       
+//                       //     NSLog(@"placemark.ISOcountryCode %@",placemark.ISOcountryCode);
+//                       //     NSLog(@"placemark.country %@",placemark.country);
+//                       //     NSLog(@"placemark.locality %@",placemark.locality );
+//                       //     NSLog(@"placemark.postalCode %@",placemark.postalCode);
+//                       //     NSLog(@"placemark.administrativeArea %@",placemark.administrativeArea);
+//                       //     NSLog(@"placemark.locality %@",placemark.subLocality);
+//                       locality = [NSString stringWithFormat:@"%@",placemark.subLocality];
+//                       //     NSLog(@"placemark.subLocality %@",placemark.subLocality);
+//                       //     NSLog(@"placemark.subThoroughfare %@",placemark.subThoroughfare);
+//                       
+//                   }];
+//    
+//    // NSLog(@"Locality.. %@",locality);
+//    
+//    [delegate.defaults setValue:latstring forKey:@"latitude"];
+//    [delegate.defaults setValue:longstring forKey:@"longitude"];
+//    
+//    currentLatitude = [[delegate.defaults valueForKey:@"latitude"] floatValue];
+//    currentLongitude = [[delegate.defaults valueForKey:@"longitude"] floatValue];
+//    //    if([[[defaults dictionaryRepresentation] allKeys] containsObject:@"loc_name"]){
+//    //        NSLog(@"mykey found");
+//    //    }else{
+//   // [delegate.defaults setValue:locality forKey:@"loc_name"];
+//    [delegate.defaults setValue:@"myloc" forKey:@"locupdatefrom"];
+//    [delegate.defaults setValue:locality forKey:@"myloc_name"];
+//    //}
+//    [delegate.defaults synchronize];
+//}
 
 -(void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error{
     if([CLLocationManager locationServicesEnabled]){
@@ -1064,7 +1071,7 @@
      self.storeValidCouponsCount.text = [NSString stringWithFormat:@"%@",[[[arr valueForKey:@"items"] valueForKey:@"Details"][0] valueForKey:@"accepted_coupons"]];
     [self.shareButton setTitle:commonclass.shareIcon forState:UIControlStateNormal];
     [self.addTofavouritesBtn setTitle:commonclass.addtofavouritesIcon forState:UIControlStateNormal];//
-    self.votesCount.text = [NSString stringWithFormat:@"%@ Votes ",[[[arr valueForKey:@"items"] valueForKey:@"Details"][0] valueForKey:@"review_count"]];
+    self.votesCount.text = [NSString stringWithFormat:@"%@ Votes ",[[[arr valueForKey:@"items"] valueForKey:@"Details"][0] valueForKey:@"no_of_votes"]];
     self.storeRatingLbl.text = [NSString stringWithFormat:@"%@",[[[arr valueForKey:@"items"] valueForKey:@"Details"][0] valueForKey:@"rating"]];
     self.storeStarsLbl.text =commonclass.addtofavouritesIcon;
     //self.
@@ -1147,6 +1154,7 @@
 }
 
 - (IBAction)ReportTapped:(id)sender {
+     [delegate.defaults setValue:@"fromDetail" forKey:@"navigateFromReport"];
     ReportErrorViewController * report = [self.storyboard instantiateViewControllerWithIdentifier:@"ReportErrorViewController"];
     [self.navigationController pushViewController:report animated:YES];
 }
@@ -1162,24 +1170,57 @@
 
 - (IBAction)checkInTapped:(id)sender {
     
+    
     if ([time isEqualToString:@"Closed"]){
-        [self.view makeToast:@"Store is closed" duration:4.0 position:CSToastPositionBottom];
-//        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Alert" message:@"Store is closed" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-//        [alert show];
+        [self.view makeToast:@"Store is closed"];
     }else{
-    NSString * mobilenumber = [delegate.defaults valueForKey:@"mobile"];
-    NSLog(@"mobilenumber %@",mobilenumber);
-    NSLog(@"mobilenumber length %lu",(unsigned long)mobilenumber.length);
-    if(mobilenumber.length == 0){
-        Popupmainview.hidden = false;
-    }else{
-        if([awayDist doubleValue]<0.25){
-            [commonclass Redirect:self.navigationController Identifier:@"GenerateCouponsViewController"];
+        // NSLog(@"dista arr is...%@",distAwayArr);
+        NSString * mobilenumber = [delegate.defaults valueForKey:@"mobile"];
+        NSLog(@"mobilenumber %@",mobilenumber);
+        NSLog(@"mobilenumber length %lu",(unsigned long)mobilenumber.length);
+        // NSLog(@"%u",[delegate.defaults boolForKey:@"otp_verified"]);
+        if ([[delegate.defaults valueForKey:@"otp_verified"]boolValue] == false){
+            if([[delegate.defaults valueForKey:@"updateMobile"]boolValue] == false){
+                Popupmainview.hidden = false;
+                verifyView.hidden = false;
+                OTPView.hidden = true;
+            }else{
+                Popupmainview.hidden = false;
+                verifyView.hidden = true;
+                OTPView.hidden = false;
+                // OTPView.hidden = false;
+            }
+            
         }else{
-            [self.view makeToast:@"You have to be in 250 meters radius to CHECK IN into the store"];
+            //    if(mobilenumber.length == 0){
+            //    }else{
+            if([awayDist doubleValue]<0.25){
+                [commonclass Redirect:self.navigationController Identifier:@"GenerateCouponsViewController"];
+            }else{
+                [self.view makeToast:@"You have to be in 250 meters radius to CHECK IN into the store"];
+            }
         }
-      }
     }
+
+    
+//    if ([time isEqualToString:@"Closed"]){
+//        [self.view makeToast:@"Store is closed" duration:4.0 position:CSToastPositionBottom];
+////        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Alert" message:@"Store is closed" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+////        [alert show];
+//    }else{
+//    NSString * mobilenumber = [delegate.defaults valueForKey:@"mobile"];
+//    NSLog(@"mobilenumber %@",mobilenumber);
+//    NSLog(@"mobilenumber length %lu",(unsigned long)mobilenumber.length);
+//    if(mobilenumber.length == 0){
+//        Popupmainview.hidden = false;
+//    }else{
+//        if([awayDist doubleValue]<0.25){
+//            [commonclass Redirect:self.navigationController Identifier:@"GenerateCouponsViewController"];
+//        }else{
+//            [self.view makeToast:@"You have to be in 250 meters radius to CHECK IN into the store"];
+//        }
+//      }
+//    }
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{

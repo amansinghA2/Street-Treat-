@@ -21,7 +21,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self allocateRequired];
-    [self GetProfile];
+   
     [self.view bringSubviewToFront:style_PopupMainview];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidShow:) name:UIKeyboardDidShowNotification object:nil];
@@ -58,6 +58,7 @@
 
 -(void)viewWillAppear:(BOOL)animated{
    // [self setPersonalPopup];
+    [self GetProfile];
     [delegate.defaults setObject:@"ProfileViewController" forKey:@"internetdisconnect"];
     self.rootNav = (CCKFNavDrawer *)self.navigationController;
     [self.rootNav setCCKFNavDrawerDelegate:self];
@@ -134,7 +135,8 @@
     //    if([[[defaults dictionaryRepresentation] allKeys] containsObject:@"loc_name"]){
     //        NSLog(@"mykey found");
     //    }else{
-    [delegate.defaults setValue:locality forKey:@"loc_name"];
+    [delegate.defaults setValue:locality forKey:@"updateloc_name"];
+    [delegate.defaults setValue:@"myloc" forKey:@"locupdatefrom"];
     [delegate.defaults setValue:locality forKey:@"myloc_name"];
     //}
     [delegate.defaults synchronize];
@@ -509,28 +511,26 @@
                                 //[userapparel_Arr addObject:keys[i]];
                             }else{
                                [apparel_Arr addObject:values[i]];
-                                [userapparel_Arr addObject:keys[i]];
+                               [userapparel_Arr addObject:keys[i]];
                             }
                         }
-                        
+                        if(colorArr.count>0){
+                            NSLog(@"%@",colorArr);
+                            [self setMyColors:colorArr];
+                        }
+                        if (style_prefArr.count>0){
+                            NSLog(@"%@",style_prefArr);
+                            [self setMyStyleTags:style_prefArr];
+                        }
+                        if (apparel_Arr.count>0){
+                            [self setMyApparels:apparel_Arr];
+                        }
                         NSLog(@"colorArr count.. %lu",(unsigned long)colorArr.count);
                         NSLog(@"style_prefArr count.. %lu",(unsigned long)style_prefArr.count);
-                        
-                 
                     }else{
                         NSLog(@"not contains.. ");
                     }
-                    if(colorArr.count>0){
-                        NSLog(@"%@",colorArr);
-                        [self setMyColors:colorArr];
-                    }
-                    if (style_prefArr.count>0){
-                        NSLog(@"%@",style_prefArr);
-                        [self setMyStyleTags:style_prefArr];
-                    }
-                    if (apparel_Arr.count>0){
-                        [self setMyApparels:apparel_Arr];
-                    }
+                 
                 }else if([[data valueForKey:@"status"]intValue] == -1){
                     [constant logoutFunction];
                 }
@@ -540,10 +540,13 @@
                     [self GetProfile];
                 }else if([[data valueForKey:@"status"]intValue] == -1){
                     [constant logoutFunction];
+                }else{
+                    [self.view makeToast:@"message"];
                 }
                
             }else if ([requestType isEqualToString:@"uploadImage"]){
                 if ([[data valueForKey:@"status"]intValue] == 1){
+                    NSLog(@"Data..%@",data);
                         [self.view makeToast:@"Image uploaded"];
                 }else if([[data valueForKey:@"status"]intValue] == -1){
                     [constant logoutFunction];
@@ -557,9 +560,9 @@
 
 -(void)setUserdata{
     nmeLbl.text = [[[usrProfileArr valueForKey:@"items"] valueForKey:@"userprofile"] valueForKey:@"name"];
-    NSURL * picurl = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",constant.siteURL ,[[[usrProfileArr valueForKey:@"items"] valueForKey:@"userprofile" ] valueForKey:@"profile_pic"]]];
+    NSURL * picurl = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@",constant.siteURL ,[[[usrProfileArr valueForKey:@"items"] valueForKey:@"userprofile" ] valueForKey:@"profile_pic"]]];
     NSLog(@"%@",picurl);
-    [profile_Pic setImageWithURL:picurl placeholderImage:[UIImage imageNamed:@"Promo1.png"] usingActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+    [profile_Pic setImageWithURL:picurl placeholderImage:[UIImage imageNamed:@""] usingActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
     
     profile_Pic.userInteractionEnabled = YES;
     UITapGestureRecognizer *pgr = [[UITapGestureRecognizer alloc]
@@ -861,8 +864,7 @@
 }
 
 - (IBAction)sharedTapped:(id)sender {
-    [delegate.defaults setValue:@"sharedStore" forKey:@"shareStore"];
-    
+    [delegate.defaults setValue:@"sharedStore" forKey:@"route"];
     ResultsViewController *result = [self.storyboard instantiateViewControllerWithIdentifier:@"ResultsViewController"];
     [self.navigationController pushViewController:result animated:YES];
     self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
@@ -992,15 +994,19 @@
     if(shirtTxtFld.text.length>0){
         apparelstr =[NSString stringWithFormat:@"SHIRT=%@",shirtTxtFld.text];
     }
+    
     if (tShirtTxtFld.text.length>0){
-        apparelstr =[NSString stringWithFormat:@"SHIRT=%@&T SHIRT=%@",shirtTxtFld.text,tShirtTxtFld.text];
+        apparelstr =[NSString stringWithFormat:@"SHIRT=%@&T_SHIRT=%@",shirtTxtFld.text,tShirtTxtFld.text];
     }
+    
     if (pantsTxtFld.text.length>0){
-        apparelstr =[NSString stringWithFormat:@"SHIRT=%@&T SHIRT=%@&PANTS=%@",shirtTxtFld.text,tShirtTxtFld.text,pantsTxtFld.text];
+        apparelstr =[NSString stringWithFormat:@"SHIRT=%@&T_SHIRT=%@&PANTS=%@",shirtTxtFld.text,tShirtTxtFld.text,pantsTxtFld.text];
     }
+    
     if (shoesTxtFld.text.length>0){
-        apparelstr =[NSString stringWithFormat:@"SHIRT=%@&T SHIRT=%@&PANTS=%@&SHOES=%@",shirtTxtFld.text,tShirtTxtFld.text,pantsTxtFld.text,shoesTxtFld.text];
+        apparelstr =[NSString stringWithFormat:@"SHIRT=%@&T_SHIRT=%@&PANTS=%@&SHOES=%@",shirtTxtFld.text,tShirtTxtFld.text,pantsTxtFld.text,shoesTxtFld.text];
     }
+    
     NSLog(@"apparelstr %@",apparelstr);
 }
 
@@ -1031,7 +1037,8 @@
     requestType = @"Set_Profile";
     NSLog(@"%@",tempclrs);
     NSLog(@"%@",tempStyles);
- if([constant isActiveInternet] == YES){
+    if([constant isActiveInternet] == YES){
+    NSLog(@"aplrelstr %@",apparelstr);
     NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&%@&%@&%@",[delegate.defaults valueForKey:@"logid"],tempclrs,tempStyles,apparelstr];
     NSLog(@"body.. %@",messageBody);
     NSLog(@"constant.setProfileURL.. %@",constant.setProfileURL);
@@ -1166,7 +1173,18 @@
 }
                   
 - (IBAction)sizesOKTapped:(id)sender {
-    style_PopupMainview.hidden = true;
-    //[self sendprofileParameters];
+    NSInteger c = [pantsTxtFld.text integerValue];
+    NSInteger d = [shoesTxtFld.text integerValue];
+    if (c < 24 || c > 60) {
+        [self.view makeToast:@"Pants size is invalid"];
+        pantsTxtFld.text = @"";
+    }else if(d < 5 || d > 14){
+        [self.view makeToast:@"Shoes size is invalid"];
+        shoesTxtFld.text = @"";
+    }else{
+        style_PopupMainview.hidden = true;
+        //[self sendprofileParameters];
+    }
+    
 }
 @end

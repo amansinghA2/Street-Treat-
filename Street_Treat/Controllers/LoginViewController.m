@@ -18,7 +18,7 @@
 @implementation LoginViewController
 @synthesize LoginGoogleView,submitBtn,passTxtFld,usertxtFld,LoginBtn;
 @synthesize LoginView,RegisterView,setRegFlds,SetLoginBody;
-@synthesize firstnametxtFld,lastnametxtFld,mobilenotxtFld,emailtxtFld,reg_passtxtFld,reg_cnf_passtxtFld,reg_submitBtn,Malebtn,femaleBtn,hdr_Underline,regHdrBtn,genderStr,fbicon,gplusicon,LoginScroll;
+@synthesize locationManager,firstnametxtFld,lastnametxtFld,mobilenotxtFld,emailtxtFld,reg_passtxtFld,reg_cnf_passtxtFld,reg_submitBtn,Malebtn,femaleBtn,hdr_Underline,regHdrBtn,genderStr,fbicon,gplusicon,LoginScroll;
 //float usryPos,passyPos;
 
 #define MAX_LENGTH 10
@@ -32,6 +32,14 @@
     [super viewDidLoad];
     commonclass = [[Common alloc]init];
     delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    locationManager = [[CLLocationManager alloc] init];
+    locationManager.delegate=self;
+    locationManager.desiredAccuracy=kCLLocationAccuracyBest;
+    locationManager.distanceFilter=kCLDistanceFilterNone;
+    [locationManager requestWhenInUseAuthorization];
+    [locationManager startMonitoringSignificantLocationChanges];
+    [locationManager startUpdatingLocation];
+
     [delegate.defaults setObject:@"DashboardViewController" forKey:@"internetdisconnect"];
     [delegate.defaults synchronize];
     //self.tabBarController.tabBar.hidden = YES;
@@ -84,7 +92,7 @@
     // Login feilds
     usertxtFld = [[RPFloatingPlaceholderTextField alloc]initWithFrame:CGRectMake(LoginGoogleView.frame.origin.x,[commonclass.usryPos floatValue], LoginGoogleView.frame.size.width, 35)];
     usertxtFld.delegate=self;
-    usertxtFld.text = @"";
+    usertxtFld.text = @"aman.singh181092@gmail.com";
     usertxtFld.placeholder = @"USERNAME";
     usertxtFld.returnKeyType = UIReturnKeyNext;
     [commonclass addfeild:LoginView textfeild:usertxtFld];
@@ -94,7 +102,7 @@
     passTxtFld.secureTextEntry = YES;
     passTxtFld.returnKeyType = UIReturnKeyDefault;
     passTxtFld.placeholder = @"PASSWORD";
-    passTxtFld.text = @"";
+    passTxtFld.text = @"123456";
     [commonclass addfeild:LoginView textfeild:passTxtFld];
     //end
     
@@ -485,7 +493,28 @@
                 }
             }else if ([requestType isEqualToString:@"GoogleSignIn"]){
                 if([[data valueForKey:@"status"]intValue] == 1){
-            NSLog(@"dsfdsf%@",@"Lol");
+            NSLog(@"%@",data);
+                    NSString * log_id = [[data valueForKey:@"items"] valueForKey:@"log_id"] ;
+                    // NSString * log_id = @"4d0054923037ac2b343e804c432679f7";
+                    NSString * log_name = [[data valueForKey:@"items"] valueForKey:@"username"];//name
+                    NSString * usr_name = [[data valueForKey:@"items"] valueForKey:@"name"];
+                    NSString * mobile = [[data valueForKey:@"items"] valueForKey:@"mobile"];
+                    
+                    if (mobile == nil){
+                        [delegate.defaults setBool:false forKey:@"updateMobile"];
+                    }else{
+                        [delegate.defaults setBool:true forKey:@"updateMobile"];
+                    }
+                    
+                    NSString * otp_Verified = [[data valueForKey:@"items"] valueForKey:@"otp_verified"];
+                    NSLog(@"%@",otp_Verified);
+                    [delegate.defaults setObject:otp_Verified forKey:@"otp_verified"];
+                    [delegate.defaults setValue:log_id forKey:@"logid"];
+                    [delegate.defaults setValue:mobile forKey:@"mobile"];
+                    [delegate.defaults setValue:log_name forKey:@"logname"];
+                    [delegate.defaults setValue:usr_name forKey:@"usr_name"];
+                    
+                    [delegate.defaults synchronize];
             UITabBarController *tabbar = [self.storyboard instantiateViewControllerWithIdentifier:@"Street_TreatTabbar"];
             [self.navigationController pushViewController:tabbar animated:YES];
             [[GIDSignIn sharedInstance] signOut];
@@ -496,6 +525,27 @@
             }else if ([requestType isEqualToString:@"FaceBook"]){
                 if([[data valueForKey:@"status"]intValue] == 1){
                 NSLog(@"dsfdsf%@",@"Lol");
+                    NSString * log_id = [[data valueForKey:@"items"] valueForKey:@"log_id"] ;
+                    // NSString * log_id = @"4d0054923037ac2b343e804c432679f7";
+                    NSString * log_name = [[data valueForKey:@"items"] valueForKey:@"username"];//name
+                    NSString * usr_name = [[data valueForKey:@"items"] valueForKey:@"name"];
+                    NSString * mobile = [[data valueForKey:@"items"] valueForKey:@"mobile"];
+                    
+                    if (mobile == nil){
+                        [delegate.defaults setBool:false forKey:@"updateMobile"];
+                    }else{
+                        [delegate.defaults setBool:true forKey:@"updateMobile"];
+                    }
+                    
+                    NSString * otp_Verified = [[data valueForKey:@"items"] valueForKey:@"otp_verified"];
+                    NSLog(@"%@",otp_Verified);
+                    [delegate.defaults setObject:otp_Verified forKey:@"otp_verified"];
+                    [delegate.defaults setValue:log_id forKey:@"logid"];
+                    [delegate.defaults setValue:mobile forKey:@"mobile"];
+                    [delegate.defaults setValue:log_name forKey:@"logname"];
+                    [delegate.defaults setValue:usr_name forKey:@"usr_name"];
+                    
+                    [delegate.defaults synchronize];
 //                UITabBarController *tabbar = [self.storyboard instantiateViewControllerWithIdentifier:@"Street_TreatTabbar"];
 //                [self.navigationController pushViewController:tabbar animated:YES];
                  [[FBSDKLoginManager new] logOut];
@@ -520,6 +570,50 @@
 //    UITabBarController *tabbar = [self.storyboard instantiateViewControllerWithIdentifier:@"Street_TreatTabbar"];
 //    [self.navigationController pushViewController:tabbar animated:YES];
 //}
+
+- (void)locationManager:(CLLocationManager *)manager didEnterRegion:(CLRegion *)region{
+    // Show an alert or otherwise notify the user
+}
+- (void)locationManager:(CLLocationManager *)manager didExitRegion:(CLRegion *)region{
+    
+}
+- (void)locationManager:(CLLocationManager *)manager monitoringDidFailForRegion:(CLRegion *)region withError:(NSError *)error{
+    
+}
+
+-(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
+{
+    NSString * latstring = [NSString stringWithFormat:@"%f", locationManager.location.coordinate.latitude];
+    NSString * longstring = [NSString stringWithFormat:@"%f", locationManager.location.coordinate.longitude];
+    //CLPlacemark *placemark;
+    
+    CLGeocoder *geoCoder = [[CLGeocoder alloc] init];
+    [geoCoder cancelGeocode];
+    [geoCoder reverseGeocodeLocation:locationManager.location
+                   completionHandler:^(NSArray *placemarks, NSError *error)
+     {
+         // NSLog(@"Error is %@",error.localizedDescription);
+         for (CLPlacemark *placemark in placemarks) {
+             locality = [NSString stringWithFormat:@"%@",placemark.subLocality];
+             [delegate.defaults setValue:locality forKey:@"updateloc_name"];
+             [delegate.defaults setValue:locality forKey:@"myloc_name"];
+      //     [delegate.defaults setValue:locality forKey:@"loc_name"];
+         }
+     }];
+    
+    // NSLog(@"Locality.. %@",locality);
+    
+    [delegate.defaults setValue:latstring forKey:@"latitude"];
+    [delegate.defaults setValue:longstring forKey:@"longitude"];
+    
+    //    if([[[defaults dictionaryRepresentation] allKeys] containsObject:@"loc_name"]){
+    //        NSLog(@"mykey found");
+    //    }else{
+    //        [defaults setValue:locality forKey:@"loc_name"];
+    //        [defaults setValue:locality forKey:@"myloc_name"];
+    //    }
+    [delegate.defaults synchronize];
+}
 
 
 -(void)textFieldDidEndEditing:(UITextField *)textField{
@@ -739,8 +833,7 @@ presentViewController:(UIViewController *)viewController {
 didSignInForUser:(GIDGoogleUser *)user
      withError:(NSError *)error {
     requestType = @"GoogleSignIn";
-    
-    NSLog(@"%@",[delegate.defaults valueForKey:@"fborgoogle"]);
+
     // Perform any operations on signed in user here.
     NSLog(@"user gplus token..%@",user.authentication.idToken);
     NSString *userId = user.userID;                  // For client-side use only!
@@ -791,10 +884,9 @@ dismissViewController:(UIViewController *)viewController {
 didCompleteWithResult:	(FBSDKLoginManagerLoginResult *)result
 error:	(NSError *)error{
     requestType = @"FaceBook";
-
+    [delegate.defaults setObject:@"fb" forKey:@"fborgoogle"];
     NSString *fbAccessToken = [FBSDKAccessToken currentAccessToken].tokenString;
     
-    NSLog(@"%@",[delegate.defaults valueForKey:@"fborgoogle"]);
     if (fbAccessToken != nil) {
         UITabBarController *tabbar = [self.storyboard instantiateViewControllerWithIdentifier:@"Street_TreatTabbar"];
         [self.navigationController pushViewController:tabbar animated:YES];
@@ -812,7 +904,12 @@ error:	(NSError *)error{
 }
 
 - (BOOL) loginButtonWillLogin:(FBSDKLoginButton *)loginButton{
-    [delegate.defaults setObject:@"fb" forKey:@"fborgoogle"];
+   [[FBSDKLoginManager new] logOut];
+//   requestType = @"FaceBook";
+//    NSString *fbAccessToken = [FBSDKAccessToken currentAccessToken].tokenString;
+    requestType = @"FaceBook";
+   [delegate.defaults setObject:@"fb" forKey:@"fborgoogle"];
+
     return true;
 }
 

@@ -15,7 +15,7 @@
 
 @implementation Common
 @synthesize delegate;
-@synthesize rootNav,siteURL,generateOTPURL,updateDeviceToken,LoginURL,RegisterURL,uniqueFldURL,forgotpasswordURL,staticDataURL,contactURL,getProfileURL,dashboardURL,searchListURL,feedbackURL,reportErrorURL,viewFeedbacksURL,exhibition_listURL,verticalsURL,storeDetailURL,bucketsListURL,otpURL,exhibition_detailURL,loginFBURL,newsEventsURL,termsconditionsURL,generatenewotpURL,verifyOTPURL,changePasswordURL,FAQsURL,privacypolicyURL,CheckinsURL,getOffersURL,generateCouponsURL,AddfavouritesURL,shareStoreURL,bucketsDeatilURL,callStoreURL,changePassfromProfileURL,getParentCategoriesURL,getMastersURL,addReviewsforStoreURL,getstoreDetailsURL,setProfileURL,myCouponsURL,updateMobileURL,userProfImageURL;
+@synthesize shoppingReviewUrl,rootNav,siteURL,generateOTPURL,updateDeviceToken,LoginURL,RegisterURL,uniqueFldURL,forgotpasswordURL,staticDataURL,contactURL,getProfileURL,dashboardURL,searchListURL,feedbackURL,reportErrorURL,viewFeedbacksURL,exhibition_listURL,verticalsURL,storeDetailURL,bucketsListURL,otpURL,exhibition_detailURL,loginFBURL,newsEventsURL,termsconditionsURL,generatenewotpURL,verifyOTPURL,changePasswordURL,FAQsURL,privacypolicyURL,CheckinsURL,getOffersURL,generateCouponsURL,AddfavouritesURL,shareStoreURL,bucketsDeatilURL,callStoreURL,changePassfromProfileURL,getParentCategoriesURL,getMastersURL,addReviewsforStoreURL,getstoreDetailsURL,setProfileURL,myCouponsURL,updateMobileURL,userProfImageURL;
 
 @synthesize Fbicon,gPlusicon,forgotIcon,telIcon,faxIcon,mailIcon,menIcon,womenIcon,childrenIcon,highStreetIcon,brandedIcon,designerIcon,shareIcon,editIcon,coloreditIcon,locationbaloonIcon,filtersIcon,starIcon,radiofilledIcon,radioemptyIcon,twostarIcon,threestarIcon,fourstarIcon,fivestarIcon,checkboxemptyIcon,checkboxfilledIcon,allreviewsIcon,positivereviewsIcon,negativereviewsIcon,backIcon,notificationIcon,menuIcon,indicatorBlankIcon,indicatorFilledIcon,homeIcon,collectionIcon,nearmeIcon,storeawayIcon,storephoneIcon,addtofavouritesIcon,cameraIcon,amenitiesACIcon,amenitiesLiftIcon,amenitiesCarParkingIcon,amenitiesCreditCardIcon,emptystarIcon,addedtofavouritesIcon;
 
@@ -201,6 +201,8 @@
         updateMobileURL = [NSString stringWithFormat:@"%@customer.updateMobileNumberNGenerateOTP",masterUrl];
         generateOTPURL = [NSString stringWithFormat:@"%@customer.generateOTP",masterUrl];
         loginFBURL = [NSString stringWithFormat:@"%@socialLogin",masterUrl];
+        shoppingReviewUrl = [NSString stringWithFormat:@"%@customer.addShoppingReview",masterUrl];
+        
 
         ht = 0;
         ht = [[UIScreen mainScreen] bounds].size.height;
@@ -403,11 +405,16 @@
     [MainView endEditing:YES];
     if(!indicator){
     indicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    indicator.color = [UIColor lightGrayColor];
+        indicator.transform = CGAffineTransformMakeScale(1.5, 1.5);
+        indicator.color=[UIColor blackColor];
     indicator.center=self.view.center;
     [MainView addSubview:indicator];
      }
-    [[UIApplication sharedApplication] beginIgnoringInteractionEvents];
+//    if ([[maindelegate.defaults valueForKey:@"internetdisconnect"] isEqualToString:@"DashboardViewController"]){
+//       
+//    }else{
+        [[UIApplication sharedApplication] beginIgnoringInteractionEvents];
+ //   }
     [indicator startAnimating];
     [mutableDta setLength:0];
     NSURL *linkurl = [NSURL URLWithString:url];
@@ -523,7 +530,6 @@
                     completion:^(BOOL finished) {
                         // Do nothing
                     }];
-
 }
 
 #pragma mark - Dashboard Methods
@@ -681,12 +687,12 @@
 
 -(void)logoutFunction{
     NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
-    [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
+//    [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
     [maindelegate.defaults setValue:@"19.1183" forKey:@"latitude"];
     [maindelegate.defaults setValue:@"73.0276" forKey:@"longitude"];
     //[delegate.defaults setValue:@"Mahape" forKey:@"loc_name"];
     [maindelegate.defaults setValue:@"3" forKey:@"radius"];
-    ViewController *splash = [self.storyboard instantiateViewControllerWithIdentifier:@"ViewController"];
+    ViewController *splash = [self.storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
     UINavigationController *passcodeNavigationController = [[UINavigationController alloc] initWithRootViewController:splash];
     [self presentViewController:passcodeNavigationController animated:YES completion:nil];
 }

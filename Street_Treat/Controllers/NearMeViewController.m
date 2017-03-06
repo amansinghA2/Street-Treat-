@@ -50,9 +50,9 @@
     
     UPStackMenuItem *squareItem = [[UPStackMenuItem alloc] initWithImage:[UIImage imageNamed:@"Download_Excel"] highlightedImage:[UIImage imageNamed:@"Download_Excel"] title:@"View Favourites"];
     UPStackMenuItem *circleItem = [[UPStackMenuItem alloc] initWithImage:[UIImage imageNamed:@"Email_Excel"] highlightedImage:[UIImage imageNamed:@"Download_Excel"] title:@"Update Profile"];
-    UPStackMenuItem *viewItem = [[UPStackMenuItem alloc] initWithImage:[UIImage imageNamed:@"Email_Excel"] highlightedImage:[UIImage imageNamed:@"Download_Excel"] title:@"Add Reviews"];
+//    UPStackMenuItem *viewItem = [[UPStackMenuItem alloc] initWithImage:[UIImage imageNamed:@"Email_Excel"] highlightedImage:[UIImage imageNamed:@"Download_Excel"] title:@"Add Reviews"];
     
-    NSMutableArray *items = [[NSMutableArray alloc] initWithObjects:squareItem, circleItem,viewItem, nil];
+    NSMutableArray *items = [[NSMutableArray alloc] initWithObjects:squareItem, circleItem, nil];
     [items enumerateObjectsUsingBlock:^(UPStackMenuItem *item, NSUInteger idx, BOOL *stop) {
         [item setTitleColor:[UIColor redColor]];
         //item.backgroundColor = [UIColor darkGrayColor];
@@ -100,9 +100,20 @@
 }
 
 - (void)stackMenu:(UPStackMenu *)menu didTouchItem:(UPStackMenuItem *)item atIndex:(NSUInteger)index{
-    NSString *message = [NSString stringWithFormat:@"Item touched : %@", item.title];
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:message message:nil delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-    [alert show];
+//    NSString *message = [NSString stringWithFormat:@"Item touched : %@", item.title];
+//    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:message message:nil delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+//    [alert show];
+    
+    if(index == 0){
+        [delegate.defaults setValue:@"Favourites" forKey:@"route"];
+        [commonclass Redirect:self.navigationController Identifier:@"ResultsViewController"];
+    }else if(index == 1){
+        [commonclass Redirect:self.navigationController Identifier:@"ProfileViewController"];
+    }else if (index == 2){
+        
+    }
+    [stack closeStack];
+    
 }
 
 - (void)viewDidLoad {
@@ -142,6 +153,7 @@
 }
 
 -(void)FindCurrentTapped{
+    [delegate.defaults setValue:@"myloc" forKey:@"locupdatefrom"];
     searchField.text = [delegate.defaults valueForKey:@"myloc_name"];
    [self setCircleOverlaywithlatitude:userLatitude longitude:userLongitude];
 }
@@ -429,7 +441,8 @@
     //    if([[[defaults dictionaryRepresentation] allKeys] containsObject:@"loc_name"]){
     //        NSLog(@"mykey found");
     //    }else{
-    [delegate.defaults setValue:locality forKey:@"loc_name"];
+    [delegate.defaults setValue:locality forKey:@"updateloc_name"];
+    [delegate.defaults setValue:@"myloc" forKey:@"locupdatefrom"];
     [delegate.defaults setValue:locality forKey:@"myloc_name"];
     //}
     [delegate.defaults synchronize];

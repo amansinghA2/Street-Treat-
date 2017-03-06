@@ -179,25 +179,26 @@
     sender.highlighted = NO;
     sender.selected  = ! sender.selected;
     if (sender.selected){
-        [sender setBackgroundImage:[UIImage imageNamed:@""] forState:UIControlStateNormal];
-   // [sender setTitle:constant.checkboxfilledIcon forState:UIControlStateNormal];
-    [selectedErrors addObject:[_errortypesArr objectAtIndex:sender.tag]];
-    }else{
         [sender setBackgroundImage:[UIImage imageNamed:@"checkmark_icon.jpg"] forState:UIControlStateNormal];
         //[sender setTitle:constant.checkboxemptyIcon forState:UIControlStateNormal];
-        [selectedErrors removeObject:[_errortypesArr objectAtIndex:sender.tag]];
+        [selectedErrors addObject:[_errortypesArr objectAtIndex:sender.tag]];
+    }else{
+        [sender setBackgroundImage:[UIImage imageNamed:@""] forState:UIControlStateNormal];
+        // [sender setTitle:constant.checkboxfilledIcon forState:UIControlStateNormal];
+         [selectedErrors removeObject:[_errortypesArr objectAtIndex:sender.tag]];
     }
-   //[sender setShowsTouchWhenHighlighted:NO];
+    // [sender setShowsTouchWhenHighlighted:NO];
 }
 
 - (void)sendResponse:(Common *)response data:(NSMutableArray*)data indicator:(UIActivityIndicatorView *)indicator{
     NSLog(@"data.. %@",data);
     dispatch_sync(dispatch_get_main_queue(), ^{
        if([[data valueForKey:@"status"]intValue] == 1){
-           [self.view makeToast:@"Error reported successfully"];
-           for(UIButton * btn in CheckboxBtns){
-               [btn setTitle:constant.checkboxemptyIcon forState:UIControlStateNormal];
-           }
+            [self.navigationController popViewControllerAnimated:YES];
+            [self dismissViewControllerAnimated:YES completion:nil];
+//           for(UIButton * btn in CheckboxBtns){
+//               [btn setTitle:constant.checkboxemptyIcon forState:UIControlStateNormal];
+//           }
            reportTxtView.text = nil;
        }else if([[data valueForKey:@"status"]intValue] == -1){
            [constant logoutFunction];

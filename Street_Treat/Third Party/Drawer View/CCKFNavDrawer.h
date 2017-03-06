@@ -28,7 +28,6 @@
     NSArray * earlyBirdArray;
      NSArray * earlyBirdImagesArray;
     int ht;
-    
     AppDelegate * delegate;
     
 }

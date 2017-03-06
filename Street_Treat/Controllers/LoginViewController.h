@@ -14,7 +14,7 @@
 #import "DashboardViewController.h"
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
 
-@interface LoginViewController : UIViewController<GIDSignInDelegate,FBSDKLoginButtonDelegate, GIDSignInUIDelegate,UITextFieldDelegate,commonProtocol,UIGestureRecognizerDelegate,UIScrollViewDelegate>{
+@interface LoginViewController : UIViewController<GIDSignInDelegate,FBSDKLoginButtonDelegate, GIDSignInUIDelegate,UITextFieldDelegate,commonProtocol,UIGestureRecognizerDelegate,UIScrollViewDelegate,CLLocationManagerDelegate>{
     float PrevX,nextX,PrevY;
     Common * commonclass;
     AppDelegate * delegate;
@@ -27,6 +27,7 @@
     BOOL iskeyboardPresent,iskeyboardAppeared;
     UITouch *touch;
     NSString * textfeildtype;
+     NSString * locality;
 }
 - (IBAction)googleSignInAction:(id)sender;
 - (void)loginButton:(FBSDKLoginButton *)loginButton
@@ -35,6 +36,7 @@ didCompleteWithResult:	(FBSDKLoginManagerLoginResult *)result
 - (void) loginButtonDidLogOut:(FBSDKLoginButton *)loginButton;
 @property (weak, nonatomic) IBOutlet UIScrollView *LoginScroll;
 @property (weak, nonatomic) IBOutlet UIButton *LoginBtn;
+@property(nonatomic,retain) CLLocationManager *locationManager;
 @property (weak, nonatomic) IBOutlet UIButton *regHdrBtn;
 - (IBAction)LoginHdrTapped:(id)sender;
 - (IBAction)RegisterHdrTapped:(id)sender;

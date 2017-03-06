@@ -40,11 +40,20 @@
     NSMutableArray * phonenoArr;
     NSMutableArray * phoneno_StoreIDArr;
     NSMutableArray * distAwayArr;
+    NSMutableArray * premiumdistAwayArr;
+    NSMutableArray * premiumphoneno_StoreIDArr;
+    NSMutableArray * premiumphonenoArr;
+    NSMutableArray * timeArray;
     NSMutableArray * promoArr;
     UISearchBar * search;
     NSString * awayDist;
+    NSString * premiumAwayDist;
+    NSString * singleTime;
+    NSString * tabType;
     UIView * flyoutView;
     int temppremiumCnt;
+    NSTimer *timer;
+   // int j;
     BOOL isUpdate;
     UILabel * premiumStoreNamelabel;
     NSString * time;
@@ -69,8 +78,10 @@
     float ratingsVal, distanceval, discountval;
     
     long int store_ID,premiumCnt;
-    
+    UIRefreshControl *refreshControl;
     NSString * verticalset;
+    NSString * segTapString;
+    NSString *typeCell;
     UIImageView * premiumImage;
     long int counter;
 }

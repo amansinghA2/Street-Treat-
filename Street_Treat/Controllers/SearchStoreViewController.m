@@ -17,9 +17,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    delegate = (AppDelegate *)[[UIApplication sharedApplication]delegate];
     [delegate.defaults setObject:@"SearchStoreViewController" forKey:@"internetdisconnect"];
     commonclass = [[Common alloc]init];
-    delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     searchbar.placeholder = @"Search Stores";
 }
 

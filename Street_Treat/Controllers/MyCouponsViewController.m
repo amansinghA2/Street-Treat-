@@ -35,7 +35,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    delegate = (AppDelegate *)[[UIApplication sharedApplication]delegate];
+    delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
    // StaticData = [[NSMutableData alloc]init];
     commonclass = [[Common alloc]init];
     couponsData = [[NSMutableData alloc]init];
@@ -207,11 +207,7 @@
 //    NSString * storeID = [dealsArr[indexPath.section] valueForKey:@"store_id"];
 //    [delegate.defaults setValue:storeID forKey:@"store_ID"];
 //    [delegate.defaults synchronize];
-//    
 //    [commonclass Redirect:self.navigationController Identifier:@"DetailViewController"];
-//    
-//    
-//    
 }
 
 -(void)ExpandTapped:(UIButton*)sender{
@@ -221,11 +217,7 @@
     path = [NSIndexPath indexPathWithIndex:sender.tag];
     [self tableView:couponsTable heightForRowAtIndexPath:path];
     [couponsTable reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:sender.tag]] withRowAnimation:UITableViewRowAnimationFade];
-    
 }
-
-
-
 
 -(void)backTapped{
     [self.navigationController popViewControllerAnimated:YES];

@@ -45,25 +45,28 @@
 }
 
 -(void)viewWillAppear:(BOOL)animated{
+   // j = 0;
+     [delegate.defaults setValue:@"" forKey:@"navigateFromReport"];
     [delegate.defaults setObject:@"ResultsViewController" forKey:@"internetdisconnect"];
     //[self allocateRequired];
     [self setupMobileVerificationPopup];
     Popupmainview.hidden = true;
-   // [resultTable setContentOffset:CGPointZero animated:YES];
-//    promoArr = [[NSMutableArray alloc]initWithObjects:[UIImage imageNamed:@"Promo1.png"],[UIImage imageNamed:@"Promo2.png"],[UIImage imageNamed:@"Promo3.png"],[UIImage imageNamed:@"Promo4.png"],nil];
+//  [resultTable setContentOffset:CGPointZero animated:YES];
+//  promoArr = [[NSMutableArray alloc]initWithObjects:[UIImage imageNamed:@"Promo1.png"],[UIImage imageNamed:@"Promo2.png"],[UIImage imageNamed:@"Promo3.png"],[UIImage imageNamed:@"Promo4.png"],nil];
     self.rootNav = (CCKFNavDrawer *)self.navigationController;
     [self.rootNav setCCKFNavDrawerDelegate:self];
     self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
-    //[distAwayArr removeAllObjects];
+//    [distAwayArr removeAllObjects];
 //    [phonenoArr removeAllObjects];
 //    [phoneno_StoreIDArr removeAllObjects];
-    
+    searchField = [search valueForKey:@"_searchField"];
     /* //working
     userLatitude = [[delegate.defaults valueForKey:@"latitude"] floatValue];
     userLongitude = [[delegate.defaults valueForKey:@"longitude"] floatValue];
     //end   */
     
     //changed
+    
     userLatitude = [[delegate.defaults valueForKey:@"latitude"] floatValue];
     userLongitude = [[delegate.defaults valueForKey:@"longitude"] floatValue];
     //end
@@ -74,16 +77,19 @@
 //    currentLongitude = [[delegate.defaults valueForKey:@"longitude"] floatValue];
     //end
     
-    searchField.text = [delegate.defaults valueForKey:@"loc_name"];
-    searchField.textColor = [UIColor whiteColor];
+//    NSLog(@"%@",[delegate.defaults valueForKey:@"myloc"]);
+//    if ([[delegate.defaults valueForKey:@"myloc"] isEqualToString:@"locupdatefrom"]){
+//        searchField.text = [delegate.defaults valueForKey:@"myloc_name"];
+//    }else{
+//       searchField.text = [delegate.defaults valueForKey:@"loc_name"];
+//    }
     
-    if([[delegate.defaults valueForKey:@"verticalsCategory"] isEqualToString:@"High Street"]){
-        [commonclass addlistingSlideAnimation:indicatorLine button1:highstreetBtn];
-    }else if([[delegate.defaults valueForKey:@"verticalsCategory"] isEqualToString:@"Brands"]){
-         [commonclass addlistingSlideAnimation:indicatorLine button1:brandsBtn];
-    }else if([[delegate.defaults valueForKey:@"verticalsCategory"] isEqualToString:@"Designers"]){
-         [commonclass addlistingSlideAnimation:indicatorLine button1:designersBtn];
-    }
+    NSLog(@"%@",[delegate.defaults valueForKey:@"loc_name"]);
+//    float duration = 0.5;
+//    timer = [NSTimer scheduledTimerWithTimeInterval:duration target:self selector:@selector(showLocName) userInfo:nil repeats: YES];
+//    searchField.textColor = [UIColor whiteColor];
+
+    [self showLocName];
     
     ratingsMaxLbl.text = [NSString stringWithFormat:@"0/5"];
     distanceMaxLbl.text = [NSString stringWithFormat:@"0.0/5.0 Km"];
@@ -91,9 +97,56 @@
     counter = 0;
 }
 
+-(void)showLocName{
+ 
+    //    if ([[delegate.defaults valueForKey:@"myloc"] isEqualToString:@"locupdatefrom"]){
+    //        txfSearchField.text = [delegate.defaults valueForKey:@"myloc_name"];
+    //                txfSearchField.textColor = [UIColor whiteColor];
+    //                [self getNearbyDealsWithLatitude:currentLatitude longitude:currentLongitude radius:userRadius];
+    //                [timer invalidate];
+    //    }else{
+    //        txfSearchField.text = [delegate.defaults valueForKey:@"loc_name"];
+    //            NSString * loc = [delegate.defaults valueForKey:@"loc_name"];
+    //            if(loc.length == 0){
+    //                txfSearchField.text = [delegate.defaults valueForKey:@"myloc_name"];
+    //            }
+    //                txfSearchField.textColor = [UIColor whiteColor];
+    //                [self getNearbyDealsWithLatitude:currentLatitude longitude:currentLongitude radius:userRadius];
+    //                [timer invalidate];
+    //        }
+    
+    //    if ([[delegate.defaults valueForKey:@"myloc"] isEqualToString:@"locupdatefrom"]){
+    //        searchField.text = [delegate.defaults valueForKey:@"myloc_name"];
+    //    }else{
+    //        searchField.text = [delegate.defaults valueForKey:@"loc_name"];
+    //    }
+    
+    NSString * loc = [delegate.defaults valueForKey:@"loc_name"];
+    if(loc.length == 0){
+        searchField.text = [delegate.defaults valueForKey:@"myloc_name"];
+        searchField.textColor = [UIColor whiteColor];
+//        [self getNearbyDealsWithLatitude:currentLatitude longitude:currentLongitude radius:userRadius];
+//        [timer invalidate];
+    }else{
+        searchField.text = [delegate.defaults valueForKey:@"loc_name"];
+        searchField.textColor = [UIColor whiteColor];
+//        [self getNearbyDealsWithLatitude:currentLatitude longitude:currentLongitude radius:userRadius];
+//        [timer invalidate];
+    }
+    //NSLog(@"loc.. %@",loc);
+}
+
+
 -(void)viewDidAppear:(BOOL)animated{
     [self setUpstackMenu];
     temppremiumCnt = 0;
+        if([[delegate.defaults valueForKey:@"verticalsCategory"] isEqualToString:@"High Street"]){
+            [commonclass addlistingSlideAnimation:indicatorLine button1:highstreetBtn];
+        }else if([[delegate.defaults valueForKey:@"verticalsCategory"] isEqualToString:@"Brands"]){
+             [commonclass addlistingSlideAnimation:indicatorLine button1:brandsBtn];
+        }else if([[delegate.defaults valueForKey:@"verticalsCategory"] isEqualToString:@"Designers"]){
+             [commonclass addlistingSlideAnimation:indicatorLine button1:designersBtn];
+        }
 }
 
 -(void)setUpstackMenu{
@@ -186,22 +239,25 @@
         }else if ([[delegate.defaults valueForKey:@"resultType"] isEqualToString:@"Keyword"]){
              VerticalsHdrLbl.hidden = FALSE;
              VerticalsHdrLbl.text = @"Store Search";
-            [self getStoresResponseBySearchKeyword:currentLatitude longitude:currentLongitude radius:userRadius];
+            [self getStoresResponseBySearchKeyword:storelatitude longitude:storeLongitude radius:userRadius];
         }else if ([[delegate.defaults valueForKey:@"resultType"] isEqualToString:@"CheckIn"]){
             NSString * radius = @"0.25";
            // [self getst];
              VerticalsHdrLbl.hidden = TRUE;
-            [self getStoresResponseByNearBy:currentLatitude longitude:currentLongitude radius:[radius floatValue]];
+            [self getStoresResponseByNearBy:storelatitude longitude:storeLongitude radius:[radius floatValue]];
         }else{
             [self PagerBtns:FALSE];
             VerticalsHdrLbl.hidden = TRUE;
             exhibitionsBtn.hidden = TRUE;
             [self getStoresResponseByTypes:[delegate.defaults valueForKey:@"verticalsCategory"] latitude:storelatitude longitude:storeLongitude radius:storeRadius];
             if([[delegate.defaults valueForKey:@"verticalsCategory"] isEqualToString:@"High Street"]){
+               // [commonclass addlistingSlideAnimation:indicatorLine button1:highstreetBtn];
                 VerticalsHdrLbl.text = @"High Street";
             }else if([[delegate.defaults valueForKey:@"verticalsCategory"] isEqualToString:@"Brands"]){
+               // [commonclass addlistingSlideAnimation:indicatorLine button1:brandsBtn];
                 VerticalsHdrLbl.text = @"Branded";
             }else{
+               // [commonclass addlistingSlideAnimation:indicatorLine button1:designersBtn];
                 VerticalsHdrLbl.text = @"Designers";
             }
         }
@@ -217,7 +273,10 @@
         [self.view addSubview:BucketNameLbl];
         resultView.frame = CGRectOffset(resultView.frame, 0, 30);
         [self getFavourites:seg_string latitude:storelatitude longitude:storeLongitude radius:storeRadius];
-        }
+    }else if([[delegate.defaults valueForKey:@"route"] isEqualToString:@"sharedStore"]){
+        [self getSharedStore:seg_string latitude:userLatitude longitude:userLongitude radius:userRadius];
+        // [self getFavourites:seg_string latitude:userLatitude longitude:userLongitude radius:userRadius];
+    }
     else{
         //[self getResponseBuckets:@"High Street"];
         [self getResponseBuckets:seg_string latitude:storelatitude longitude:storeLongitude radius:storeRadius];
@@ -235,22 +294,32 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+  //  j = 0;
+    [delegate.defaults setValue:@"" forKey:@"navigateFromReport"];
+    
+//    refreshControl = [[UIRefreshControl alloc] init];
+//    refreshControl.backgroundColor = [UIColor purpleColor];
+//    refreshControl.tintColor = [UIColor whiteColor];
+//    [refreshControl addTarget:self
+//                            action:@selector(getLatestLoans)
+//                  forControlEvents:UIControlEventValueChanged];
+    
     [self allocateRequired];
     [self CurrentLocationIdentifier];
     exhibitionsBtn.hidden = TRUE;
-    
+    distanceval = 3.0;
+    segTapString = @"High Street";
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidShow:) name:UIKeyboardDidShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidHide:) name:UIKeyboardDidHideNotification object:nil];
-//    promoArr = [[NSMutableArray alloc]initWithObjects:[UIImage imageNamed:@"Promo1.png"],[UIImage imageNamed:@"Promo2.png"],[UIImage imageNamed:@"Promo3.png"],[UIImage imageNamed:@"Promo4.png"],nil];
-    
-    currentLatitude = [[delegate.defaults valueForKey:@"latitude"] floatValue];
-    currentLongitude = [[delegate.defaults valueForKey:@"longitude"] floatValue];
+//  promoArr = [[NSMutableArray alloc]initWithObjects:[UIImage imageNamed:@"Promo1.png"],[UIImage imageNamed:@"Promo2.png"],[UIImage imageNamed:@"Promo3.png"],[UIImage imageNamed:@"Promo4.png"],nil];
+    currentLatitude = [[delegate.defaults valueForKey:@"user_latitude"] floatValue];
+    currentLongitude = [[delegate.defaults valueForKey:@"user_longitude"] floatValue];
+    userLatitude = [[delegate.defaults valueForKey:@"user_latitude"] floatValue];
+    userLongitude = [[delegate.defaults valueForKey:@"user_longitude"] floatValue];
     userRadius = [[delegate.defaults valueForKey:@"radius"] floatValue];
+//    searchField = [search valueForKey:@"_searchField"];
     
-    
-    
-    searchField = [search valueForKey:@"_searchField"];
-    
+   // searchField.text = [delegate.defaults valueForKey:@"loc_name"];
     UITapGestureRecognizer *gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(categoriesFilterTapped:)];
     CategoriesSelectLbl.userInteractionEnabled = YES;
     [CategoriesSelectLbl addGestureRecognizer:gestureRecognizer];
@@ -335,6 +404,7 @@
     phonenoArr = [[NSMutableArray alloc]init];
     verticalsArr = [[NSMutableArray alloc]init];
     searchResponseArr = [[NSMutableArray alloc]init];
+    premiumphonenoArr = [[NSMutableArray alloc]init];
     self.navigationItem.hidesBackButton = YES;
     highstreetArr = [[NSMutableArray alloc]init];
     brandedArr = [[NSMutableArray alloc]init];
@@ -344,10 +414,12 @@
     distAwayArr = [[NSMutableArray alloc]init];
     phoneno_StoreIDArr = [[NSMutableArray alloc]init];
     categoriesArr = [[NSMutableArray alloc]init];
+    premiumphoneno_StoreIDArr = [[NSMutableArray alloc]init];
     categoriesData = [[NSMutableData alloc]init];
     selectedcategoriesIDArr = [[NSMutableArray alloc]init];
     selectedcategoriesArr = [[NSMutableArray alloc]init];
     premiumListArr = [[NSMutableArray alloc]init];
+    premiumdistAwayArr = [[NSMutableArray alloc]init];
     
     PrevX = indicatorLine.frame.origin.x;
     PrevY = indicatorLine.frame.origin.y;
@@ -370,16 +442,21 @@
 
 -(void)FindCurrentTapped{
     [distAwayArr removeAllObjects];
+    [premiumdistAwayArr removeAllObjects];
+    [delegate.defaults setValue:@"myloc" forKey:@"locupdatefrom"];
     searchField.text = [delegate.defaults valueForKey:@"myloc_name"];
+    [delegate.defaults setValue:searchField.text forKey:@"loc_name"];
     searchField.textColor = [UIColor whiteColor];
     
-    currentLatitude = userLatitude;
-    currentLongitude = userLongitude;
+    currentLatitude = [[delegate.defaults valueForKey:@"latitude"]floatValue];
+    currentLongitude = [[delegate.defaults valueForKey:@"longitude"]floatValue];
     
-   // [self highstreetTapped:nil];
+    [delegate.defaults setValue:[delegate.defaults valueForKey:@"latitude"] forKey:@"user_latitude"];
+    [delegate.defaults setValue:[delegate.defaults valueForKey:@"longitude"] forKey:@"user_longitude"];
     
-    seg_string = @"High Street";
-    [self getDatawithStoreCategory:@"High Street" latitude:currentLatitude longitude:currentLongitude radius:userRadius];
+    [self getDatawithStoreCategory:segTapString latitude:currentLatitude longitude:currentLongitude radius:userRadius];
+    
+    [delegate.defaults setValue:@"myloc" forKey:@"locupdatefrom"];
     
 }
 
@@ -496,12 +573,12 @@
                 break;
             case 14:{
                 NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
-                [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
+//                [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
                 [delegate.defaults setValue:@"19.1183" forKey:@"latitude"];
                 [delegate.defaults setValue:@"73.0276" forKey:@"longitude"];
                 //[delegate.defaults setValue:@"Mahape" forKey:@"loc_name"];
                 [delegate.defaults setValue:@"3" forKey:@"radius"];
-                ViewController * splash = [self.storyboard instantiateViewControllerWithIdentifier:@"ViewController"];
+                ViewController * splash = [self.storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
                 UINavigationController *passcodeNavigationController = [[UINavigationController alloc] initWithRootViewController:splash];
                 [self presentViewController:passcodeNavigationController animated:YES completion:nil];
             }
@@ -625,6 +702,8 @@
                 if([[data valueForKey:@"status"]intValue] == 1){
                     [verticalsArr removeAllObjects];
                     verticalsArr = [data valueForKey:@"items"];
+                    premiumListArr = [data valueForKey:@"premium_listing"];
+                    premiumCnt = premiumListArr.count;
                     self.storeCountLbl.text = [NSString stringWithFormat:@"%lu Stores",(unsigned long)[[verticalsArr valueForKey:@"items"] count]];
                 }else if([[data valueForKey:@"status"]intValue] == -1){
                     [commonclass logoutFunction];
@@ -739,12 +818,16 @@
     
     [delegate.defaults setValue:latstring forKey:@"latitude"];
     [delegate.defaults setValue:longstring forKey:@"longitude"];
-    
+//    currentLatitude = [[delegate.defaults valueForKey:@"latitude"]floatValue];
+//    currentLongitude = [[delegate.defaults valueForKey:@"longitude"]floatValue];
     //    if([[[defaults dictionaryRepresentation] allKeys] containsObject:@"loc_name"]){
     //        NSLog(@"mykey found");
     //    }else{
-    [delegate.defaults setValue:locality forKey:@"loc_name"];
+    
+    [delegate.defaults setValue:locality forKey:@"updateloc_name"];
+    [delegate.defaults setValue:@"myloc" forKey:@"locupdatefrom"];
     [delegate.defaults setValue:locality forKey:@"myloc_name"];
+   
     //}
     [delegate.defaults synchronize];
 }
@@ -754,16 +837,16 @@
 -(void)getStoresResponseByTypes:(NSString *)storetype latitude:(float)storelatitude longitude:(float)storeLongitude radius:(float)storeRadius{
     seg_string = @"Verticals";
     NSString *messageBody;
-    if ([[delegate.defaults valueForKey:@"shareStore"] isEqualToString:@"sharedStore"]) {
-        messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%f&current_longitude=%f&radius=%f&type=%@&shared=%@",[delegate.defaults valueForKey:@"logid"],storelatitude,storeLongitude,currentLatitude,currentLongitude,storeRadius,storetype,@"1"];
-        NSLog(@"body.. %@",messageBody);
-        NSLog(@"commonclass.searchListURL.. %@",commonclass.searchListURL);
-        
-    }else{
-    messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%f&current_longitude=%f&radius=%f&type=%@",[delegate.defaults valueForKey:@"logid"],storelatitude,storeLongitude,currentLatitude,currentLongitude,storeRadius,storetype];
+//    if ([[delegate.defaults valueForKey:@"shareStore"] isEqualToString:@"sharedStore"]) {
+//        messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%f&current_longitude=%f&radius=%f&type=%@&shared=%@",[delegate.defaults valueForKey:@"logid"],storelatitude,storeLongitude,currentLatitude,currentLongitude,storeRadius,storetype,@"1"];
+//        NSLog(@"body.. %@",messageBody);
+//        NSLog(@"commonclass.searchListURL.. %@",commonclass.searchListURL);
+//        
+//    }else{
+    messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%@&current_longitude=%@&radius=%f&type=%@",[delegate.defaults valueForKey:@"logid"],storelatitude,storeLongitude,[delegate.defaults valueForKey:@"longitude"],[delegate.defaults valueForKey:@"longitude"],storeRadius,storetype];
     NSLog(@"body.. %@",messageBody);
     NSLog(@"commonclass.searchListURL.. %@",commonclass.searchListURL);
-    }
+//    }
     if([commonclass isActiveInternet] == YES){
     [commonclass sendRequest:self.view mutableDta:searchData url:commonclass.searchListURL msgBody:messageBody];
     }else{
@@ -775,15 +858,15 @@
 -(void)getStoresResponseByCategories:(NSString *)storetype latitude:(float)storelatitude longitude:(float)storeLongitude radius:(float)storeRadius{
     //current_latitude,current_longitude
     NSString *messageBody;
-    if ([[delegate.defaults valueForKey:@"shareStore"] isEqualToString:@"sharedStore"]) {
-        messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%f&current_longitude=%f&radius=%f&category_id=%@&type=%@&shared=%@",[delegate.defaults valueForKey:@"logid"],storelatitude,storeLongitude,currentLatitude,currentLongitude,storeRadius,[delegate.defaults valueForKey:@"category"],storetype,@"1"];
-        NSLog(@"body.. %@",messageBody);
-        NSLog(@"commonclass.searchListURL.. %@",commonclass.searchListURL);
-    }else{
-    messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%f&current_longitude=%f&radius=%f&category_id=%@&type=%@",[delegate.defaults valueForKey:@"logid"],storelatitude,storeLongitude,currentLatitude,currentLongitude,storeRadius,[delegate.defaults valueForKey:@"category"],storetype];
+//    if ([[delegate.defaults valueForKey:@"shareStore"] isEqualToString:@"sharedStore"]) {
+//        messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%f&current_longitude=%f&radius=%f&category_id=%@&type=%@&shared=%@",[delegate.defaults valueForKey:@"logid"],storelatitude,storeLongitude,currentLatitude,currentLongitude,storeRadius,[delegate.defaults valueForKey:@"category"],storetype,@"1"];
+//        NSLog(@"body.. %@",messageBody);
+//        NSLog(@"commonclass.searchListURL.. %@",commonclass.searchListURL);
+//    }else{
+    messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%@&current_longitude=%@&radius=%f&category_id=%@&type=%@",[delegate.defaults valueForKey:@"logid"],storelatitude,storeLongitude,[delegate.defaults valueForKey:@"latitude"],[delegate.defaults valueForKey:@"longitude"],storeRadius,[delegate.defaults valueForKey:@"category"],storetype];
     NSLog(@"body.. %@",messageBody);
     NSLog(@"commonclass.searchListURL.. %@",commonclass.searchListURL);
-    }
+  //  }
     if([commonclass isActiveInternet] == YES){
     [commonclass sendRequest:self.view mutableDta:searchData url:commonclass.searchListURL msgBody:messageBody];
     }else{
@@ -795,15 +878,15 @@
 -(void)getStoresResponseByNearBy:(float)storelatitude longitude:(float)storeLongitude radius:(float)storeRadius{
     //current_latitude,current_longitude
     NSString *messageBody;
-    if ([[delegate.defaults valueForKey:@"shareStore"] isEqualToString:@"sharedStore"]) {
-        messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%f&current_longitude=%f&radius=%f&shared=%@",[delegate.defaults valueForKey:@"logid"],storelatitude,storeLongitude,currentLatitude,currentLongitude,storeRadius,@"1"];
-        NSLog(@"body.. %@",messageBody);
-        NSLog(@"commonclass.searchListURL.. %@",commonclass.searchListURL);
-    }else{
-        messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%f&current_longitude=%f&radius=%f",[delegate.defaults valueForKey:@"logid"],storelatitude,storeLongitude,currentLatitude,currentLongitude,storeRadius];
+//    if ([[delegate.defaults valueForKey:@"shareStore"] isEqualToString:@"sharedStore"]) {
+//        messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%f&current_longitude=%f&radius=%f&shared=%@",[delegate.defaults valueForKey:@"logid"],storelatitude,storeLongitude,currentLatitude,currentLongitude,storeRadius,@"1"];
+//        NSLog(@"body.. %@",messageBody);
+//        NSLog(@"commonclass.searchListURL.. %@",commonclass.searchListURL);
+//    }else{
+        messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%@&current_longitude=%@&radius=%f",[delegate.defaults valueForKey:@"logid"],storelatitude,storeLongitude,[delegate.defaults valueForKey:@"latitude"],[delegate.defaults valueForKey:@"longitude"],storeRadius];
     NSLog(@"body.. %@",messageBody);
     NSLog(@"commonclass.searchListURL.. %@",commonclass.searchListURL);
-    }
+   // }
     if([commonclass isActiveInternet] == YES){
     [commonclass sendRequest:self.view mutableDta:searchData url:commonclass.searchListURL msgBody:messageBody];
     }else{
@@ -818,15 +901,15 @@
     [self PagerBtns:true];
     
     NSString *messageBody;
-    if ([[delegate.defaults valueForKey:@"shareStore"] isEqualToString:@"sharedStore"]) {
-        messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%f&current_longitude=%f&radius=%f&s=%@&shared=%@",[delegate.defaults valueForKey:@"logid"],storelatitude,storeLongitude,currentLatitude,currentLongitude,storeRadius,[delegate.defaults valueForKey:@"Search_Keyword"],@"1"];
-        NSLog(@"body.. %@",messageBody);
-        NSLog(@"commonclass.searchListURL.. %@",commonclass.searchListURL);
-    }else{
-    messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%f&current_longitude=%f&radius=%f&s=%@",[delegate.defaults valueForKey:@"logid"],storelatitude,storeLongitude,currentLatitude,currentLongitude,storeRadius,[delegate.defaults valueForKey:@"Search_Keyword"]];
+//    if ([[delegate.defaults valueForKey:@"shareStore"] isEqualToString:@"sharedStore"]) {
+//        messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%f&current_longitude=%f&radius=%f&s=%@&shared=%@",[delegate.defaults valueForKey:@"logid"],storelatitude,storeLongitude,currentLatitude,currentLongitude,storeRadius,[delegate.defaults valueForKey:@"Search_Keyword"],@"1"];
+//        NSLog(@"body.. %@",messageBody);
+//        NSLog(@"commonclass.searchListURL.. %@",commonclass.searchListURL);
+//    }else{
+    messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%@&current_longitude=%@&radius=%f&s=%@",[delegate.defaults valueForKey:@"logid"],storelatitude,storeLongitude,[delegate.defaults valueForKey:@"latitude"],[delegate.defaults valueForKey:@"longitude"],storeRadius,[delegate.defaults valueForKey:@"Search_Keyword"]];
     NSLog(@"body.. %@",messageBody);
     NSLog(@"commonclass.searchListURL.. %@",commonclass.searchListURL);
-    }
+ //  }
     if([commonclass isActiveInternet] == YES){
     [commonclass sendRequest:self.view mutableDta:searchData url:commonclass.searchListURL msgBody:messageBody];
     }else{
@@ -837,28 +920,38 @@
 
 -(void)getFavourites:(NSString *)storetype latitude:(float)storelatitude longitude:(float)storeLongitude radius:(float)storeRadius{
     NSString *messageBody;
-    if ([[delegate.defaults valueForKey:@"shareStore"] isEqualToString:@"sharedStore"]) {
-        messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%f&current_longitude=%f&radius=%f&favorite=1&type=%@&shared=%@",[delegate.defaults valueForKey:@"logid"],storelatitude,storeLongitude,currentLatitude,currentLongitude,storeRadius,storetype,@"1"];
-        NSLog(@"body.. %@",messageBody);
-        NSLog(@"commonclass.searchListURL.. %@",commonclass.searchListURL);
-    }else{
-        messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%f&current_longitude=%f&radius=%f&favorite=1&type=%@",[delegate.defaults valueForKey:@"logid"],storelatitude,storeLongitude,currentLatitude,currentLongitude,storeRadius,storetype];
+//    if ([[delegate.defaults valueForKey:@"shareStore"] isEqualToString:@"sharedStore"]) {
+//        messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%f&current_longitude=%f&radius=%f&favorite=1&type=%@&shared=%@",[delegate.defaults valueForKey:@"logid"],storelatitude,storeLongitude,currentLatitude,currentLongitude,storeRadius,storetype,@"1"];
+//        NSLog(@"body.. %@",messageBody);
+//        NSLog(@"commonclass.searchListURL.. %@",commonclass.searchListURL);
+//    }else{
+        messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%@&current_longitude=%@&radius=%f&favorite=1&type=%@",[delegate.defaults valueForKey:@"logid"],storelatitude,storeLongitude,[delegate.defaults valueForKey:@"latitude"],[delegate.defaults valueForKey:@"longitude"],storeRadius,storetype];
     NSLog(@"body.. %@",messageBody);
     NSLog(@"commonclass.searchListURL.. %@",commonclass.searchListURL);
-    }
+   // }
     [commonclass sendRequest:self.view mutableDta:searchData url:commonclass.searchListURL msgBody:messageBody];
     
+    
+}
+
+-(void)getSharedStore:(NSString *)storetype latitude:(float)storelatitude longitude:(float)storeLongitude radius:(float)storeRadius{
+    
+    //    if ([[delegate.defaults valueForKey:@"shareStore"] isEqualToString:@"sharedStore"]) {
+       NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%@&current_longitude=%@&radius=%f&favorite=1&type=%@&shared=%@",[delegate.defaults valueForKey:@"logid"],storelatitude,storeLongitude,[delegate.defaults valueForKey:@"latitude"],[delegate.defaults valueForKey:@"longitude"],storeRadius,storetype,@"1"];
+            NSLog(@"body.. %@",messageBody);
+            NSLog(@"commonclass.searchListURL.. %@",commonclass.searchListURL);
+        [commonclass sendRequest:self.view mutableDta:searchData url:commonclass.searchListURL msgBody:messageBody];
     
 }
 
 -(void)getResponseBuckets:(NSString *)storetype latitude:(float)storelatitude longitude:(float)storeLongitude radius:(float)storeRadius{
     NSString *messageBody;
     if ([[delegate.defaults valueForKey:@"shareStore"] isEqualToString:@"sharedStore"]) {
-        messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%f&current_longitude=%f&radius=%f&bucket_id=%@&type=%@&shared=%@",[delegate.defaults valueForKey:@"logid"],storelatitude,storeLongitude,currentLatitude,currentLongitude,storeRadius,[delegate.defaults valueForKey:@"bucketID"],storetype,@"1"];
+        messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%@&current_longitude=%@&radius=%f&bucket_id=%@&type=%@&shared=%@",[delegate.defaults valueForKey:@"logid"],storelatitude,storeLongitude,[delegate.defaults valueForKey:@"latitude"],[delegate.defaults valueForKey:@"longitude"],storeRadius,[delegate.defaults valueForKey:@"bucketID"],storetype,@"1"];
         NSLog(@"body.. %@",messageBody);
         NSLog(@"commonclass.searchListURL.. %@",commonclass.searchListURL);
     }else{
-        messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%f&current_longitude=%f&radius=%f&bucket_id=%@&type=%@",[delegate.defaults valueForKey:@"logid"],storelatitude,storeLongitude,currentLatitude,currentLongitude,storeRadius,[delegate.defaults valueForKey:@"bucketID"],storetype];
+        messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%@&current_longitude=%@&radius=%f&bucket_id=%@&type=%@",[delegate.defaults valueForKey:@"logid"],storelatitude,storeLongitude,[delegate.defaults valueForKey:@"latitude"],[delegate.defaults valueForKey:@"longitude"],storeRadius,[delegate.defaults valueForKey:@"bucketID"],storetype];
     NSLog(@"body.. %@",messageBody);
     NSLog(@"commonclass.searchListURL.. %@",commonclass.searchListURL);
     }
@@ -887,6 +980,11 @@
     }else{
         premCount = 1;
     }
+    
+    if ((highstreetArr.count || brandedArr.count || designerArr.count || verticalsArr.count < 4) && premiumListArr.count > 5){
+        premCount = 0;
+    }
+    
     if([seg_string isEqualToString:@"High Street"]){
         NSLog(@"%lu , %lu",(unsigned long)highstreetArr.count ,([premiumListArr count] / 5) + premCount);
         return ([highstreetArr count] + ([premiumListArr count] / 5) + premCount);
@@ -899,19 +997,33 @@
     }else if([seg_string isEqualToString:@"Exhibitions"]){
         return [exhibitionArr count];
     }else if([seg_string isEqualToString:@"Verticals"]){
-        return [verticalsArr count];
+        NSLog(@"%lu , %lu",(unsigned long)designerArr.count ,([premiumListArr count] / 5) + 1);
+        return ([verticalsArr count] + ([premiumListArr count] / 5) + premCount);
     }else{
         return 0;
     }
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    
     if([seg_string isEqualToString:@"Exhibitions"]){
         return 195;
     }else{
-        return 220;
+        if (imgcnt == 0){
+            if ([typeCell isEqualToString:@"Premium"]){
+                return 220;
+            }else{
+                return 170;
+            }
+        }else{
+            return 220;
+        }
     }
 }
+
+//-(CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(nonnull NSIndexPath *)indexPath{
+//    return  UITableViewAutomaticDimension;
+//}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -935,8 +1047,10 @@
             if (premiumcell == nil) {
                 premiumcell = [[PremiumListingCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
             }
+            typeCell = @"Premium";
             [premiumcell setSelectionStyle:UITableViewCellSelectionStyleNone];
             [self setPremiumData:premiumListArr indexpath:indexPath];
+            
             return premiumcell;
         }
         else{
@@ -945,6 +1059,8 @@
             if (cell == nil) {
                 cell = [[NormalListCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
             }
+            typeCell = @"Normal";
+            
             [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
             
 //            NSLog(@"designerArr %lu",(unsigned long)highstreetArr.count);
@@ -1012,8 +1128,8 @@
                 }else{
                     newIndexPath = [NSIndexPath indexPathForRow:indexPath.row - 1 inSection:indexPath.section];
                 }
-                if (brandedArr.count > newIndexPath.row){
-                    [self setData:brandedArr indexpath:newIndexPath];
+                if (verticalsArr.count > newIndexPath.row){
+                    [self setData:verticalsArr indexpath:newIndexPath];
                 }
                //  NSIndexPath* newIndexPath = [NSIndexPath indexPathForRow:indexPath.row - 1 inSection:indexPath.section];
                 
@@ -1029,26 +1145,35 @@
     premiumcell.PremiumListingScroll.bounces = NO;
     int btnwt = self.view.frame.size.width-30;
     NSLog(@"tempcount.. %d",temppremiumCnt);
-    //if(temppremiumCnt>=4){
+    
+//    awayDist = [NSString stringWithFormat:@"%@",[arr[indexpath.row] valueForKey:@"distance_in_kms"]];
+//    NSLog(@"away dist..%@",awayDist);
+//    [distAwayArr addObject:awayDist];
+
+//    if(temppremiumCnt>=4){
         int i = 5;
         if (premiumListArr.count <= i) {
             premiumcell.PremiumListingScroll.contentSize = CGSizeMake((btnwt * premiumListArr.count)+25, premiumcell.PremiumListingScroll.frame.size.height);
         }else{
-            i = i + i;
-            while (i < premiumListArr.count) {
-                premiumcell.PremiumListingScroll.contentSize = CGSizeMake((btnwt * i - premiumListArr.count)+25, premiumcell.PremiumListingScroll.frame.size.height);
-            }
+            premiumcell.PremiumListingScroll.contentSize = CGSizeMake((btnwt * 5)+25, premiumcell.PremiumListingScroll.frame.size.height);
+//            i = i + i;
+//            while (i < premiumListArr.count) {
+//                premiumcell.PremiumListingScroll.contentSize = CGSizeMake((btnwt * i - premiumListArr.count)+25, premiumcell.PremiumListingScroll.frame.size.height);
+//            }
         }
 //    }else{
 //        premiumcell.PremiumListingScroll.contentSize = CGSizeMake((btnwt * temppremiumCnt)+25, premiumcell.PremiumListingScroll.frame.size.height);
 //    }
+    
 //    if(premiumListArr.count>1){
 //        premiumcell.PremiumListingScroll.scrollEnabled = YES;
 //    }else{
 //        premiumcell.PremiumListingScroll.scrollEnabled = NO;
 //    }
-    
-    for (int j = temppremiumCnt; j < premiumCnt; j++) {
+//    premiumcell.PremiumListingScroll.userInteractionEnabled = NO;
+//    NSLog(@"%d",j);
+    for (int j = temppremiumCnt - 1; j < premiumCnt; ++j) {
+        NSLog(@"%d",j);
         if(j < temppremiumCnt+5  && j >= 0){
             NSLog(@"j...%d",j);
             UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, premiumcell.PremiumListingScroll.frame.size.width, premiumcell.PremiumListingScroll.frame.size.height)];
@@ -1056,18 +1181,24 @@
             view.alpha = 0.2;
             premiumImage = [[UIImageView alloc]initWithFrame:CGRectMake((btnwt + 5) * j, 0, btnwt,premiumcell.PremiumListingScroll.frame.size.height)];
             premiumImage.tag = j;
-          premiumImage.backgroundColor = [UIColor lightGrayColor];
-        //premiumImage.alpha = 0.5;
+            premiumImage.backgroundColor = [UIColor lightGrayColor];
+          //premiumImage.alpha = 0.5;
             NSString *imglink = [NSString stringWithFormat:@"%@/%@",commonclass.siteURL,[premiumListArr[j] valueForKey:@"cover_pic"]];
             [premiumImage setImageWithURL:[NSURL URLWithString:imglink] placeholderImage:[UIImage imageNamed:@"splash_iPhone.png"] usingActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
              [premiumcell.PremiumListingScroll addSubview:premiumImage];
              [premiumcell.PremiumListingScroll addSubview:view];
+//            premiumImage.userInteractionEnabled = true;
+//            view.userInteractionEnabled = true;
             premiumStoreNamelabel = [[UILabel alloc]initWithFrame:CGRectMake((btnwt + 10) * j, 3, 200, 25)];
             [premiumStoreNamelabel setFont:[UIFont fontWithName:@"Roboto-Bold" size:16.0f]];
             premiumStoreNamelabel.textColor = [UIColor whiteColor];
             premiumStoreNamelabel.numberOfLines = 0;
             premiumStoreNamelabel.lineBreakMode = NSLineBreakByWordWrapping;
             premiumStoreNamelabel.text = [NSString stringWithFormat:@"%@",[premiumListArr[j] valueForKey:@"store_name"]];
+            
+            premiumAwayDist = [NSString stringWithFormat:@"%@",[arr[j] valueForKey:@"distance_in_kms"]];
+            NSLog(@"away dist..%@",awayDist);
+            [premiumdistAwayArr addObject:premiumAwayDist];
             
             UILabel *addressLbl = [[UILabel alloc]initWithFrame:CGRectMake((btnwt + 10) * j, 26, 200, 25)];
             [addressLbl setFont:[UIFont fontWithName:@"Roboto" size:12.0f]];
@@ -1108,9 +1239,8 @@
             storeOfferLbl.lineBreakMode = NSLineBreakByWordWrapping;
             storeOfferLbl.text = @"STORE OFFER";
             
-            
             UIButton * PremiumCheckinBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-            PremiumCheckinBtn.frame = CGRectMake((btnwt + 15) * j, storeOfferLbl.frame.origin.y + 35, 110, 30);
+            PremiumCheckinBtn.frame = CGRectMake((btnwt + 25) * j, storeOfferLbl.frame.origin.y + 35, 110, 30);
             PremiumCheckinBtn.layer.borderWidth = 1.0f;
             PremiumCheckinBtn.layer.borderColor = [[UIColor whiteColor] CGColor];
             PremiumCheckinBtn.layer.cornerRadius = 18.0f;
@@ -1129,26 +1259,68 @@
             [PremiumCallBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
             [PremiumCallBtn addTarget:self action:@selector(PremiumCallTapped:) forControlEvents:UIControlEventTouchUpInside];
     
-           
+            [premiumphonenoArr addObject:[arr[j] valueForKey:@"phone_number"]];
+            [premiumphoneno_StoreIDArr addObject:[arr[j] valueForKey:@"store_id"]];
             [premiumcell.PremiumListingScroll addSubview:premiumStoreNamelabel];
             [premiumcell.PremiumListingScroll addSubview:addressLbl];
             [premiumcell.PremiumListingScroll addSubview:shopCatLbl];
             [premiumcell.PremiumListingScroll addSubview:storeOfferLbl];
             [premiumcell.PremiumListingScroll addSubview:exclusivediscLbl];
             [premiumcell.PremiumListingScroll addSubview:PremiumCheckinBtn];
+         // [premiumcell.PremiumListingScroll bringSubviewToFront:PremiumCheckinBtn];
             [premiumcell.PremiumListingScroll addSubview:PremiumCallBtn];
            
         }
     }
     
+
+    
 }
 
 -(void)PremiumCheckinTapped:(UIButton *)sender{
-    
+//    if ([time isEqualToString:@"Closed"]){
+//        [self.view makeToast:@"Store is closed"];
+//    }else{
+        // NSLog(@"dista arr is...%@",distAwayArr);
+        NSString * mobilenumber = [delegate.defaults valueForKey:@"mobile"];
+        NSLog(@"mobilenumber %@",mobilenumber);
+        NSLog(@"mobilenumber length %lu",(unsigned long)mobilenumber.length);
+        // NSLog(@"%u",[delegate.defaults boolForKey:@"otp_verified"]);
+        if ([[delegate.defaults valueForKey:@"otp_verified"]boolValue] == false){
+            if([[delegate.defaults valueForKey:@"updateMobile"]boolValue] == false){
+                Popupmainview.hidden = false;
+                verifyView.hidden = false;
+                OTPView.hidden = true;
+            }else{
+                Popupmainview.hidden = false;
+                verifyView.hidden = true;
+                OTPView.hidden = false;
+                // OTPView.hidden = false;
+            }
+            
+        }else{
+            //    if(mobilenumber.length == 0){
+            //    }else{
+            if([premiumdistAwayArr[sender.tag] doubleValue]<0.25){
+                [commonclass Redirect:self.navigationController Identifier:@"GenerateCouponsViewController"];
+            }else{
+                [self.view makeToast:@"You have to be in 250 meters radius to CHECK IN into the store"];
+            }
+        }
+    //}
 }
 
 -(void)PremiumCallTapped:(UIButton *)sender{
-    
+    NSLog(@"phoneno_StoreIDArr.. %@",phoneno_StoreIDArr);
+    store_ID = [premiumphoneno_StoreIDArr[sender.tag] intValue];
+    NSLog(@"store_id.. %ld",store_ID);
+    [self phoneResponse];
+    NSString *dialNumber =[NSString stringWithFormat:@"telprompt://%@",[premiumphonenoArr objectAtIndex:sender.tag]];
+    NSLog(@"number..%@",dialNumber);
+    UIApplication *app = [UIApplication sharedApplication];
+    NSString *dialThis = [NSString stringWithFormat:@"%@", dialNumber];
+    NSURL *url = [NSURL URLWithString:dialThis];
+    [app openURL:url];
 }
 
 -(void)scrollViewWillEndDragging:(UIScrollView *)scrollView
@@ -1214,7 +1386,7 @@
         cell.storeStarsLbl.text = commonclass.starIcon;
         cell.storeRatingLbl.text = [NSString stringWithFormat:@"%.1f",[[arr[indexpath.row] valueForKey:@"rating"] floatValue]];
     }
-    cell.storeValidCpnCodeLbl.text = [NSString stringWithFormat:@"%@ Accepted Coupon Code | %@ Checkins | %@ Reviews  ",[arr[indexpath.row] valueForKey:@"valid_coupon"],[arr[indexpath.row] valueForKey:@"checkins"],[arr[indexpath.row] valueForKey:@"review_count"]];
+    cell.storeValidCpnCodeLbl.text = [NSString stringWithFormat:@"%@ Accepted Coupon Code | %@ Checkins | %@ Reviews  ",[arr[indexpath.row] valueForKey:@"accepted_coupons"],[arr[indexpath.row] valueForKey:@"no_of_checkins"],[arr[indexpath.row] valueForKey:@"no_of_votes"]];
     
     if([arr[indexpath.row] valueForKey:@"start_time"] == [NSNull null] && [arr[indexpath.row] valueForKey:@"end_time"] == [NSNull null]){
         cell.storeTimeLbl.backgroundColor = [UIColor redColor];
@@ -1260,11 +1432,19 @@
             [cell.storeGalleryView addSubview:storeimgview];
         }
     }else{
-        CGRect newFrame = cell.storeGalleryView.frame;
-          newFrame.size.height = 0;
-//        [cell.storeGalleryView removeFromSuperview];
-//        [cell.storeGalleryView setAutoresizesSubviews:YES];
-       // cell.storeGalleryView.frame = CGRectMake(0, 0, 0, 0);
+       // CGRect newFrame = CGRectMake(cell.storeGalleryView.frame.origin.x, cell.storeGalleryView.frame.origin.y, 200, 0);
+        
+       // cell.storeGalleryView.frame = newFrame;
+        
+        //[UIView animateWithDuration:.1 animations:^{
+//            CGRect rect=cell.storeGalleryView.frame;
+//            rect.origin.x=cell.storeGalleryView.superview.frame.size.width;
+//            cell.storeGalleryView.frame=rect;
+//       // } completion:^(BOOL finished) {
+//            [self reArrangeSuperView:cell.storeGalleryView.superview withDeletedViewFrame:cell.storeGalleryView.frame];
+//            [cell.storeGalleryView removeFromSuperview];
+//       // }];
+        
     }
     
     cell.storeAwayIconLbl.text = commonclass.storeawayIcon;
@@ -1292,7 +1472,6 @@
     cell.storePhoneBtn.tag = indexpath.row;
     [phonenoArr addObject:[arr[indexpath.row] valueForKey:@"phone_number"]];
     [cell.storePhoneBtn addTarget:self action:@selector(phoneTapped:) forControlEvents:UIControlEventTouchUpInside];
-
     
    // }
 /*//    NSLog(@"arr..%@",arr[indexpath.row]);
@@ -1319,6 +1498,46 @@
    */
 }
 
+//Adding Delete Tap Gesture
+-(void)addGestureToSubViews{
+    for(UIView *view in view.subviews){
+        UITapGestureRecognizer *gesture=[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(deleteAction:)];
+        [view addGestureRecognizer:gesture];
+    }
+}
+
+
+-(IBAction)deleteAction:(UITapGestureRecognizer *)sender{
+    UIView *view=sender.view;
+    
+    [UIView animateWithDuration:.3 animations:^{
+        CGRect rect=view.frame;
+        rect.origin.x=view.superview.frame.size.width;
+        view.frame=rect;
+    } completion:^(BOOL finished) {
+        [self reArrangeSuperView:view.superview withDeletedViewFrame:view.frame];
+        [view removeFromSuperview];
+        
+    }];
+    
+}
+
+-(void)reArrangeSuperView:(UIView *)superView withDeletedViewFrame:(CGRect)frame{
+    
+    for(UIView *view in superView.subviews){
+        CGRect rect=view.frame;
+        
+        if(rect.origin.y>frame.origin.y){
+            rect.origin.y=frame.origin.y ;
+        }
+        
+      //  [UIView animateWithDuration:.3 animations:^{
+            view.frame=rect ;
+      //  }];
+        
+    }
+}
+
 -(void)MoveToMapTapped:(UIGestureRecognizer*)recognizer{
     NSLog(@"recognizer.. %ld",recognizer.view.tag);
         NSArray * arr;
@@ -1343,10 +1562,9 @@
 
 -(void)CheckinTapped:(UIButton*)sender{
 //  NSLog(@"brands Arr.. %@",brandedArr[sender.tag]);
-//    if ([time isEqualToString:@"Closed"]){
-//        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Alert" message:@"Store is closed" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-//        [alert show];
-//    }else{
+    if ([time isEqualToString:@"Closed"]){
+        [self.view makeToast:@"Store is closed"];
+    }else{
 // NSLog(@"dista arr is...%@",distAwayArr);
     NSString * mobilenumber = [delegate.defaults valueForKey:@"mobile"];
     NSLog(@"mobilenumber %@",mobilenumber);
@@ -1372,7 +1590,7 @@
         }else{
             [self.view makeToast:@"You have to be in 250 meters radius to CHECK IN into the store"];
         }
-//}
+   }
    }
 }
 
@@ -1478,12 +1696,21 @@
             storeNo = [designerArr[indexPath.row - 1] valueForKey:@"store_id"];
         }
     }else if([seg_string isEqualToString:@"Verticals"]){
-//        if ([[highstreetArr[indexPath.row - 1] valueForKey:@"checked_in"]boolValue] == true {
-//            
-//        }else{
-//            
-//        }
-        storeNo = [verticalsArr[indexPath.row - 1] valueForKey:@"store_id"];
+        if (premiumListArr.count == 0){
+            if ([[verticalsArr[indexPath.row] valueForKey:@"checked_in"]boolValue] == true){
+                [commonclass Redirect:self.navigationController Identifier:@"GenerateCouponsViewController"];
+            }else{
+                [commonclass Redirect:self.navigationController Identifier:@"DetailViewController"];
+            }
+            storeNo = [verticalsArr[indexPath.row] valueForKey:@"store_id"];
+        }else{
+            if ([[verticalsArr[indexPath.row - 1] valueForKey:@"checked_in"]boolValue] == true){
+                [commonclass Redirect:self.navigationController Identifier:@"GenerateCouponsViewController"];
+            }else{
+                [commonclass Redirect:self.navigationController Identifier:@"DetailViewController"];
+            }
+            storeNo = [verticalsArr[indexPath.row - 1] valueForKey:@"store_id"];
+        }
     }
    
     [delegate.defaults setValue:storeNo forKey:@"store_ID"];
@@ -1521,6 +1748,8 @@
 - (IBAction)highstreetTapped:(id)sender {
      [delegate.defaults setObject:@"High Street" forKey:@"verticalsCategory"];
     [distAwayArr removeAllObjects];
+    [premiumdistAwayArr removeAllObjects];
+    segTapString = @"High Street";
     temppremiumCnt = 0;
     counter = 0;
     [resultTable setContentOffset:CGPointZero animated:YES];
@@ -1536,12 +1765,15 @@
             [self getDatawithStoreCategory:seg_string latitude:currentLatitude longitude:currentLongitude radius:userRadius];
         }
     }else if([[delegate.defaults valueForKey:@"route"] isEqualToString:@"Favourites"]){
-        [self getFavourites:seg_string latitude:userLatitude longitude:userLongitude radius:userRadius];
+        [self getFavourites:seg_string latitude:currentLatitude longitude:currentLongitude radius:userRadius];
     }else if([[delegate.defaults valueForKey:@"resultType"] isEqualToString:@"StoreType"]){
          NSLog(@"type is... %@",[delegate.defaults valueForKey:@"resultType"]);
        // [self getFavourites:seg_string latitude:userLatitude longitude:userLongitude radius:userRadius];
+    }else if([[delegate.defaults valueForKey:@"route"] isEqualToString:@"sharedStore"]){
+        [self getSharedStore:seg_string latitude:currentLatitude longitude:currentLongitude radius:userRadius];
+        // [self getFavourites:seg_string latitude:userLatitude longitude:userLongitude radius:userRadius];
     }else{
-        [self getResponseBuckets:seg_string latitude:userLatitude longitude:userLongitude radius:userRadius];
+        [self getResponseBuckets:seg_string latitude:currentLatitude longitude:currentLongitude radius:userRadius];
     }
 //    [delegate.defaults setObject:@"High Street" forKey:@"verticalsCategory"];
 //    [delegate.defaults synchronize];
@@ -1551,8 +1783,10 @@
 - (IBAction)brandsTapped:(id)sender {
     [delegate.defaults setObject:@"Brands" forKey:@"verticalsCategory"];
     [distAwayArr removeAllObjects];
+    [premiumdistAwayArr removeAllObjects];
     temppremiumCnt = 0;
     counter = 0;
+    segTapString = @"Brands";
     [resultTable setContentOffset:CGPointZero animated:YES];
     seg_string = @"Brands";
     verticalset = @"Brands";
@@ -1569,9 +1803,12 @@
             [self getDatawithStoreCategory:seg_string latitude:currentLatitude longitude:currentLongitude radius:userRadius];
         }
     }else if([[delegate.defaults valueForKey:@"route"] isEqualToString:@"Favourites"]){
-        [self getFavourites:seg_string latitude:userLatitude longitude:userLongitude radius:userRadius];
+        [self getFavourites:seg_string latitude:currentLatitude longitude:currentLongitude radius:userRadius];
+    }else if([[delegate.defaults valueForKey:@"route"] isEqualToString:@"sharedStore"]){
+        [self getSharedStore:seg_string latitude:currentLatitude longitude:currentLongitude radius:userRadius];
+        // [self getFavourites:seg_string latitude:userLatitude longitude:userLongitude radius:userRadius];
     }else{
-        [self getResponseBuckets:seg_string latitude:userLatitude longitude:userLongitude radius:userRadius];
+        [self getResponseBuckets:seg_string latitude:currentLatitude longitude:currentLongitude radius:userRadius];
     }
 //    [delegate.defaults setObject:@"Brands" forKey:@"verticalsCategory"];
 //    //[delegate.defaults setValue:@"Store" forKey:@"route"];
@@ -1582,8 +1819,10 @@
 - (IBAction)designersTapped:(id)sender {
     [delegate.defaults setObject:@"Designers" forKey:@"verticalsCategory"];
     [distAwayArr removeAllObjects];
+    [premiumdistAwayArr removeAllObjects];
     temppremiumCnt = 0;
     counter = 0;
+    segTapString =  @"Designers";
     [resultTable setContentOffset:CGPointZero animated:YES];
     seg_string = @"Designers";
     verticalset = @"Designers";
@@ -1596,9 +1835,12 @@
             [self getDatawithStoreCategory:seg_string latitude:currentLatitude longitude:currentLongitude radius:userRadius];
         }
     }else if([[delegate.defaults valueForKey:@"route"] isEqualToString:@"Favourites"]){
-       [self getFavourites:seg_string latitude:userLatitude longitude:userLongitude radius:userRadius];
+       [self getFavourites:seg_string latitude:currentLatitude longitude:currentLongitude radius:userRadius];
+    }else if([[delegate.defaults valueForKey:@"route"] isEqualToString:@"sharedStore"]){
+        [self getSharedStore:seg_string latitude:currentLatitude longitude:currentLongitude radius:userRadius];
+        // [self getFavourites:seg_string latitude:userLatitude longitude:userLongitude radius:userRadius];
     }else{
-        [self getResponseBuckets:seg_string latitude:userLatitude longitude:userLongitude radius:userRadius];
+        [self getResponseBuckets:seg_string latitude:currentLatitude longitude:currentLongitude radius:userRadius];
     }
 //    [delegate.defaults setObject:@"Designers" forKey:@"verticalsCategory"];
 //    //[delegate.defaults setValue:@"Store" forKey:@"route"];
@@ -1625,14 +1867,23 @@ didAutocompleteWithPlace:(GMSPlace *)place {
     search.text = place.name;
     currentLatitude = place.coordinate.latitude;
     currentLongitude = place.coordinate.longitude;
+    NSString *userLatitude1 = [NSString stringWithFormat:@"%f",place.coordinate.latitude];
+    NSString *userLongitude1 = [NSString stringWithFormat:@"%f",place.coordinate.longitude];
     // NSString * placename = place.name;
 //    [delegate.defaults setValue:placename forKey:@"loc_name"];
 //    [delegate.defaults synchronize];
+    [delegate.defaults setValue:userLatitude1 forKey:@"user_latitude"];
+    [delegate.defaults setValue:userLongitude1 forKey:@"user_longitude"];
+    [delegate.defaults setValue:@"loc" forKey:@"locupdatefrom"];
+    [delegate.defaults setValue:search.text forKey:@"loc_name"];
+    
+    userLatitude = [[delegate.defaults valueForKey:@"user_latitude"]floatValue];
+    userLongitude = [[delegate.defaults valueForKey:@"user_longitude"]floatValue];
     
     searchField.text = place.name;
     searchField.textColor = [UIColor whiteColor];
    // if([[delegate.defaults valueForKey:@"resultType"] isEqualToString:@"Category"]){
-    [self getDatawithStoreCategory:seg_string latitude:place.coordinate.latitude longitude:place.coordinate.longitude radius:userRadius];
+    [self getDatawithStoreCategory:seg_string latitude:currentLatitude longitude:currentLongitude radius:userRadius];
 }
 
 - (void)viewController:(GMSAutocompleteViewController *)viewController
@@ -1862,13 +2113,13 @@ didFailAutocompleteWithError:(NSError *)error {
 - (IBAction)filterSubmitTapped:(id)sender {
     NSString * filterCategoriesIDs = [selectedcategoriesIDArr componentsJoinedByString:@","];
     NSLog(@"filterCategoriesIDs %@",filterCategoriesIDs);
-    seg_string = @"High Street";
+   //seg_string = @"High Street";
     couponDetMainView.hidden = TRUE;
     NSString *messageBody;
     if(filterCategoriesIDs.length == 0){
-        messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%f&current_longitude=%f&radius=%f&category_id=%@&type=%@&rating_min=0&rating_max=%f&discount_min=0&discount_max=%f",[delegate.defaults valueForKey:@"logid"],userLatitude,userLongitude,currentLatitude,currentLongitude,distanceval,[delegate.defaults valueForKey:@"category"],seg_string,ratingsVal,distanceval];
+        messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%f&current_longitude=%f&radius=%f&category_id=%@&type=%@&rating_min=0&rating_max=%f&discount_min=0&discount_max=%f",[delegate.defaults valueForKey:@"logid"],userLatitude,userLongitude,currentLatitude,currentLongitude,distanceval,[delegate.defaults valueForKey:@"category"],segTapString,ratingsVal,distanceval];
     }else{
-        messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%f&current_longitude=%f&radius=%f&category_id=%@&type=%@&rating_min=0&rating_max=%f&discount_min=0&discount_max=%f",[delegate.defaults valueForKey:@"logid"],userLatitude,userLongitude,currentLatitude,currentLongitude,distanceval,filterCategoriesIDs,seg_string,ratingsVal,distanceval];
+        messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%f&current_longitude=%f&radius=%f&category_id=%@&type=%@&rating_min=0&rating_max=%f&discount_min=0&discount_max=%f",[delegate.defaults valueForKey:@"logid"],userLatitude,userLongitude,currentLatitude,currentLongitude,distanceval,filterCategoriesIDs,segTapString,ratingsVal,discountval];
     }
     if([commonclass isActiveInternet] == YES){
     NSLog(@"body.. %@",messageBody);
@@ -1882,7 +2133,7 @@ didFailAutocompleteWithError:(NSError *)error {
 
 - (void)keyboardDidShow:(NSNotification *)notification
 {
-    //   if(iskeyboardPresent == YES && iskeyboardAppeared == NO){
+//       if(iskeyboardPresent == YES && iskeyboardAppeared == NO){
 //    iskeyboardAppeared = YES;
 //    LoginScroll.contentSize = CGSizeMake(LoginScroll.frame.size.width, LoginScroll.frame.size.height + 200);
 //    //    }
@@ -1891,8 +2142,8 @@ didFailAutocompleteWithError:(NSError *)error {
 
 -(void)keyboardDidHide:(NSNotification *)notification
 {
- //    if(iskeyboardPresent == YES && iskeyboardAppeared == NO){
- //   iskeyboardAppeared = NO;
+//     if(iskeyboardPresent == YES && iskeyboardAppeared == NO){
+//    iskeyboardAppeared = NO;
 //    LoginScroll.contentSize = CGSizeMake(LoginScroll.frame.size.width, LoginScroll.frame.size.height);
 //    //    }
 //    LoginScroll.scrollEnabled = NO;

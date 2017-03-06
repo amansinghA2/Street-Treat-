@@ -29,26 +29,51 @@ int btnwt,btnht;
 -(void)viewDidAppear:(BOOL)animated{
     [self setUpstackMenu];
     
-    userLatitude = [[delegate.defaults valueForKey:@"latitude"] floatValue];
-    userLongitude = [[delegate.defaults valueForKey:@"longitude"] floatValue];
+//    userLatitude = [[delegate.defaults valueForKey:@"latitude"] floatValue];
+//    userLongitude = [[delegate.defaults valueForKey:@"longitude"] floatValue];
     
 //    txfSearchField.text = [delegate.defaults valueForKey:@"loc_name"];
 //    txfSearchField.textColor = [UIColor whiteColor];
 }
 
 -(void)showLocName{
+    
+//    if ([[delegate.defaults valueForKey:@"myloc"] isEqualToString:@"locupdatefrom"]){
+//        txfSearchField.text = [delegate.defaults valueForKey:@"myloc_name"];
+//                txfSearchField.textColor = [UIColor whiteColor];
+//                [self getNearbyDealsWithLatitude:currentLatitude longitude:currentLongitude radius:userRadius];
+//                [timer invalidate];
+//    }else{
+//        txfSearchField.text = [delegate.defaults valueForKey:@"loc_name"];
+//            NSString * loc = [delegate.defaults valueForKey:@"loc_name"];
+//            if(loc.length == 0){
+//                txfSearchField.text = [delegate.defaults valueForKey:@"myloc_name"];
+//            }
+//                txfSearchField.textColor = [UIColor whiteColor];
+//                [self getNearbyDealsWithLatitude:currentLatitude longitude:currentLongitude radius:userRadius];
+//                [timer invalidate];
+//        }
+    
+//    if ([[delegate.defaults valueForKey:@"myloc"] isEqualToString:@"locupdatefrom"]){
+//        searchField.text = [delegate.defaults valueForKey:@"myloc_name"];
+//    }else{
+//        searchField.text = [delegate.defaults valueForKey:@"loc_name"];
+//    }
+    
     NSString * loc = [delegate.defaults valueForKey:@"loc_name"];
     if(loc.length == 0){
-        
+        txfSearchField.text = [delegate.defaults valueForKey:@"myloc_name"];
+        txfSearchField.textColor = [UIColor whiteColor];
+       
+        [timer invalidate];
     }else{
         txfSearchField.text = [delegate.defaults valueForKey:@"loc_name"];
         txfSearchField.textColor = [UIColor whiteColor];
-        [self getNearbyDealsWithLatitude:currentLatitude longitude:currentLongitude radius:userRadius];
+//        [self getNearbyDealsWithLatitude:[[delegate.defaults valueForKey:@"user_latitude"]floatValue] longitude:[[delegate.defaults valueForKey:@"user_longitude"]floatValue] radius:userRadius];
         [timer invalidate];
     }
     //NSLog(@"loc.. %@",loc);
 }
-
 
 -(void)viewWillAppear:(BOOL)animated{
     [delegate.defaults setObject:@"DashboardViewController" forKey:@"internetdisconnect"];
@@ -62,20 +87,17 @@ int btnwt,btnht;
     [self setupPromotionalBanners:promoArr];
     [self setupExhibitions:promoArr];
     
-    NSString *userLatitude1 = [delegate.defaults valueForKey:@"user_latitude"];
-    NSString *userLongitude1 = [delegate.defaults valueForKey:@"user_longitude"];
-    
-    [delegate.defaults setValue:userLatitude1 forKey:@"user_latitude"];
-    [delegate.defaults setValue:userLongitude1 forKey:@"user_longitude"];
+//    NSString *userLatitude1 = [delegate.defaults valueForKey:@"user_latitude"];
+//    NSString *userLongitude1 = [delegate.defaults valueForKey:@"user_longitude"];
+//    
+//    [delegate.defaults setValue:userLatitude1 forKey:@"user_latitude"];
+//    [delegate.defaults setValue:userLongitude1 forKey:@"user_longitude"];
     [delegate.defaults synchronize];
     
-//    NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&device_os=%@&device_token=%@",[delegate.defaults valueForKey:@"logid"],@"ios",[delegate.defaults valueForKey:@"deviceToken"]];
-//    NSLog(@"messageBody.. %@",messageBody);
-//    [constant sendRequest:self.view mutableDta:dealsdata url:constant.updateDeviceToken msgBody:messageBody];
+     [self getNearbyDealsWithLatitude:[[delegate.defaults valueForKey:@"user_latitude"]floatValue] longitude:[[delegate.defaults valueForKey:@"user_longitude"]floatValue] radius:userRadius];
     
     float duration = 0.5;
     timer = [NSTimer scheduledTimerWithTimeInterval:duration target:self selector:@selector(showLocName) userInfo:nil repeats: YES];
-    
 }
 
 -(void)getParentCategories{
@@ -94,10 +116,14 @@ int btnwt,btnht;
 -(void)getNearbyDealsWithLatitude:(float)storeLatitude longitude:(float)storeLongitude radius:(float)storeradius{
     if([constant isActiveInternet] == YES){
         requestType = @"GetDeals";
-        NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&radius=%f&current_latitude=%@&current_longitude=%@&limitstart=0&limit=5&order_by=a.exclusive_discount&order_dir=DESC",[delegate.defaults valueForKey:@"logid"],storeLatitude,storeLongitude,storeradius,[delegate.defaults valueForKey:@"latitude"],[delegate.defaults valueForKey:@"longitude"]];
-        NSLog(@"messageBody.. %@",messageBody);
+//            NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&device_os=%@&device_token=%@",[delegate.defaults valueForKey:@"logid"],@"ios",[delegate.defaults valueForKey:@"deviceToken"]];
+//            NSLog(@"messageBody.. %@",messageBody);
+//        [constant sendRequest:self.view mutableDta:dealsdata url:constant.updateDeviceToken msgBody:messageBody];
+        
+        NSString *messageBody1 = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&radius=%f&current_latitude=%@&current_longitude=%@&limitstart=0&limit=5&order_by=a.exclusive_discount&order_dir=DESC",[delegate.defaults valueForKey:@"logid"],storeLatitude,storeLongitude,storeradius,[delegate.defaults valueForKey:@"latitude"],[delegate.defaults valueForKey:@"longitude"]];
+        NSLog(@"messageBody.. %@",messageBody1);
         NSLog(@"constant.searchListURL.. %@",constant.searchListURL);
-        [constant sendRequest:self.view mutableDta:dealsdata url:constant.searchListURL msgBody:messageBody];
+        [constant sendRequest:self.view mutableDta:dealsdata url:constant.searchListURL msgBody:messageBody1];
     }else{
         [self CreateNetworkEnabler];
         [constant Redirect:self.navigationController Identifier:@"InternetDisconnectViewController"];
@@ -119,11 +145,16 @@ int btnwt,btnht;
     }
 }
 
+
+
 - (void)sendResponse:(Common *)response data:(NSMutableArray*)data indicator:(UIActivityIndicatorView *)indicator{
     NSLog(@"data.. %@",data);
     dispatch_sync(dispatch_get_main_queue(), ^{
          if([requestType isEqualToString:@"GetDeals"]){
             if([[data valueForKey:@"status"]intValue] == 1){
+                if ([data valueForKey:@"items"] == (id)[NSNull null]) {
+                    [self.view makeToast:@""];
+                }else{
                 NSLog(@"deals are.. %@",data);
                 dealsArr = [data valueForKey:@"items"];
                 [self setupCoupons:dealsArr];
@@ -135,7 +166,7 @@ int btnwt,btnht;
                 [constant changeFrameforDashboardWRT:_CheckinDtlsView ofview:_CollectionsLblHdr];
                 [constant changeFrameforDashboardWRT:_CheckinDtlsView ofview:_collectionMoreBtn];
                 [self getBuckets];
-            }else if([[data valueForKey:@"status"]intValue] == -1){
+                }}else if([[data valueForKey:@"status"]intValue] == -1){
                 [constant logoutFunction];
             }else{
                 _bestDlsLbl.hidden = true;
@@ -465,10 +496,9 @@ int btnwt,btnht;
         [btn removeFromSuperview];
     }
    //Service Integration
-     long int collectioncnt = bucketsArr.count;
     float yht=(collectionLbl.frame.origin.y + collectionLbl.frame.size.height) + 5;
-    if(collectioncnt>=6){
-    for (int j = 0; j < 6; j++) {
+
+    for (int j = 0; j < bucketsArr.count; j++) {
         if(j%2 == 0){
             collectionsbtn = [UIButton buttonWithType:UIButtonTypeCustom];
             collectionsbtn.frame = CGRectMake(5, yht, (self.view.frame.size.width/2 - 10), 35);
@@ -482,14 +512,13 @@ int btnwt,btnht;
             collectionsbtn.layer.cornerRadius = 18.0f;
             [collectionsbtn addTarget:self action:@selector(collectionTapped:) forControlEvents:UIControlEventTouchUpInside];
             [DashboardScroll addSubview:collectionsbtn];
-            
         }else{
             collectionsbtn = [UIButton buttonWithType:UIButtonTypeCustom];
             collectionsbtn.frame = CGRectMake(self.view.frame.size.width/2, yht, (self.view.frame.size.width/2 - 10), 35);
             [collectionsbtn setTitle:[bucketsArr[j] valueForKey:@"title"] forState:UIControlStateNormal];
             [collectionsbtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
             collectionsbtn.tag = j;
-             [allbucketsBtnsArr addObject:collectionsbtn];
+            [allbucketsBtnsArr addObject:collectionsbtn];
             collectionsbtn.layer.borderWidth = 1.0f;
             [collectionsbtn.titleLabel setFont:[UIFont fontWithName:@"Roboto-Regular" size:14]];
             collectionsbtn.layer.borderColor = [[UIColor View_Border] CGColor];
@@ -499,7 +528,7 @@ int btnwt,btnht;
             yht = (yht+collectionsbtn.frame.size.height)+5.0f;
         }
     }
-    }
+
     //End
     
   /*  //Without service integration
@@ -534,8 +563,8 @@ int btnwt,btnht;
             yht = (yht+collectionsbtn.frame.size.height)+5.0f;
         }
     }*/
-
-    DashboardScroll.contentSize = CGSizeMake(self.view.frame.size.width, yht);
+    
+    DashboardScroll.contentSize = CGSizeMake(self.view.frame.size.width, yht + 50);
 }
 
 -(void)collectionTapped:(UIButton *)sender{
@@ -790,7 +819,11 @@ int btnwt,btnht;
     [delegate.defaults setValue:latstring forKey:@"latitude"];
     [delegate.defaults setValue:longstring forKey:@"longitude"];
     
-    [delegate.defaults setValue:locality forKey:@"loc_name"];
+//    currentLatitude = [[delegate.defaults valueForKey:@"latitude"] floatValue];
+//    currentLongitude = [[delegate.defaults valueForKey:@"longitude"] floatValue];
+    
+    [delegate.defaults setValue:locality forKey:@"updateloc_name"];
+    [delegate.defaults setValue:@"myloc" forKey:@"locupdatefrom"];
     [delegate.defaults setValue:locality forKey:@"myloc_name"];
     [delegate.defaults synchronize];
 }
@@ -800,12 +833,12 @@ int btnwt,btnht;
     [super viewDidLoad];
     [self allocateRequired];
     
-     [self CurrentLocationIdentifier];
+    [self CurrentLocationIdentifier];
     
     _ExhibitionTitleHdr.hidden = true;
     _ExhibitionMoreBtn.hidden = true;
     _ExhibitionDtlsView.hidden = true;
-    ExhibitionScroll.hidden = true;
+     ExhibitionScroll.hidden = true;
     
     [constant changeFrameforDashboardWRT:couponScroll ofview:brandView];
     [constant changeFrameforDashboardWRT:brandView ofview:_CheckinDtlsView];
@@ -814,21 +847,23 @@ int btnwt,btnht;
     
     //[self getParentCategories];
     
-    
     //Without webservice Integration
     promoArr = [[NSMutableArray alloc]initWithObjects:[UIImage imageNamed:@"Promo1.png"],[UIImage imageNamed:@"Promo2.png"],[UIImage imageNamed:@"Promo3.png"],[UIImage imageNamed:@"Promo4.png"],nil];
     collectionArr = [[NSMutableArray alloc]initWithObjects:@"Summer Collection",@"Winter Collection",@"Rainy Collection",@"Holi Collection",@"Diwali Collection",@"Eid Collection",nil];
-    ExhibitionTitleArr = [[NSMutableArray alloc]initWithObjects:@"Summer Exhibition",@"Winter Exhibition",@"Rainy Exhibition",@"Holi Exhibition",nil];
+    ExhibitionTitleArr = [[NSMutableArray alloc]initWithObjects:@"Summer Exhibition",@"Winter Exhibition",@"Rainy Exhibition",@"Holi ,Exhibition",nil];
     _dealArr = [[NSMutableArray alloc]initWithObjects:@"Buy 2 get 1 Free",@"Buy 2 for 1000",@"Buy 3 get 1 Free",@"Buy 3 get 1 Free",@"Buy 1 for 1000",nil];
     
-    //[self setupCollections:collectionArr];
-   // [self setupCoupons:_dealArr];
+  // [self setupCollections:collectionArr];
+  // [self setupCoupons:_dealArr];
     
     [usrNameLbl setShadowColor:[UIColor darkGrayColor]];
     [usrNameLbl setShadowOffset:CGSizeMake(0, -1)];
     [_welcomeLbl setShadowColor:[UIColor darkGrayColor]];
     [_welcomeLbl setShadowOffset:CGSizeMake(0, -1)];
-    
+    requestType = @"updateCoupon";
+//    NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&device_os=%@&device_token=%@",[delegate.defaults valueForKey:@"logid"],@"ios",[delegate.defaults valueForKey:@"deviceToken"]];
+//    NSLog(@"messageBody.. %@",messageBody);
+//    [constant sendRequest:self.view mutableDta:dealsdata url:constant.updateDeviceToken msgBody:messageBody];
     //End
     
     UIButton *back = (UIButton *)[self.view viewWithTag:1111];
@@ -842,8 +877,6 @@ int btnwt,btnht;
     
     search = (UISearchBar *)[self.view viewWithTag:11111];
     txfSearchField = [search valueForKey:@"_searchField"];
-    
-    
     
     [constant addTabImages:self.tabBarController.tabBar];
     
@@ -869,8 +902,8 @@ int btnwt,btnht;
     
     constant.delegate = self;
     
-    currentLatitude = [[delegate.defaults valueForKey:@"latitude"] floatValue];
-    currentLongitude = [[delegate.defaults valueForKey:@"longitude"] floatValue];
+    currentLatitude = [[delegate.defaults valueForKey:@"user_latitude"] floatValue];
+    currentLongitude = [[delegate.defaults valueForKey:@"user_longitude"] floatValue];
     userRadius = [[delegate.defaults valueForKey:@"radius"] floatValue];
     
 //  UIButton*  checkInBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -938,14 +971,22 @@ int btnwt,btnht;
     
     
     // contentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
-    
-   
-    
+ 
 }
 
 -(void)FindCurrentTapped{
+    
+    currentLatitude = [[delegate.defaults valueForKey:@"latitude"]floatValue];
+    currentLongitude = [[delegate.defaults valueForKey:@"longitude"]floatValue];
+    
+    [delegate.defaults setValue:[delegate.defaults valueForKey:@"latitude"] forKey:@"user_latitude"];
+    [delegate.defaults setValue:[delegate.defaults valueForKey:@"longitude"] forKey:@"user_longitude"];
+    
+     [delegate.defaults setValue:@"myloc" forKey:@"locupdatefrom"];
+    
      txfSearchField.text = [delegate.defaults valueForKey:@"myloc_name"];
-     [self getNearbyDealsWithLatitude:currentLatitude longitude:currentLongitude radius:userRadius];
+        [delegate.defaults setValue:txfSearchField.text forKey:@"loc_name"];
+     [self getNearbyDealsWithLatitude:[[delegate.defaults valueForKey:@"latitude"]floatValue] longitude:[[delegate.defaults valueForKey:@"longitude"]floatValue] radius:userRadius];
 }
 
 -(void)setUpstackMenu{
@@ -1088,12 +1129,12 @@ int btnwt,btnht;
             case 14:{
                 
                 NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
-                [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
+//               [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
                 [delegate.defaults setValue:@"19.1183" forKey:@"latitude"];
                 [delegate.defaults setValue:@"73.0276" forKey:@"longitude"];
                 //[delegate.defaults setValue:@"Mahape" forKey:@"loc_name"];
                 [delegate.defaults setValue:@"3" forKey:@"radius"];
-                ViewController * splash = [self.storyboard instantiateViewControllerWithIdentifier:@"ViewController"];
+                ViewController * splash = [self.storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
                 UINavigationController *passcodeNavigationController = [[UINavigationController alloc] initWithRootViewController:splash];
                 [self presentViewController:passcodeNavigationController animated:YES completion:nil];
             }
@@ -1164,7 +1205,6 @@ int btnwt,btnht;
     if(index == 0){
         [delegate.defaults setValue:@"Favourites" forKey:@"route"];
         [constant Redirect:self.navigationController Identifier:@"ResultsViewController"];
-        
     }else if(index == 1){
        [constant Redirect:self.navigationController Identifier:@"ProfileViewController"];
     }else if (index == 2){
@@ -1231,9 +1271,14 @@ int btnwt,btnht;
 -(void)showVerticals{
     [delegate.defaults setObject:@"StoreType" forKey:@"resultType"];
     [delegate.defaults synchronize];
+     if([constant isActiveInternet] == YES){
     ResultsViewController * result = [self.storyboard instantiateViewControllerWithIdentifier:@"ResultsViewController"];
     [self.navigationController pushViewController:result animated:YES];
     self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
+     }else{
+         [constant Redirect:self.navigationController Identifier:@"InternetDisconnectViewController"];
+         //[self.view makeToast:@"Check your internet connection"];
+     }
 }
 
 -(void)GetHighstreetStores{
@@ -1307,21 +1352,22 @@ int btnwt,btnht;
 didAutocompleteWithPlace:(GMSPlace *)place {
     [self dismissViewControllerAnimated:YES completion:nil];
     search.text = place.name;
-    
+    currentLatitude = place.coordinate.latitude;
+    currentLongitude = place.coordinate.longitude;
     NSString *userLatitude1 = [NSString stringWithFormat:@"%f",place.coordinate.latitude];
     NSString *userLongitude1 = [NSString stringWithFormat:@"%f",place.coordinate.longitude];
-    NSString * placename = place.name;
+    NSString *placename = place.name;
     NSLog(@"place name is... %@",placename);
-    
     [delegate.defaults setValue:userLatitude1 forKey:@"user_latitude"];
     [delegate.defaults setValue:userLongitude1 forKey:@"user_longitude"];
+    [delegate.defaults setValue:@"loc" forKey:@"locupdatefrom"];
     [delegate.defaults setValue:placename forKey:@"loc_name"];
     [delegate.defaults synchronize];
     
     userLatitude = [[delegate.defaults valueForKey:@"user_latitude"] floatValue];
     userLongitude = [[delegate.defaults valueForKey:@"user_longitude"] floatValue];
     
-    [self getNearbyDealsWithLatitude:userLatitude longitude:userLongitude radius:userRadius];
+    [self getNearbyDealsWithLatitude:[[delegate.defaults valueForKey:@"latitude"]floatValue] longitude:[[delegate.defaults valueForKey:@"longitude"]floatValue] radius:userRadius];
     
     NSLog(@"Current latitude.. %f current longitude.. %f",currentLatitude,currentLongitude);
     NSLog(@"user latitude.. %f user longitude.. %f",userLatitude,userLongitude);

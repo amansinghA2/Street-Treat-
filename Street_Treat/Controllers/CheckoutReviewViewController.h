@@ -7,8 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Common.h"
 
-@interface CheckoutReviewViewController : UIViewController
+@interface CheckoutReviewViewController : UIViewController<commonProtocol>{
+    Common * commonclass;
+    NSMutableData *parentsData;
+     AppDelegate * delegate;
+    NSString *typeReview;
+}
 
 @property (weak, nonatomic) IBOutlet UISegmentedControl *CategorySelect;
 - (IBAction)categoryChanged:(id)sender;
@@ -25,6 +31,7 @@
 @property (weak, nonatomic) IBOutlet UISegmentedControl *trailRoomSelect;
 - (IBAction)trailRoomChanged:(id)sender;
 
+@property (weak, nonatomic) IBOutlet UITextView *feedBackTextView;
 @property (weak, nonatomic) IBOutlet UILabel *overallShoppingLbl;
 - (IBAction)submitTapped:(id)sender;
 - (IBAction)closeTapped:(id)sender;

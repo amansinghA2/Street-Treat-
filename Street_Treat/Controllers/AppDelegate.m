@@ -12,6 +12,7 @@
 #import <GooglePlaces/GooglePlaces.h>
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 
+
 @interface AppDelegate (){
     GMSPlacesClient *_placesClient;
     NSDictionary *dUserInfo;
@@ -76,20 +77,36 @@
     [GMSServices provideAPIKey:@"AIzaSyARNV9fPiiSy54R-ATJ2W6E2imnbINsA64"];
     [GMSPlacesClient provideAPIKey:@"AIzaSyARNV9fPiiSy54R-ATJ2W6E2imnbINsA64"];
     
-    if (floor(NSFoundationVersionNumber) < NSFoundationVersionNumber_iOS_8_0)
-        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge|
-         UIRemoteNotificationTypeAlert| UIRemoteNotificationTypeSound];
-    else {
-        [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge) categories:nil]];
-        [application registerForRemoteNotifications];
+//    if (floor(NSFoundationVersionNumber) < NSFoundationVersionNumber_iOS_8_0)
+//        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge|
+//         UIRemoteNotificationTypeAlert| UIRemoteNotificationTypeSound];
+//    else {
+//        [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge) categories:nil]];
+//        [application registerForRemoteNotifications];
+//    }
+    
+//    UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert |
+//                                                    UIUserNotificationTypeBadge |
+//                                                    UIUserNotificationTypeSound);
+//    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:userNotificationTypes categories:nil];
+//    [application registerUserNotificationSettings:settings];
+    
+    if([[UIDevice currentDevice] systemVersion].floatValue >= 8.0)
+    {
+        UIUserNotificationSettings* notificationSettings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound categories:nil];
+        [[UIApplication sharedApplication] registerUserNotificationSettings:notificationSettings];
+    }
+    else
+    {
+        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeSound|UIRemoteNotificationTypeBadge)];
     }
     
     //temporary for checking purpose
-    NSString * token = @"< e5988 1b088 12b99 22dd9 b453d 41501 1db42 03626 70de0 25357 ab5a9 fce68 b3bd >";
-    NSString *tokenStr = [token stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<> "]];
-    tokenStr = [tokenStr stringByReplacingOccurrencesOfString:@" " withString:@""];
-    NSLog(@"tokenStr.. %@",tokenStr);
-    [defaults setValue:tokenStr forKey:@"deviceToken"];
+//    NSString * token = @"< e5988 1b088 12b99 22dd9 b453d 41501 1db42 03626 70de0 25357 ab5a9 fce68 b3bd >";
+//    NSString *tokenStr = [token stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<> "]];
+//    tokenStr = [tokenStr stringByReplacingOccurrencesOfString:@" " withString:@""];
+//    NSLog(@"tokenStr.. %@",tokenStr);
+//   [defaults setValue:tokenStr forKey:@"deviceToken"];
     [defaults setValue:@"19.1183" forKey:@"latitude"];
     [defaults setValue:@"73.0276" forKey:@"longitude"];
     //[defaults setValue:@"Mahape" forKey:@"loc_name"];
@@ -101,21 +118,45 @@
                                     didFinishLaunchingWithOptions:launchOptions];;
 }
 
+
+- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings
+{
+    //register to receive notifications
+    [application registerForRemoteNotifications];
+}
+
+//For interactive notification only
+- (void)application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo completionHandler:(void(^)())completionHandler
+{
+    //handle the actions
+    if ([identifier isEqualToString:@"declineAction"]){
+    }
+    else if ([identifier isEqualToString:@"answerAction"]){
+    }
+}
+
 - (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken
 {
     
     NSLog(@"My token is: %@", deviceToken);
-    NSString *string = [[NSString alloc] initWithData:deviceToken encoding:NSUTF8StringEncoding];
-    NSString *tokenStr = [string stringByTrimmingCharactersInSet:
-                         [NSCharacterSet characterSetWithCharactersInString:@"<> "]];
-    tokenStr = [tokenStr stringByReplacingOccurrencesOfString:@" " withString:@""];
-    NSLog(@"tokenStr.. %@",tokenStr);
-    [defaults setValue:tokenStr forKey:@"deviceToken"];
+//    NSString *string = [[NSString alloc] initWithData:deviceToken encoding:NSUTF8StringEncoding];
+//    NSString *tokenStr = [string stringByTrimmingCharactersInSet:
+//                         [NSCharacterSet characterSetWithCharactersInString:@"<> "]];
+//    tokenStr = [tokenStr stringByReplacingOccurrencesOfString:@" " withString:@""];
+//    NSLog(@"tokenStr.. %@",tokenStr);
+    NSString *dt = [[deviceToken description] stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]];
+    dt = [dt stringByReplacingOccurrencesOfString:@" " withString:@""];
+    NSLog(@"%@",dt);
+    [defaults setValue:dt forKey:@"deviceToken"];
+    
+//    NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&device_os=%@&device_token=%@",[delegate.defaults valueForKey:@"logid"],@"ios",[delegate.defaults valueForKey:@"deviceToken"]];
+//    NSLog(@"messageBody.. %@",messageBody);
+//    [constant sendRequest:self.view mutableDta:dealsdata url:constant.updateDeviceToken msgBody:messageBody];
+    
     [defaults synchronize];
 }
 
-- (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error
-{
+- (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error{
     NSLog(@"Failed to get token, error: %@", error);
 }
 
@@ -222,7 +263,9 @@ didDisconnectWithUser:(GIDGoogleUser *)user
          // NSLog(@"Error is %@",error.localizedDescription);
          for (CLPlacemark *placemark in placemarks) {
              locality = [NSString stringWithFormat:@"%@",placemark.subLocality];
-             [defaults setValue:locality forKey:@"loc_name"];
+             [defaults setValue:locality forKey:@"updateloc_name"];
+             [defaults setValue:locality forKey:@"myloc_name"];
+             //[defaults setValue:locality forKey:@"loc_name"];
          }
      }];
     

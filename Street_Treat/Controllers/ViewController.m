@@ -17,9 +17,10 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [delegate.defaults setObject:@"ViewController" forKey:@"internetdisconnect"];
+   
     self.navigationController.navigationBarHidden = TRUE;
     delegate = (AppDelegate *)[[UIApplication sharedApplication]delegate];
+     [delegate.defaults setObject:@"ViewController" forKey:@"internetdisconnect"];
     if(![delegate.defaults valueForKey:@"logid"]){
         duration = 0.5;
          NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:duration target:self selector:@selector(showLoginController) userInfo:nil repeats: NO];

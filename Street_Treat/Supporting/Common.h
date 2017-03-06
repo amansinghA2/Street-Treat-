@@ -208,6 +208,9 @@
 @property (strong, nonatomic) NSString *addReviewsforStoreURL;
 @property (strong, nonatomic) NSString *updateDeviceToken;
 @property (strong, nonatomic) NSString *updateMobileURL;
+@property (strong, nonatomic) NSString *shoppingReviewUrl;
+
+
 
 @property (strong, nonatomic) NSString *myCouponsURL;
 
