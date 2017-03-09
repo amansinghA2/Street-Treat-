@@ -14,8 +14,9 @@
 #import "AMTagListView.h"
 #import "CZPickerView.h"
 #import "MyCouponsViewController.h"
+#import "HelpViewController.h"
 
-@interface ProfileViewController : UIViewController<UITabBarControllerDelegate,commonProtocol,UITextFieldDelegate,CCKFNavDrawerDelegate,CZPickerViewDelegate,CZPickerViewDataSource,CLLocationManagerDelegate,UIGestureRecognizerDelegate,UIImagePickerControllerDelegate, UINavigationControllerDelegate>{
+@interface ProfileViewController : UIViewController<UITabBarControllerDelegate,commonProtocol,UITextFieldDelegate,CCKFNavDrawerDelegate,CZPickerViewDelegate,CZPickerViewDataSource,CLLocationManagerDelegate,UIGestureRecognizerDelegate,UIImagePickerControllerDelegate, UINavigationControllerDelegate >{
     Common * constant;
      AppDelegate * delegate;
      NSMutableData *getProfileData;
@@ -55,6 +56,10 @@
     CLLocationManager *locationManager;
     CLLocation *currentLocation;
     NSString * locality;
+    NSString *name;
+    NSString *age;
+    NSString *lastname;
+    NSString *birthdate;
 }
 
 
@@ -79,6 +84,9 @@
 @property (strong, nonatomic) IBOutlet RPFloatingPlaceholderTextField *nametxtFld;
 @property (strong, nonatomic) IBOutlet RPFloatingPlaceholderTextField *mobiletxtFld;
 @property (strong, nonatomic) IBOutlet RPFloatingPlaceholderTextField *emailTxtFld;
+@property (strong, nonatomic) IBOutlet RPFloatingPlaceholderTextField *agetTxtField;
+@property (strong, nonatomic) IBOutlet RPFloatingPlaceholderTextField *birthDateField;
+@property (strong, nonatomic) IBOutlet RPFloatingPlaceholderTextField *lastTxtField;
 @property (weak, nonatomic) IBOutlet UIButton *per_infoeditBtn;
 - (IBAction)per_infoEditTapped:(id)sender;
 

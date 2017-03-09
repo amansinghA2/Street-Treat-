@@ -8,12 +8,22 @@
 
 #import <UIKit/UIKit.h>
 #import "Common.h"
+#import "ProfileViewController.h"
+
+//@class HelpViewController;
+//
+//@protocol HelpViewControllerDelegate <NSObject>
+//- (void)HelpViewControllerDidTapButton:
+//(HelpViewController *)controller;
+//
+//@end
 
 @interface HelpViewController : UIViewController<UIScrollViewDelegate>{
      BOOL pageControlBeingUsed;
     Common * constant;
     AppDelegate *delegate;
 }
+//@property (nonatomic, weak) id <HelpViewControllerDelegate> delegate1;
 @property (weak, nonatomic) IBOutlet UIScrollView *HelpScroll;
 @property (weak, nonatomic) IBOutlet UIPageControl *helpPageControl;
 @property (nonatomic,strong) NSMutableArray * helpArr;

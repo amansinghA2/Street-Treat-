@@ -316,7 +316,7 @@
     dealsArr = [[NSMutableArray alloc]init];
     amenitiesArr = [[NSMutableArray alloc]init];
     deatilsArr = [[NSMutableArray alloc]init];
-    
+    checkinsData = [[NSMutableData  alloc]init];
     backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     backBtn.frame = CGRectMake(5, 5, 30, 30);
     [backBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
@@ -488,8 +488,8 @@
             case 14:{
                 NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
 //                [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
-                [delegate.defaults setValue:@"19.1183" forKey:@"latitude"];
-                [delegate.defaults setValue:@"73.0276" forKey:@"longitude"];
+              //  [delegate.defaults setValue:@"19.1183" forKey:@"latitude"];
+              //  [delegate.defaults setValue:@"73.0276" forKey:@"longitude"];
                 //[delegate.defaults setValue:@"Mahape" forKey:@"loc_name"];
                 [delegate.defaults setValue:@"3" forKey:@"radius"];
                 ViewController * splash = [self.storyboard instantiateViewControllerWithIdentifier:@"ViewController"];
@@ -945,7 +945,20 @@
 - (void)sendResponse:(Common *)response data:(NSMutableArray*)data indicator:(UIActivityIndicatorView *)indicator{
     dispatch_sync(dispatch_get_main_queue(), ^{
         if(data != NULL){
-            if([responseType isEqualToString:@"StoreDetails"]){
+            
+            if([responseType isEqualToString:@"CheckedIn"]){
+                
+                if([[data valueForKey:@"status"]intValue] == 1){
+                    [commonclass Redirect:self.navigationController Identifier:@"GenerateCouponsViewController"];
+                }else if([[data valueForKey:@"status"]intValue] == -1){
+                    [commonclass logoutFunction];
+                    
+                }else{
+                    [self.view makeToast:[data valueForKey:@"message"]];
+                }
+                
+            }
+            else if([responseType isEqualToString:@"StoreDetails"]){
                 [deatilsArr removeAllObjects];
                 if([[data valueForKey:@"status"]intValue] == 1){
                     deatilsArr = [data valueForKey:@"items"];
@@ -1169,8 +1182,6 @@
 }
 
 - (IBAction)checkInTapped:(id)sender {
-    
-    
     if ([time isEqualToString:@"Closed"]){
         [self.view makeToast:@"Store is closed"];
     }else{
@@ -1195,7 +1206,8 @@
             //    if(mobilenumber.length == 0){
             //    }else{
             if([awayDist doubleValue]<0.25){
-                [commonclass Redirect:self.navigationController Identifier:@"GenerateCouponsViewController"];
+                    responseType = @"CheckedIn";
+                    [self userCheckedin];
             }else{
                 [self.view makeToast:@"You have to be in 250 meters radius to CHECK IN into the store"];
             }
@@ -1222,6 +1234,29 @@
 //      }
 //    }
 }
+
+-(void)userCheckedin{
+    
+    if([commonclass isActiveInternet] == YES){
+        
+        NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%@&longitude=%@&store_id=%ld",[delegate.defaults valueForKey:@"logid"],[delegate.defaults valueForKey:@"latitude"],[delegate.defaults valueForKey:@"longitude"],store_ID];
+        
+        NSLog(@"body.. %@",messageBody);
+        
+        NSLog(@"commonclass.searchListURL.. %@",commonclass.CheckinsURL);
+        
+        [commonclass sendRequest:self.view mutableDta:checkinsData url:commonclass.CheckinsURL msgBody:messageBody];
+        
+    }else{
+        
+        [commonclass Redirect:self.navigationController Identifier:@"InternetDisconnectViewController"];
+        
+        //[self.view makeToast:@"Check your internet connection"];
+        
+    }
+    
+}
+
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return [dealsArr count];

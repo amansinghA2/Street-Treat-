@@ -42,7 +42,7 @@
     StoreDealsCell * cell;
     NSString * setType;
     NSString * awayDist;
-    
+    NSMutableData *  checkinsData;
     long int amenitiesCnt;
     UIView * flyoutView;
     UIButton * backBtn;

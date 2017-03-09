@@ -144,8 +144,8 @@
         
         
        // LIVE
-       // siteURL = @"http://www.web.streettreat.in";
-       // NSString * masterUrl = @"http://www.web.streettreat.in/index.php?option=com_konnect&task=";
+//        siteURL = @"http://www.web.streettreat.in";
+//        NSString * masterUrl = @"http://www.web.streettreat.in/index.php?option=com_konnect&task=";
         
         getMastersURL = [NSString stringWithFormat:@"%@getMasterData",masterUrl];
         
@@ -294,7 +294,6 @@
     }
 }
 
-
 #pragma mark - Navigation and Tabbar Methods
 -(void)addNavigationBar:(UIView *)MainView{
     UIView *myview = [[UIView alloc]initWithFrame:CGRectMake(5, 5, self.view.frame.size.width - 10, 44)];
@@ -303,7 +302,7 @@
     myview.layer.borderWidth = 0.5f;
     myview.layer.borderColor = [[UIColor blackColor] CGColor];
     UIButton * backbtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    backbtn.frame = CGRectMake(myview.frame.origin.x+5, myview.frame.origin.y+3, 35, 35);
+    backbtn.frame = CGRectMake(myview.frame.origin.x+5, myview.frame.origin.y+2, 35, 35);
     backbtn.tag = 1111;
     [backbtn setTitle:backIcon forState:UIControlStateNormal];
     [backbtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
@@ -410,11 +409,13 @@
     indicator.center=self.view.center;
     [MainView addSubview:indicator];
      }
-//    if ([[maindelegate.defaults valueForKey:@"internetdisconnect"] isEqualToString:@"DashboardViewController"]){
-//       
+    
+   
+//    if ([[maindelegate.defaults valueForKey:@"parentcategories"] isEqualToString:@"fromparent"]){
+//         [maindelegate.defaults setObject:@"" forKey:@"parentcategories"];
 //    }else{
         [[UIApplication sharedApplication] beginIgnoringInteractionEvents];
- //   }
+//    }
     [indicator startAnimating];
     [mutableDta setLength:0];
     NSURL *linkurl = [NSURL URLWithString:url];
@@ -424,6 +425,7 @@
     [request addValue: msgLength forHTTPHeaderField:@"Content-Length"];
     [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
     [request setHTTPBody:[msgBody dataUsingEncoding:NSUTF8StringEncoding]];
+    
     NSOperationQueue *queue = [[NSOperationQueue alloc]init];
     [NSURLConnection sendAsynchronousRequest:request
      
@@ -438,7 +440,7 @@
                                NSLog(@"%@",mutableDta);
                                //[indicator removeFromSuperview];
                                [self DataResponse:mutableDta];
-                               
+                    
                                //});
                            }];
 }
@@ -598,7 +600,7 @@
         w = MAX(fw, w);
         h = MAX(fh, h);
     }
-    [mainView setFrame:CGRectMake(mainView.frame.origin.x, mainView.frame.origin.y, w, h)];
+    [mainView setFrame:CGRectMake(mainView.frame.origin.x, mainView.frame.origin.y, w, h + 5)];
 }
 
 -(NSArray *)setDate:(NSString *)firstdate seconddate:(NSString *)seconddate{
@@ -686,16 +688,18 @@
 }
 
 -(void)logoutFunction{
-    NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
-//    [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
-    [maindelegate.defaults setValue:@"19.1183" forKey:@"latitude"];
-    [maindelegate.defaults setValue:@"73.0276" forKey:@"longitude"];
-    //[delegate.defaults setValue:@"Mahape" forKey:@"loc_name"];
+//    NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
+////    [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
+//    //[maindelegate.defaults setValue:@"19.1183" forKey:@"latitude"];
+//   // [maindelegate.defaults setValue:@"73.0276" forKey:@"longitude"];
+//    //[delegate.defaults setValue:@"Mahape" forKey:@"loc_name"];
     [maindelegate.defaults setValue:@"3" forKey:@"radius"];
-    ViewController *splash = [self.storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
+    LoginViewController *splash = [self.storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
     UINavigationController *passcodeNavigationController = [[UINavigationController alloc] initWithRootViewController:splash];
     [self presentViewController:passcodeNavigationController animated:YES completion:nil];
 }
+
+
 
 
 @end

@@ -272,9 +272,9 @@
                 break;
             case 14:{
                 NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
-                [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
-                [delegate.defaults setValue:@"19.1183" forKey:@"latitude"];
-                [delegate.defaults setValue:@"73.0276" forKey:@"longitude"];
+                //[[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
+              //  [delegate.defaults setValue:@"19.1183" forKey:@"latitude"];
+              //  [delegate.defaults setValue:@"73.0276" forKey:@"longitude"];
                 //[delegate.defaults setValue:@"Mahape" forKey:@"loc_name"];
                 [delegate.defaults setValue:@"3" forKey:@"radius"];
                 ViewController * splash = [self.storyboard instantiateViewControllerWithIdentifier:@"ViewController"];

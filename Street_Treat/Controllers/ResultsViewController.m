@@ -22,9 +22,10 @@
 @synthesize RatingsSlider,ratingsMaxLbl,DistanceSlider,distanceMaxLbl,DiscountSlider,discountMaxLbl,CategoriesSelectLbl,SelectedCategoriesLbl;
 
 -(void)getParentCategories{
+  //[delegate.defaults setObject:@"fromparent" forKey:@"parentcategories"];
     seg_string = @"GetParents";
     if([commonclass isActiveInternet] == YES){
-    [commonclass sendRequest:self.view mutableDta:extraData url:commonclass.getParentCategoriesURL msgBody:nil];
+    [commonclass sendRequest:_filterPopup mutableDta:extraData url:commonclass.getParentCategoriesURL msgBody:nil];
     }else{
         [commonclass Redirect:self.navigationController Identifier:@"InternetDisconnectViewController"];
         //[self.view makeToast:@"Check your internet connection"];
@@ -46,9 +47,11 @@
 
 -(void)viewWillAppear:(BOOL)animated{
    // j = 0;
+    segTapString = [delegate.defaults valueForKey:@"checkedinfrom"];
+    [self getDatawithStoreCategory:segTapString latitude:currentLatitude longitude:currentLongitude radius:userRadius];
      [delegate.defaults setValue:@"" forKey:@"navigateFromReport"];
     [delegate.defaults setObject:@"ResultsViewController" forKey:@"internetdisconnect"];
-    //[self allocateRequired];
+   // [self allocateRequired];
     [self setupMobileVerificationPopup];
     Popupmainview.hidden = true;
 //  [resultTable setContentOffset:CGPointZero animated:YES];
@@ -296,7 +299,7 @@
     [super viewDidLoad];
   //  j = 0;
     [delegate.defaults setValue:@"" forKey:@"navigateFromReport"];
-    
+    brandsBtn.hidden = TRUE;
 //    refreshControl = [[UIRefreshControl alloc] init];
 //    refreshControl.backgroundColor = [UIColor purpleColor];
 //    refreshControl.tintColor = [UIColor whiteColor];
@@ -308,7 +311,7 @@
     [self CurrentLocationIdentifier];
     exhibitionsBtn.hidden = TRUE;
     distanceval = 3.0;
-    segTapString = @"High Street";
+    [delegate.defaults setValue:@"High Street" forKey:@"checkedinfrom"];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidShow:) name:UIKeyboardDidShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidHide:) name:UIKeyboardDidHideNotification object:nil];
 //  promoArr = [[NSMutableArray alloc]initWithObjects:[UIImage imageNamed:@"Promo1.png"],[UIImage imageNamed:@"Promo2.png"],[UIImage imageNamed:@"Promo3.png"],[UIImage imageNamed:@"Promo4.png"],nil];
@@ -328,7 +331,7 @@
     CategoriesSelectLbl.layer.cornerRadius = 12;
     
     seg_string = @"High Street";
-    [self getDatawithStoreCategory:@"High Street" latitude:currentLatitude longitude:currentLongitude radius:userRadius];
+    
 }
 
 -(void)categoriesFilterTapped:(UITapGestureRecognizer *)recogniser{
@@ -387,7 +390,7 @@
 
 -(void)PagerBtns:(BOOL)val{
     highstreetBtn.hidden = val;
-    brandsBtn.hidden = val;
+   // brandsBtn.hidden = val;
     designersBtn.hidden = val;
     exhibitionsBtn.hidden = val;
     indicatorLine.hidden = val;
@@ -400,6 +403,7 @@
     delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     [commonclass addNavigationBar:self.view];
     searchData = [[NSMutableData alloc]init];
+    arrayIndexPath = [[NSIndexPath alloc]init];
     extraData = [[NSMutableData alloc]init];
     phonenoArr = [[NSMutableArray alloc]init];
     verticalsArr = [[NSMutableArray alloc]init];
@@ -407,6 +411,8 @@
     premiumphonenoArr = [[NSMutableArray alloc]init];
     self.navigationItem.hidesBackButton = YES;
     highstreetArr = [[NSMutableArray alloc]init];
+    arrForImage = [[NSMutableArray alloc]init];
+    checkinsData = [[NSMutableData alloc]init];
     brandedArr = [[NSMutableArray alloc]init];
     designerArr = [[NSMutableArray alloc]init];
     exhibitionArr = [[NSMutableArray alloc]init];
@@ -420,7 +426,7 @@
     selectedcategoriesArr = [[NSMutableArray alloc]init];
     premiumListArr = [[NSMutableArray alloc]init];
     premiumdistAwayArr = [[NSMutableArray alloc]init];
-    
+    timeArray = [[NSMutableArray alloc]init];
     PrevX = indicatorLine.frame.origin.x;
     PrevY = indicatorLine.frame.origin.y;
     [resultTable setSeparatorColor:[UIColor clearColor]];
@@ -447,16 +453,19 @@
     searchField.text = [delegate.defaults valueForKey:@"myloc_name"];
     [delegate.defaults setValue:searchField.text forKey:@"loc_name"];
     searchField.textColor = [UIColor whiteColor];
+    [delegate.defaults synchronize];
+    NSLog(@"%@",[delegate.defaults valueForKey:@"loc_name"]);
     
     currentLatitude = [[delegate.defaults valueForKey:@"latitude"]floatValue];
     currentLongitude = [[delegate.defaults valueForKey:@"longitude"]floatValue];
-    
+    [delegate.defaults synchronize];
     [delegate.defaults setValue:[delegate.defaults valueForKey:@"latitude"] forKey:@"user_latitude"];
     [delegate.defaults setValue:[delegate.defaults valueForKey:@"longitude"] forKey:@"user_longitude"];
     
     [self getDatawithStoreCategory:segTapString latitude:currentLatitude longitude:currentLongitude radius:userRadius];
     
     [delegate.defaults setValue:@"myloc" forKey:@"locupdatefrom"];
+    
     
 }
 
@@ -573,9 +582,9 @@
                 break;
             case 14:{
                 NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
-//                [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
-                [delegate.defaults setValue:@"19.1183" forKey:@"latitude"];
-                [delegate.defaults setValue:@"73.0276" forKey:@"longitude"];
+        //      [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
+              //  [delegate.defaults setValue:@"19.1183" forKey:@"latitude"];
+               // [delegate.defaults setValue:@"73.0276" forKey:@"longitude"];
                 //[delegate.defaults setValue:@"Mahape" forKey:@"loc_name"];
                 [delegate.defaults setValue:@"3" forKey:@"radius"];
                 ViewController * splash = [self.storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
@@ -633,12 +642,41 @@
                 [resultTable reloadData];
             }
            else*/
-            if([seg_string isEqualToString:@"GetParents"]){
+            if([seg_string isEqualToString:@"CheckedIn"]){
+                if([[data valueForKey:@"status"]intValue] == 1){
+                    seg_string = segTapString;
+                   [commonclass Redirect:self.navigationController Identifier:@"GenerateCouponsViewController"];
+                    
+                    //                if ([segTapString isEqualToString:@"High Street"]){
+                    //
+                    //                }else if ([segTapString isEqualToString:@"Brands"]){
+                    //
+                    //                }else{
+                    //
+                    //                }
+                    //              storeCountLbl.text = [NSString stringWithFormat:@"%lu Stores",(unsigned long)[[highstreetArr valueForKey:@"items"] count]];
+                }else if([[data valueForKey:@"status"]intValue] == -1){
+                     seg_string = segTapString;
+                    [commonclass logoutFunction];
+                }else{
+                   seg_string = segTapString;
+                   [self.view makeToast:[data valueForKey:@"message"]];
+                }
+
+            }else if([seg_string isEqualToString:@"GetParents"]){
                 [categoriesArr removeAllObjects];
                 if([[data valueForKey:@"status"]intValue] == 1){
                     categoriesArr = [data valueForKey:@"items"];
                     NSLog(@"categoriesArr..%@",categoriesArr);
-//                    storeCountLbl.text = [NSString stringWithFormat:@"%lu Stores",(unsigned long)[[highstreetArr valueForKey:@"items"] count]];
+                    
+//                if ([segTapString isEqualToString:@"High Street"]){
+//                    
+//                }else if ([segTapString isEqualToString:@"Brands"]){
+//                    
+//                }else{
+//                    
+//                }
+//              storeCountLbl.text = [NSString stringWithFormat:@"%lu Stores",(unsigned long)[[highstreetArr valueForKey:@"items"] count]];
                 }else if([[data valueForKey:@"status"]intValue] == -1){
                     [commonclass logoutFunction];
                 }else{
@@ -752,6 +790,7 @@
 //                [resultTable reloadData];
 //            }
         }else{
+            storeCountLbl.text = [NSString stringWithFormat:@"0 Stores"];
             [self.view makeToast:@"Oops server Error!"];
         }
         
@@ -843,7 +882,7 @@
 //        NSLog(@"commonclass.searchListURL.. %@",commonclass.searchListURL);
 //        
 //    }else{
-    messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%@&current_longitude=%@&radius=%f&type=%@",[delegate.defaults valueForKey:@"logid"],storelatitude,storeLongitude,[delegate.defaults valueForKey:@"longitude"],[delegate.defaults valueForKey:@"longitude"],storeRadius,storetype];
+    messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%@&current_longitude=%@&radius=%f&type=%@",[delegate.defaults valueForKey:@"logid"],storelatitude,storeLongitude,[delegate.defaults valueForKey:@"latitude"],[delegate.defaults valueForKey:@"longitude"],storeRadius,storetype];
     NSLog(@"body.. %@",messageBody);
     NSLog(@"commonclass.searchListURL.. %@",commonclass.searchListURL);
 //    }
@@ -1063,17 +1102,15 @@
             
             [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
             
-//            NSLog(@"designerArr %lu",(unsigned long)highstreetArr.count);
+//          NSLog(@"designerArr %lu",(unsigned long)highstreetArr.count);
             NSLog(@"old indexpath.row %lu",(unsigned long)indexPath.row);
-//           
+            
 //           long int rows = [resultTable numberOfRowsInSection:indexPath.section];
 //             NSLog(@"rows %lu",(unsigned long)rows);
 //            
 //            NSLog(@"row is... %lu",indexPath.row - [premiumListArr count]);
             
-           
-            
-           // NSLog(@"new indexpath.row %lu",(unsigned long)newIndexPath.row);
+//           NSLog(@"new indexpath.row %lu",(unsigned long)newIndexPath.row);
             
             if([seg_string isEqualToString:@"High Street"]){
 //                if(counter == highstreetArr.count){
@@ -1143,6 +1180,7 @@
 
 -(void)setPremiumData:(NSMutableArray *)arr indexpath:(NSIndexPath *)indexpath{
     premiumcell.PremiumListingScroll.bounces = NO;
+    premiumcell.PremiumListingScroll.clipsToBounds = NO;
     int btnwt = self.view.frame.size.width-30;
     NSLog(@"tempcount.. %d",temppremiumCnt);
     
@@ -1172,24 +1210,26 @@
 //    }
 //    premiumcell.PremiumListingScroll.userInteractionEnabled = NO;
 //    NSLog(@"%d",j);
-    for (int j = temppremiumCnt - 1; j < premiumCnt; ++j) {
+  
+    for (int j = temppremiumCnt; j < premiumCnt; ++j) {
         NSLog(@"%d",j);
         if(j < temppremiumCnt+5  && j >= 0){
             NSLog(@"j...%d",j);
             UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, premiumcell.PremiumListingScroll.frame.size.width, premiumcell.PremiumListingScroll.frame.size.height)];
             //view.backgroundColor = [UIColor PopupBackground];
-            view.alpha = 0.2;
+         //   view.alpha = 0.2;
             premiumImage = [[UIImageView alloc]initWithFrame:CGRectMake((btnwt + 5) * j, 0, btnwt,premiumcell.PremiumListingScroll.frame.size.height)];
             premiumImage.tag = j;
-            premiumImage.backgroundColor = [UIColor lightGrayColor];
+            premiumImage.backgroundColor = [UIColor blackColor];
+            premiumImage.alpha = 0.8;
           //premiumImage.alpha = 0.5;
             NSString *imglink = [NSString stringWithFormat:@"%@/%@",commonclass.siteURL,[premiumListArr[j] valueForKey:@"cover_pic"]];
             [premiumImage setImageWithURL:[NSURL URLWithString:imglink] placeholderImage:[UIImage imageNamed:@"splash_iPhone.png"] usingActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
              [premiumcell.PremiumListingScroll addSubview:premiumImage];
-             [premiumcell.PremiumListingScroll addSubview:view];
+           //  [premiumcell.PremiumListingScroll addSubview:view];
 //            premiumImage.userInteractionEnabled = true;
 //            view.userInteractionEnabled = true;
-            premiumStoreNamelabel = [[UILabel alloc]initWithFrame:CGRectMake((btnwt + 10) * j, 3, 200, 25)];
+            premiumStoreNamelabel = [[UILabel alloc]initWithFrame:CGRectMake(((btnwt + 5) * j) + 5, 3, 200, 25)];
             [premiumStoreNamelabel setFont:[UIFont fontWithName:@"Roboto-Bold" size:16.0f]];
             premiumStoreNamelabel.textColor = [UIColor whiteColor];
             premiumStoreNamelabel.numberOfLines = 0;
@@ -1200,14 +1240,28 @@
             NSLog(@"away dist..%@",awayDist);
             [premiumdistAwayArr addObject:premiumAwayDist];
             
-            UILabel *addressLbl = [[UILabel alloc]initWithFrame:CGRectMake((btnwt + 10) * j, 26, 200, 25)];
+            if([arr[j] valueForKey:@"start_time"] == [NSNull null] && [arr[j] valueForKey:@"end_time"] == [NSNull null]){
+               // cell.storeTimeLbl.backgroundColor = [UIColor redColor];
+                time = @"Closed";
+                [timeArray addObject:time];
+              //  cell.storeTimeLbl.textAlignment = NSTextAlignmentCenter;
+            }else{
+               // cell.storeTimeLbl.backgroundColor = [UIColor greenColor];
+                NSString * startTime = [commonclass calculateTimeinAMPM:[arr[indexpath.row] valueForKey:@"start_time"]];
+                NSString * endTime = [commonclass calculateTimeinAMPM:[arr[indexpath.row] valueForKey:@"end_time"]];
+                time = [NSString stringWithFormat:@"%@-%@",startTime,endTime];
+                [timeArray addObject:time];
+            }
+            
+            
+            UILabel *addressLbl = [[UILabel alloc]initWithFrame:CGRectMake(((btnwt + 5) * j) + 5, 26, 200, 25)];
             [addressLbl setFont:[UIFont fontWithName:@"Roboto" size:12.0f]];
             addressLbl.textColor = [UIColor whiteColor];
             addressLbl.numberOfLines = 0;
             addressLbl.lineBreakMode = NSLineBreakByWordWrapping;
             addressLbl.text = [NSString stringWithFormat:@"%@, %@",[premiumListArr[j] valueForKey:@"address_1"],[premiumListArr[j] valueForKey:@"address_2"]];
-            
-            UILabel * shopCatLbl = [[UILabel alloc]initWithFrame:CGRectMake((btnwt + 10) * j, addressLbl.frame.origin.y + 20, 200, 25)];
+           
+            UILabel * shopCatLbl = [[UILabel alloc]initWithFrame:CGRectMake(((btnwt + 5) * j) + 5, addressLbl.frame.origin.y + 20, 200, 25)];
             [shopCatLbl setFont:[UIFont fontWithName:@"Roboto" size:12.0f]];
             shopCatLbl.textColor = [UIColor whiteColor];
             shopCatLbl.numberOfLines = 0;
@@ -1225,22 +1279,22 @@
                 }
             }
             
-            UILabel * exclusivediscLbl = [[UILabel alloc]initWithFrame:CGRectMake((btnwt + 10) * j, shopCatLbl.frame.origin.y + 50, 200, 38)];
+            UILabel * exclusivediscLbl = [[UILabel alloc]initWithFrame:CGRectMake(((btnwt + 5) * j) + 5, shopCatLbl.frame.origin.y + 50, 200, 38)];
             [exclusivediscLbl setFont:[UIFont fontWithName:@"Roboto" size:35.0f]];
             exclusivediscLbl.textColor = [UIColor whiteColor];
             exclusivediscLbl.numberOfLines = 0;
             exclusivediscLbl.lineBreakMode = NSLineBreakByWordWrapping;
             exclusivediscLbl.text = [NSString stringWithFormat:@"%@%%",[premiumListArr[j] valueForKey:@"exclusive_discount"]];
             
-            UILabel * storeOfferLbl = [[UILabel alloc]initWithFrame:CGRectMake((btnwt + 10) * j, exclusivediscLbl.frame.origin.y + 35, 200, 30)];
+            UILabel * storeOfferLbl = [[UILabel alloc]initWithFrame:CGRectMake(((btnwt + 5) * j) + 5, exclusivediscLbl.frame.origin.y + 35, 200, 30)];
             [storeOfferLbl setFont:[UIFont fontWithName:@"Roboto" size:12.0f]];
             storeOfferLbl.textColor = [UIColor whiteColor];
             storeOfferLbl.numberOfLines = 0;
             storeOfferLbl.lineBreakMode = NSLineBreakByWordWrapping;
             storeOfferLbl.text = @"STORE OFFER";
             
-            UIButton * PremiumCheckinBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-            PremiumCheckinBtn.frame = CGRectMake((btnwt + 25) * j, storeOfferLbl.frame.origin.y + 35, 110, 30);
+            UIButton * PremiumCheckinBtn; PremiumCheckinBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+            PremiumCheckinBtn.frame = CGRectMake(((btnwt + 5) * j) + 5, storeOfferLbl.frame.origin.y + 35, 110, 30);
             PremiumCheckinBtn.layer.borderWidth = 1.0f;
             PremiumCheckinBtn.layer.borderColor = [[UIColor whiteColor] CGColor];
             PremiumCheckinBtn.layer.cornerRadius = 18.0f;
@@ -1248,10 +1302,11 @@
             [PremiumCheckinBtn.titleLabel setFont:[UIFont fontWithName:@"Roboto" size:16]];
             [PremiumCheckinBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
             PremiumCheckinBtn.tag = j;
-            [PremiumCheckinBtn addTarget:self action:@selector(PremiumCheckinTapped:) forControlEvents:UIControlEventTouchUpInside];
+            [PremiumCheckinBtn addTarget:self action:@selector(PremiumCheckinTapped:)            forControlEvents:UIControlEventTouchUpInside];
+            PremiumCheckinBtn.userInteractionEnabled = true;
             
-            UIButton * PremiumCallBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-            PremiumCallBtn.frame = CGRectMake((PremiumCheckinBtn.frame.origin.x + PremiumCheckinBtn.frame.size.width) + 10  , storeOfferLbl.frame.origin.y + 35, 30, 30);
+            UIButton * PremiumCallBtn = [UIButton buttonWithType:UIButtonTypeSystem];
+            PremiumCallBtn.frame = CGRectMake((PremiumCheckinBtn.frame.origin.x + PremiumCheckinBtn.frame.size.width) + 10   , storeOfferLbl.frame.origin.y + 35, 30, 30);
             PremiumCallBtn.layer.cornerRadius = 18.0f;
             PremiumCallBtn.tag = j;
             [PremiumCallBtn setTitle:commonclass.storephoneIcon forState:UIControlStateNormal];
@@ -1259,6 +1314,12 @@
             [PremiumCallBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
             [PremiumCallBtn addTarget:self action:@selector(PremiumCallTapped:) forControlEvents:UIControlEventTouchUpInside];
     
+            
+//            for (UIView* view in self.view.subviews)
+//                if ([view isKindOfClass:[UIButton class]])
+//                {
+//                     [PremiumCheckinBtn addTarget:self action:@selector(PremiumCheckinTapped:)            forControlEvents:UIControlEventTouchUpInside];
+//                }
             [premiumphonenoArr addObject:[arr[j] valueForKey:@"phone_number"]];
             [premiumphoneno_StoreIDArr addObject:[arr[j] valueForKey:@"store_id"]];
             [premiumcell.PremiumListingScroll addSubview:premiumStoreNamelabel];
@@ -1274,13 +1335,13 @@
     }
     
 
-    
 }
 
 -(void)PremiumCheckinTapped:(UIButton *)sender{
-//    if ([time isEqualToString:@"Closed"]){
-//        [self.view makeToast:@"Store is closed"];
-//    }else{
+    NSString *storeNo;
+    if ([timeArray[sender.tag] isEqualToString:@"Closed"]){
+        [self.view makeToast:@"Store is closed"];
+    }else{
         // NSLog(@"dista arr is...%@",distAwayArr);
         NSString * mobilenumber = [delegate.defaults valueForKey:@"mobile"];
         NSLog(@"mobilenumber %@",mobilenumber);
@@ -1307,6 +1368,40 @@
                 [self.view makeToast:@"You have to be in 250 meters radius to CHECK IN into the store"];
             }
         }
+    }
+    
+    if([seg_string isEqualToString:@"High Street"]){
+        if (premiumListArr.count == 0){
+            
+        }else{
+            storeNo = [premiumListArr[sender.tag] valueForKey:@"store_id"];
+        }
+    }else if([seg_string isEqualToString:@"Brands"]){
+        
+        if (premiumListArr.count == 0){
+            
+        }else{
+            storeNo = [premiumListArr[sender.tag] valueForKey:@"store_id"];
+        }
+    }else if([seg_string isEqualToString:@"Designers"]){
+        if (premiumListArr.count == 0){
+            
+        //    storeNo = [designerArr[sender.tag] valueForKey:@"store_id"];
+        }else{
+            
+            storeNo = [premiumListArr[sender.tag] valueForKey:@"store_id"];
+        }
+    }else if([seg_string isEqualToString:@"Verticals"]){
+        if (premiumListArr.count == 0){
+          //  storeNo = [verticalsArr[sender.tag] valueForKey:@"store_id"];
+        }else{
+            storeNo = [premiumListArr[sender.tag] valueForKey:@"store_id"];
+        }
+    }
+    
+    [delegate.defaults setValue:storeNo forKey:@"store_ID"];
+    [delegate.defaults synchronize];
+    
     //}
 }
 
@@ -1371,6 +1466,64 @@
     [cell1.storePhoneBtn addTarget:self action:@selector(phoneTapped:) forControlEvents:UIControlEventTouchUpInside];
 }
 
+//- (void) displayContentController: (UIViewController*) content;
+//{
+//    [self addChildViewController:content];
+//    content.view.frame = [self ];
+//    [self.view addSubview:self.currentClientView];
+//    [content didMoveToParentViewController:self];
+//    
+//}
+
+-(void)selectImage:(id)sender{
+    
+    UITapGestureRecognizer *tapRecognizer = (UITapGestureRecognizer *)sender;
+  //  NSLog (@"%d",[tapRecognizer.view tag]);
+    
+//    NSString * imglink = [NSString stringWithFormat:@"%@/%@",commonclass.siteURL,[arrForImage[arrayIndexPath.row] valueForKey:@"images"][[tapRecognizer.view tag]]];
+    
+    viewforImage = [[UIView alloc]initWithFrame:CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height)];
+    //view.backgroundColor = [UIColor PopupBackground];
+    //   view.alpha = 0.2;
+   UIImageView *premiumImage1 = [[UIImageView alloc]initWithFrame:CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height)];
+    [premiumImage1 setImageWithURL:[NSURL URLWithString:imglink1] placeholderImage:[UIImage imageNamed:@"splash_iPhone.png"] usingActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    
+    UIButton * closeBtn = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    [closeBtn setFrame:CGRectMake(self.view.frame.origin.x - 40 , self.view.frame.origin.y + 20, 30, 30)];
+  //  closeBtn.frame = CGRectMake(self.view.frame.origin.x - 40 , self.view.frame.origin.y + 20, 30, 30);
+    //resendBtn.titleLabel.textColor = [UIColor redColor];
+    [closeBtn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+    [closeBtn setTitle:@"Resend" forState:UIControlStateNormal];
+    closeBtn.titleLabel.font = [UIFont fontWithName:@"Roboto-Regular" size:14.0];
+    [closeBtn addTarget:self action:@selector(closeTapped) forControlEvents:UIControlEventTouchUpInside];
+    
+    [self.view addSubview:viewforImage];
+    [viewforImage addSubview:premiumImage1];
+    [premiumImage1 addSubview:closeBtn];
+    
+//    ImageViewController *vcb = [[ImageViewController alloc] init];
+//    vcb.imglink = imglink;
+//    [self addChildViewController:vcb];
+//    [self.view setFrame:CGRectMake(0,0,320,320)];
+//    [self.view addSubview:vcb.view];
+//    [vcb didMoveToParentViewController:self];
+    
+
+//    ResultsViewController *vcb1 = [[ResultsViewController alloc] init];
+//    [self addChildViewController:vcb];
+
+//    vcb.view.frame = [self vcb1];
+//    [self.view addSubview:vcb.view];
+//    [vcb didMoveToParentViewController:self];
+
+  //  [self.view addSubview:vcb.view];
+    
+}
+
+-(void)closeTapped{
+    [viewforImage removeFromSuperview];
+}
+
 -(void)setData:(NSMutableArray *)arr indexpath:(NSIndexPath *)indexpath{
     //NSLog(@"arr..%@",arr[indexpath.row]);
          [phoneno_StoreIDArr addObject:[arr[indexpath.row] valueForKey:@"store_id"]];
@@ -1378,7 +1531,8 @@
     NSLog(@"%@",[delegate.defaults valueForKey:@"store_id"]);
     cell.storeNameLbl.text = [NSString stringWithFormat:@"%@",[arr[indexpath.row] valueForKey:@"store_name"]];
     cell.storeAddLbl.text = [NSString stringWithFormat:@"%@, %@",[arr[indexpath.row] valueForKey:@"address_1"],[arr[indexpath.row] valueForKey:@"address_2"]];
-    
+    arrForImage = arr;
+    arrayIndexPath = indexpath;
     if([[arr[indexpath.row] valueForKey:@"rating"] intValue] == 0){
         cell.storeStarsLbl.text = commonclass.emptystarIcon;
         cell.storeRatingLbl.text = @"0";
@@ -1386,6 +1540,7 @@
         cell.storeStarsLbl.text = commonclass.starIcon;
         cell.storeRatingLbl.text = [NSString stringWithFormat:@"%.1f",[[arr[indexpath.row] valueForKey:@"rating"] floatValue]];
     }
+    
     cell.storeValidCpnCodeLbl.text = [NSString stringWithFormat:@"%@ Accepted Coupon Code | %@ Checkins | %@ Reviews  ",[arr[indexpath.row] valueForKey:@"accepted_coupons"],[arr[indexpath.row] valueForKey:@"no_of_checkins"],[arr[indexpath.row] valueForKey:@"no_of_votes"]];
     
     if([arr[indexpath.row] valueForKey:@"start_time"] == [NSNull null] && [arr[indexpath.row] valueForKey:@"end_time"] == [NSNull null]){
@@ -1420,7 +1575,12 @@
     if([arr[indexpath.row] valueForKey:@"images"] != [NSNull null]){
         imgcnt = [[arr[indexpath.row] valueForKey:@"images"] count];
         for (int j = 0; j < imgcnt; j++) {
+//            UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(selectImage:)];
+//            tapRecognizer.delegate = self;
+//            [storeimgview addGestureRecognizer:tapRecognizer];
+//            storeimgview.userInteractionEnabled = YES;
             NSString * imglink = [NSString stringWithFormat:@"%@/%@",commonclass.siteURL,[arr[indexpath.row] valueForKey:@"images"][j]];
+            imglink1 = [NSString stringWithFormat:@"%@/%@",commonclass.siteURL,[arr[indexpath.row] valueForKey:@"images"][j]];
             storeimgview = [[UIImageView alloc]initWithFrame:CGRectMake(70 * j, 0, 65,cell.storeGalleryView.frame.size.height)];
             storeimgview.tag = j;
             storeimgview.layer.borderWidth = 1.0f;
@@ -1461,7 +1621,6 @@
     [distAwayArr addObject:awayDist];
     cell.storeAwayLbl.text = [NSString stringWithFormat:@"%.2f Kms away  ",[awayDist doubleValue]];
     cell.storeDiscLbl.text = [NSString stringWithFormat:@"%@%%",[arr[indexpath.row] valueForKey:@"exclusive_discount"]];
-   
     cell.storecheckInBtn.layer.cornerRadius = 15.0f;
     cell.storecheckInBtn.layer.borderWidth = 1.0f;
     cell.storecheckInBtn.tag = indexpath.row;
@@ -1560,7 +1719,58 @@
     [commonclass Redirect:self.navigationController Identifier:@"DirectionViewController"];
 }
 
+-(void)userCheckedin{
+    if([commonclass isActiveInternet] == YES){
+        NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&store_id=%@&latitude=%f&longitude=%f&current_latitude=%@&current_longitude=%@",[delegate.defaults valueForKey:@"logid"],[delegate.defaults valueForKey:@"store_ID"],currentLatitude,currentLongitude,[delegate.defaults valueForKey:@"latitude"],[delegate.defaults valueForKey:@"longitude"]];
+        //    NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%@&longitude=%@&store_id=%ld",[delegate.defaults valueForKey:@"logid"],[delegate.defaults valueForKey:@"latitude"],[delegate.defaults valueForKey:@"longitude"],store_ID];
+        NSLog(@"body.. %@",messageBody);
+        NSLog(@"commonclass.searchListURL.. %@",commonclass.CheckinsURL);
+        seg_string = @"CheckedIn";
+        [commonclass sendRequest:self.view mutableDta:checkinsData url:commonclass.CheckinsURL msgBody:messageBody];
+    }else{
+        [commonclass Redirect:self.navigationController Identifier:@"InternetDisconnectViewController"];
+        //[self.view makeToast:@"Check your internet connection"];
+    }
+}
+
 -(void)CheckinTapped:(UIButton*)sender{
+    NSString *storeNo;
+    NSLog(@"%ld",(long)sender.tag);
+    if([seg_string isEqualToString:@"High Street"]){
+        if (premiumListArr.count == 0){
+            storeNo = [highstreetArr[sender.tag] valueForKey:@"store_id"];
+        }else{
+            storeNo = [highstreetArr[sender.tag] valueForKey:@"store_id"];
+        }
+    }else if([seg_string isEqualToString:@"Brands"]){
+        
+        if (premiumListArr.count == 0){
+            
+            storeNo = [brandedArr[sender.tag] valueForKey:@"store_id"];
+        }else{
+            
+            storeNo = [brandedArr[sender.tag] valueForKey:@"store_id"];
+        }
+    }else if([seg_string isEqualToString:@"Designers"]){
+        if (premiumListArr.count == 0){
+            
+            storeNo = [designerArr[sender.tag] valueForKey:@"store_id"];
+        }else{
+            
+            storeNo = [designerArr[sender.tag] valueForKey:@"store_id"];
+        }
+    }else if([seg_string isEqualToString:@"Verticals"]){
+        if (premiumListArr.count == 0){
+            storeNo = [verticalsArr[sender.tag] valueForKey:@"store_id"];
+        }else{
+            storeNo = [verticalsArr[sender.tag] valueForKey:@"store_id"];
+        }
+    }
+    
+    [delegate.defaults setValue:storeNo forKey:@"store_ID"];
+    [delegate.defaults synchronize];
+    
+    
 //  NSLog(@"brands Arr.. %@",brandedArr[sender.tag]);
     if ([time isEqualToString:@"Closed"]){
         [self.view makeToast:@"Store is closed"];
@@ -1581,17 +1791,20 @@
             OTPView.hidden = false;
            // OTPView.hidden = false;
         }
-        
     }else{
 //    if(mobilenumber.length == 0){
 //    }else{
         if([distAwayArr[sender.tag] doubleValue]<0.25){
-            [commonclass Redirect:self.navigationController Identifier:@"GenerateCouponsViewController"];
+           
+            [self userCheckedin];
         }else{
             [self.view makeToast:@"You have to be in 250 meters radius to CHECK IN into the store"];
         }
    }
    }
+    
+   
+    
 }
 
 -(void)phoneTapped:(UIButton*)sender{
@@ -1610,7 +1823,7 @@
 -(void)phoneResponse{
     seg_string = @"phone";
     if([commonclass isActiveInternet] == YES){
-    NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&store_id=%ld",[delegate.defaults valueForKey:@"logid"],store_ID];
+    NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&store_id=%@",[delegate.defaults valueForKey:@"logid"],[delegate.defaults valueForKey:@"store_ID"]];
     NSLog(@"body.. %@",messageBody);
     NSLog(@"commonclass.searchListURL.. %@",commonclass.callStoreURL);
     [commonclass sendRequest:self.view mutableDta:extraData url:commonclass.callStoreURL msgBody:messageBody];
@@ -1642,7 +1855,7 @@
         }else{
             [commonclass Redirect:self.navigationController Identifier:@"DetailViewController"];
         }
-        storeNo = [highstreetArr[indexPath.row] valueForKey:@"store_id"];
+            storeNo = [highstreetArr[indexPath.row] valueForKey:@"store_id"];
         }else{
             if ([[highstreetArr[indexPath.row - 1] valueForKey:@"checked_in"]boolValue] == true){
                 [commonclass Redirect:self.navigationController Identifier:@"GenerateCouponsViewController"];
@@ -1746,10 +1959,11 @@
 }
 
 - (IBAction)highstreetTapped:(id)sender {
-     [delegate.defaults setObject:@"High Street" forKey:@"verticalsCategory"];
+    [delegate.defaults setObject:@"High Street" forKey:@"verticalsCategory"];
     [distAwayArr removeAllObjects];
     [premiumdistAwayArr removeAllObjects];
     segTapString = @"High Street";
+    [delegate.defaults setValue:segTapString forKey:@"checkedinfrom"];
     temppremiumCnt = 0;
     counter = 0;
     [resultTable setContentOffset:CGPointZero animated:YES];
@@ -1758,7 +1972,6 @@
    [commonclass addlistingSlideAnimation:indicatorLine button1:highstreetBtn];
     if([[delegate.defaults valueForKey:@"route"] isEqualToString:@"Store"]){
         if([[delegate.defaults valueForKey:@"resultType"] isEqualToString:@"StoreType"]){
-           
             [delegate.defaults synchronize];
             [self getDatawithStoreCategory:seg_string latitude:currentLatitude longitude:currentLongitude radius:userRadius];
         }else{
@@ -1787,6 +2000,7 @@
     temppremiumCnt = 0;
     counter = 0;
     segTapString = @"Brands";
+    [delegate.defaults setValue:segTapString forKey:@"checkedinfrom"];
     [resultTable setContentOffset:CGPointZero animated:YES];
     seg_string = @"Brands";
     verticalset = @"Brands";
@@ -1823,6 +2037,7 @@
     temppremiumCnt = 0;
     counter = 0;
     segTapString =  @"Designers";
+    [delegate.defaults setValue:segTapString forKey:@"checkedinfrom"];
     [resultTable setContentOffset:CGPointZero animated:YES];
     seg_string = @"Designers";
     verticalset = @"Designers";
@@ -1863,6 +2078,8 @@
 
 - (void)viewController:(GMSAutocompleteViewController *)viewController
 didAutocompleteWithPlace:(GMSPlace *)place {
+    [distAwayArr removeAllObjects];
+    [premiumdistAwayArr removeAllObjects];
     [self dismissViewControllerAnimated:YES completion:nil];
     search.text = place.name;
     currentLatitude = place.coordinate.latitude;
@@ -1882,6 +2099,7 @@ didAutocompleteWithPlace:(GMSPlace *)place {
     
     searchField.text = place.name;
     searchField.textColor = [UIColor whiteColor];
+    [delegate.defaults synchronize];
    // if([[delegate.defaults valueForKey:@"resultType"] isEqualToString:@"Category"]){
     [self getDatawithStoreCategory:seg_string latitude:currentLatitude longitude:currentLongitude radius:userRadius];
 }
@@ -2114,12 +2332,13 @@ didFailAutocompleteWithError:(NSError *)error {
     NSString * filterCategoriesIDs = [selectedcategoriesIDArr componentsJoinedByString:@","];
     NSLog(@"filterCategoriesIDs %@",filterCategoriesIDs);
    //seg_string = @"High Street";
+    seg_string = segTapString;
     couponDetMainView.hidden = TRUE;
     NSString *messageBody;
     if(filterCategoriesIDs.length == 0){
-        messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%f&current_longitude=%f&radius=%f&category_id=%@&type=%@&rating_min=0&rating_max=%f&discount_min=0&discount_max=%f",[delegate.defaults valueForKey:@"logid"],userLatitude,userLongitude,currentLatitude,currentLongitude,distanceval,[delegate.defaults valueForKey:@"category"],segTapString,ratingsVal,distanceval];
+        messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%f&current_longitude=%f&radius=%f&category_id=%@&type=%@&rating_min=%f&discount_min=%f",[delegate.defaults valueForKey:@"logid"],userLatitude,userLongitude,currentLatitude,currentLongitude,distanceval,[delegate.defaults valueForKey:@"category"],segTapString,ratingsVal,discountval];
     }else{
-        messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%f&current_longitude=%f&radius=%f&category_id=%@&type=%@&rating_min=0&rating_max=%f&discount_min=0&discount_max=%f",[delegate.defaults valueForKey:@"logid"],userLatitude,userLongitude,currentLatitude,currentLongitude,distanceval,filterCategoriesIDs,segTapString,ratingsVal,discountval];
+        messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%f&current_longitude=%f&radius=%f&category_id=%@&type=%@&rating_min=%f&discount_min=%f",[delegate.defaults valueForKey:@"logid"],userLatitude,userLongitude,currentLatitude,currentLongitude,distanceval,filterCategoriesIDs,segTapString,ratingsVal,discountval];
     }
     if([commonclass isActiveInternet] == YES){
     NSLog(@"body.. %@",messageBody);

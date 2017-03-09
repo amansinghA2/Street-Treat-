@@ -8,12 +8,14 @@
 
 #import "ProfileViewController.h"
 
+
+
 @interface ProfileViewController ()
 
 @end
 
 @implementation ProfileViewController
-@synthesize profile_Pic,shareBtn,per_infoeditBtn,nmeeditBtn,col_EditBtn,style_EditBtn,apprel_EditBtn;
+@synthesize lastTxtField ,agetTxtField , birthDateField,profile_Pic,shareBtn,per_infoeditBtn,nmeeditBtn,col_EditBtn,style_EditBtn,apprel_EditBtn;
 @synthesize nmeLbl,genderLbl,ageLbl,mobileLbl,emailLbl,per_InfoMainView,per_infoInnerView,clr_PopupView,style_PopupMainview,style_PopupInnerView,mobiletxtFld,emailTxtFld,colorPrefScroll,stylePrefScroll;
 @synthesize colorArr,clrBtnsCollection,style_prefArr,apparel_Arr,userapparel_Arr,nametxtFld;
 @synthesize shirtTxtFld,tShirtTxtFld,pantsTxtFld,shoesTxtFld,editScroll;
@@ -21,8 +23,13 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self allocateRequired];
-   
     [self.view bringSubviewToFront:style_PopupMainview];
+    agetTxtField.delegate = self;
+  //  [self setUpTextFieldDatePicker];
+
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
+    
+    [self.view addGestureRecognizer:tap];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidShow:) name:UIKeyboardDidShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidHide:) name:UIKeyboardDidHideNotification object:nil];
@@ -34,6 +41,7 @@
                             [[UIBarButtonItem alloc]initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(doneWithNumberPad)]];
     [numberToolbar sizeToFit];
     pantsTxtFld.inputAccessoryView = numberToolbar;
+    agetTxtField.inputAccessoryView = numberToolbar;
     
     UIToolbar* numberToolbarTxtFlds = [[UIToolbar alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 50)];
     numberToolbarTxtFlds.barStyle = UIBarStyleBlackTranslucent;
@@ -42,6 +50,11 @@
                                    [[UIBarButtonItem alloc]initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(doneWithNumberPad)]];
     [numberToolbarTxtFlds sizeToFit];
     shoesTxtFld.inputAccessoryView = numberToolbarTxtFlds;
+}
+
+-(void)dismissKeyboard
+{
+    [agetTxtField resignFirstResponder];
 }
 
 -(void)cancelNumberPad{
@@ -56,8 +69,16 @@
     [self.view endEditing:YES];
 }
 
+//-(void)HelpViewControllerDidTapButton:(HelpViewController *)controller{
+//    [self dismissViewControllerAnimated:YES completion:^{
+//        
+//       
+//        
+//    }];
+//}
+
 -(void)viewWillAppear:(BOOL)animated{
-   // [self setPersonalPopup];
+  //[self setPersonalPopup];
     [self GetProfile];
     [delegate.defaults setObject:@"ProfileViewController" forKey:@"internetdisconnect"];
     self.rootNav = (CCKFNavDrawer *)self.navigationController;
@@ -70,7 +91,6 @@
     }];
     
     [apparelSizesViews removeAllObjects];
-    
     
 }
 
@@ -131,7 +151,7 @@
     
     [delegate.defaults setValue:latstring forKey:@"latitude"];
     [delegate.defaults setValue:longstring forKey:@"longitude"];
-    
+
     //    if([[[defaults dictionaryRepresentation] allKeys] containsObject:@"loc_name"]){
     //        NSLog(@"mykey found");
     //    }else{
@@ -301,11 +321,18 @@
     UIButton *current_Loc = (UIButton *)[self.view viewWithTag:444];
     current_Loc.hidden = TRUE;
 
-    
     UIButton *Menu = (UIButton *)[self.view viewWithTag:111];
     [Menu addTarget:self action:@selector(MenuToggle) forControlEvents:UIControlEventTouchUpInside];
     UIButton *notifications = (UIButton *)[self.view viewWithTag:222];
     [notifications addTarget:self action:@selector(notificationsTapped) forControlEvents:UIControlEventTouchUpInside];
+    
+    if([[NSUserDefaults standardUserDefaults] boolForKey:@"navigatefromhelp"]==YES)
+    {
+        notifications.frame = CGRectMake(Menu.frame.origin.x,Menu.frame.origin.y + 5, 25, 25);
+        Menu.hidden = true;
+    }else{
+        Menu.hidden = false;
+    }
     
 }
 
@@ -324,6 +351,8 @@
 
 #pragma mark - photoShotSavedDelegate
 - (void)DrawerTapped:(NSInteger)selectionIndex{
+    
+    
     if([[delegate.defaults valueForKey:@"drawerRoute"] isEqualToString:@"Section"]){
         NSLog(@"index.. %ld",(long)selectionIndex);
         switch (selectionIndex) {
@@ -413,12 +442,12 @@
                 break;
             case 14:{
                 NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
-                [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
-                [delegate.defaults setValue:@"19.1183" forKey:@"latitude"];
-                [delegate.defaults setValue:@"73.0276" forKey:@"longitude"];
-                //[delegate.defaults setValue:@"Mahape" forKey:@"loc_name"];
+              //  [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
+              //  [delegate.defaults setValue:@"19.1183" forKey:@"latitude"];
+               // [delegate.defaults setValue:@"73.0276" forKey:@"longitude"];
+              //  //[delegate.defaults setValue:@"Mahape" forKey:@"loc_name"];
                 [delegate.defaults setValue:@"3" forKey:@"radius"];
-                ViewController * splash = [self.storyboard instantiateViewControllerWithIdentifier:@"ViewController"];
+                LoginViewController * splash = [self.storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
                 UINavigationController *passcodeNavigationController = [[UINavigationController alloc] initWithRootViewController:splash];
                 [self presentViewController:passcodeNavigationController animated:YES completion:nil];
             }
@@ -475,7 +504,19 @@
 }
 
 -(void)backTapped{
-    [self.navigationController popViewControllerAnimated:YES];
+    
+    if([[NSUserDefaults standardUserDefaults] boolForKey:@"navigatefromhelp"]==YES)
+    {
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"navigatefromprofiletohelp"];
+        [self dismissViewControllerAnimated:YES completion:nil];
+        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"navigatefromhelp"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }else{
+        // skipBtn.hidden = TRUE;
+        [self.navigationController popViewControllerAnimated:YES];
+    }
+
+   
 }
 
 - (void)sendResponse:(Common *)response data:(NSMutableArray*)data indicator:(UIActivityIndicatorView *)indicator{
@@ -530,13 +571,24 @@
                     }else{
                         NSLog(@"not contains.. ");
                     }
-                 
+                    
                 }else if([[data valueForKey:@"status"]intValue] == -1){
                     [constant logoutFunction];
                 }
             }else if([requestType isEqualToString:@"Set_Profile"]){
                  NSLog(@"data.. %@",data);
                 if([[data valueForKey:@"status"]intValue] == 1){
+                    
+                    if([[NSUserDefaults standardUserDefaults] boolForKey:@"navigatefromhelp"]==YES)
+                    {
+                        ViewController *splash = [self.storyboard instantiateViewControllerWithIdentifier:@"ViewController"];
+                        UINavigationController *passcodeNavigationController = [[UINavigationController alloc] initWithRootViewController:splash];
+                        [self presentViewController:passcodeNavigationController animated:YES completion:nil];
+                        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"navigatefromhelp"];
+                        [[NSUserDefaults standardUserDefaults] synchronize];
+                    }else{
+                        
+                    }
                     [self GetProfile];
                 }else if([[data valueForKey:@"status"]intValue] == -1){
                     [constant logoutFunction];
@@ -552,17 +604,25 @@
                     [constant logoutFunction];
                 }
             }
+            [indicator stopAnimating];
+            [[UIApplication sharedApplication] endIgnoringInteractionEvents];
+        }else{
+            [indicator stopAnimating];
+            [[UIApplication sharedApplication] endIgnoringInteractionEvents];
+            [self GetProfile];
         }
-        [indicator stopAnimating];
-        [[UIApplication sharedApplication] endIgnoringInteractionEvents];
+       
     });
 }
 
 -(void)setUserdata{
     nmeLbl.text = [[[usrProfileArr valueForKey:@"items"] valueForKey:@"userprofile"] valueForKey:@"name"];
+    [[NSUserDefaults standardUserDefaults] setValue:nmeLbl.text forKey:@"usr_name"];
+   // [delegate.defaults setValue:nmeLbl.text forKey:@"usr_name"];
+    [delegate.defaults synchronize];
     NSURL * picurl = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@",constant.siteURL ,[[[usrProfileArr valueForKey:@"items"] valueForKey:@"userprofile" ] valueForKey:@"profile_pic"]]];
     NSLog(@"%@",picurl);
-    [profile_Pic setImageWithURL:picurl placeholderImage:[UIImage imageNamed:@""] usingActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+    [profile_Pic setImageWithURL:picurl placeholderImage:[UIImage imageNamed:@"Promo3.png"] usingActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
     
     profile_Pic.userInteractionEnabled = YES;
     UITapGestureRecognizer *pgr = [[UITapGestureRecognizer alloc]
@@ -576,6 +636,9 @@
     ageLbl.text = [NSString stringWithFormat:@"%d",years];
     mobileLbl.text = [[[usrProfileArr valueForKey:@"items"] valueForKey:@"userprofile"] valueForKey:@"mobile"];
     emailLbl.text = [[[usrProfileArr valueForKey:@"items"] valueForKey:@"userprofile"] valueForKey:@"email"];
+    name =  [[[usrProfileArr valueForKey:@"items"] valueForKey:@"userprofile"] valueForKey:@"name"];
+    age = [[[usrProfileArr valueForKey:@"items"] valueForKey:@"userprofile"] valueForKey:@"birthdate"];
+    lastname = [[[usrProfileArr valueForKey:@"items"] valueForKey:@"userprofile"] valueForKey:@"last_name"];
 }
 
 - (void)handleTouch:(UIPinchGestureRecognizer *)pinchGestureRecognizer
@@ -612,7 +675,6 @@
     
 }
 
-
 -(void)setMyColors:(NSMutableArray*)data{
     NSLog(@"%@",data);
     [selectedColorsArr removeAllObjects];
@@ -625,18 +687,26 @@
      for (int j = 0; j < tempclrarr.count; j++) {
        UIView *clrView = [[UIView alloc]initWithFrame:CGRectMake(85 * j, 0, 80,colorPrefScroll.frame.size.height)];
          clrView.tag = j;
-        clrView.backgroundColor = [UIColor lightGrayColor];
-         clrView.tintColor = [UIColor whiteColor];
-        UILabel * clrlabel = [[UILabel alloc]initWithFrame:CGRectMake(5, 0, 15, 15)];
+        clrView.backgroundColor = [UIColor whiteColor];
+        UILabel * clrlabel = [[UILabel alloc]initWithFrame:CGRectMake(5, 0, 75, 15)];
         clrlabel.backgroundColor = [constant getUIColorObjectFromHexString:[tempclrarr[j] valueForKey:@"code"] alpha:1];
-//        [constant roundedImage:(UIImageView *)clrlabel];
-//        [clrView addSubview:clrlabel];
-       // clrlabel.textColor = [UIColor darkGrayColor];
-        clrlabel = [[UILabel alloc]initWithFrame:CGRectMake(5, 0, 75, 15)];
+     //   clrlabel.textColor = [UIColor darkGrayColor];
+     //   clrlabel = [[UILabel alloc]initWithFrame:CGRectMake(5, 0, 75, 15)];
         [clrlabel setFont:[UIFont fontWithName:@"Roboto-Regular" size:10]];
+        clrlabel.textColor = [UIColor blackColor];
         clrlabel.text = [NSString stringWithFormat:@"%@",[tempclrarr[j] valueForKey:@"value"]];
+//                  if ([clrlabel.text isEqualToString:@"RED"]) {
+//                      clrlabel.textColor = [UIColor redColor];
+//                  }else if([clrlabel.text isEqualToString:@"BLUE"]){
+//                      clrlabel.textColor = [UIColor blueColor];
+//                  }else if([clrlabel.text isEqualToString:@"GREEN"]){
+//                      clrlabel.textColor = [UIColor greenColor];
+//                  }else{
+//                      clrlabel.textColor = [UIColor yellowColor];
+//                  }
+        clrlabel.textAlignment = UITextAlignmentCenter;
         [selectedColorsArr addObject:[tempclrarr[j] valueForKey:@"value"]];
-        clrlabel.textColor = [UIColor darkGrayColor];
+       
         [clrView addSubview:clrlabel];
         [colorPrefScroll addSubview:clrView];
     }
@@ -687,6 +757,7 @@
          [view removeFromSuperview];
         }
     }
+    
     for(int i =0;i<userapparel_Arr.count;i++){
         if(![userapparel_Arr[i] isEqualToString:@"userprofile"]){
            UIView * apaarelTypeView = [[UIView alloc]initWithFrame:CGRectMake(xpos, ypos, self.view.frame.size.width/2.15, 20)];
@@ -700,7 +771,7 @@
             typename.textColor = [UIColor darkGrayColor];
             [apaarelTypeView addSubview:typename];
 
-            UILabel * valname = [[UILabel alloc]initWithFrame:CGRectMake(apaarelTypeView.frame.size.width/1.5, 0, 50, 20)];
+            UILabel * valname = [[UILabel alloc]initWithFrame:CGRectMake(apaarelTypeView.frame.size.width/1.5, 0, 30, 20)];
             NSArray *temparr = apparel_Arr[i];
             NSLog(@"temp arr[0]..%@",temparr[0]);
             valname.text = [NSString stringWithFormat:@"%@",temparr[0]];
@@ -718,7 +789,7 @@
             [apaarelTypeView addSubview:valname];
             
             [_apparelView addSubview:apaarelTypeView];
-            xpos = (apaarelTypeView.frame.origin.x + apaarelTypeView.frame.size.width) + 10;
+            xpos = (apaarelTypeView.frame.origin.x + apaarelTypeView.frame.size.width) + 5;
             if(i%2 == 0){temp++;}
             if(xpos>_apparelView.frame.size.width){xpos = 10;ypos = (25*temp)+2;}
         }
@@ -743,37 +814,68 @@
 
 -(void)setPersonalPopup{
     // Login feilds
+    
     nametxtFld = [[RPFloatingPlaceholderTextField alloc]initWithFrame:CGRectMake(15,45, per_infoInnerView.frame.size.width - 30, 25)];
     nametxtFld.delegate=self;
-    nametxtFld.placeholder = @"NAME";
+    nametxtFld.placeholder = @"First Name";
     //nametxtFld.text = @"ASD";
     [constant addfeild:per_infoInnerView textfeild:nametxtFld];
     
-    mobiletxtFld = [[RPFloatingPlaceholderTextField alloc]initWithFrame:CGRectMake(15,(nametxtFld.frame.origin.y + nametxtFld.frame.size.height) + 20, per_infoInnerView.frame.size.width - 30, 25)];
+    lastTxtField = [[RPFloatingPlaceholderTextField alloc]initWithFrame:CGRectMake(15,(nametxtFld.frame.origin.y + nametxtFld.frame.size.height) + 20, per_infoInnerView.frame.size.width - 30, 25)];
+    lastTxtField.delegate=self;
+    lastTxtField.placeholder = @"Last Name";
+    //nametxtFld.text = @"ASD";
+    [constant addfeild:per_infoInnerView textfeild:lastTxtField];
+    
+    mobiletxtFld = [[RPFloatingPlaceholderTextField alloc]initWithFrame:CGRectMake(15,(lastTxtField.frame.origin.y + lastTxtField.frame.size.height) + 20, per_infoInnerView.frame.size.width - 30, 25)];
     mobiletxtFld.delegate=self;
-    mobiletxtFld.placeholder = @"MOBILE";
+    mobiletxtFld.placeholder = @"Mobile";
     [constant addfeild:per_infoInnerView textfeild:mobiletxtFld];
     
     emailTxtFld = [[RPFloatingPlaceholderTextField alloc]initWithFrame:CGRectMake(15,(mobiletxtFld.frame.origin.y + mobiletxtFld.frame.size.height) + 20 , per_infoInnerView.frame.size.width - 30, 25)];
     emailTxtFld.delegate=self;
-    emailTxtFld.placeholder = @"EMAIL";
+    emailTxtFld.placeholder = @"Email";
     [constant addfeild:per_infoInnerView textfeild:emailTxtFld];
+    emailTxtFld.enabled = false;
     
+    agetTxtField = [[RPFloatingPlaceholderTextField alloc]initWithFrame:CGRectMake(15,(emailTxtFld.frame.origin.y + emailTxtFld.frame.size.height) + 20 , per_infoInnerView.frame.size.width - 30, 25)];
+    agetTxtField.delegate=self;
+    agetTxtField.placeholder = @"Birth Date";
+    [constant addfeild:per_infoInnerView textfeild:agetTxtField];
     
+//    birthDateField = [[RPFloatingPlaceholderTextField alloc]initWithFrame:CGRectMake(15,(agetTxtField.frame.origin.y + agetTxtField.frame.size.height) + 20 , per_infoInnerView.frame.size.width - 30, 25)];
+//    birthDateField.delegate=self;
+//    birthDateField.placeholder = @"EMAIL";
+//    [constant addfeild:per_infoInnerView textfeild:birthDateField];
+
     nametxtFld.text = [[[usrProfileArr valueForKey:@"items"] valueForKey:@"userprofile"] valueForKey:@"name"];
     mobiletxtFld.text = [[[usrProfileArr valueForKey:@"items"] valueForKey:@"userprofile"] valueForKey:@"mobile"];
     if(mobiletxtFld.text.length == 0){
         mobiletxtFld.enabled = TRUE;
     }else{
-         mobiletxtFld.enabled = FALSE;
+        mobiletxtFld.enabled = FALSE;
     }
     emailTxtFld.text = [[[usrProfileArr valueForKey:@"items"] valueForKey:@"userprofile"] valueForKey:@"email"];
-    
-    
-    
-    
-    
     //end
+}
+
+-(void)setUpTextFieldDatePicker
+{
+    UIDatePicker *datePicker = [[UIDatePicker alloc]init];
+    datePicker.datePickerMode = UIDatePickerModeTime;
+    [datePicker setDate:[NSDate date]];
+    [datePicker addTarget:self action:@selector(updateTextField:) forControlEvents:UIControlEventValueChanged];
+    [self.agetTxtField setInputView:datePicker];
+}
+
+-(void)updateTextField:(id)sender
+{
+    UIDatePicker *picker = (UIDatePicker*)self.agetTxtField.inputView;
+    NSDateFormatter *outputFormatter = [[NSDateFormatter alloc] init];
+    [outputFormatter setDateFormat:@"yyyy-MM-dd"];
+    NSString *dateString = [outputFormatter stringFromDate:picker.date];
+    
+    self.agetTxtField.text = [NSString stringWithFormat:@"%@",dateString];
 }
 
 -(void)textFieldDidBeginEditing:(UITextField *)textField{
@@ -793,7 +895,17 @@
         picker.needFooterView = YES;
         [picker show];
         
+    }else if (textField == agetTxtField){
+        UIDatePicker *datePicker = [[UIDatePicker alloc] init];
+        datePicker.datePickerMode = UIDatePickerModeDate;
+        [datePicker addTarget:self action:@selector(updateTextField:) forControlEvents:UIControlEventValueChanged];
+        datePicker.maximumDate = [NSDate date];
+        self.agetTxtField.inputView = datePicker;
     }
+    
+}
+
+-(void)datePickerValueChanged:(UIDatePicker *)sender{
     
 }
 
@@ -802,24 +914,36 @@
         
     }else if (textField == shoesTxtFld){
         
+    }else if (textField == nametxtFld){
+        
     }
     
 }
 
 - (IBAction)per_infoEditTapped:(id)sender {
+    [self.view endEditing:YES];
     per_InfoMainView.hidden = false;
 }
 
 - (IBAction)clrSelectDone:(id)sender {
+    [self.view endEditing:YES];
     clr_PopupView.hidden = true;
     per_InfoMainView.hidden = true;
     style_PopupMainview.hidden = true;
 }
 
 - (IBAction)clr_OkTapped:(id)sender {
+    [self.view endEditing:YES];
+    clr_PopupView.hidden = true;
+    per_InfoMainView.hidden = true;
+    style_PopupMainview.hidden = true;
+    name =   nametxtFld.text;
+    age =  agetTxtField.text;
+    lastname = lastTxtField.text;
+    [self.view makeToast:@"Tap on Save button to update changes"];
 }
 
-- (IBAction)col_EditTapped:(id)sender {
+-(IBAction)col_EditTapped:(id)sender {
     [selectedColorsArr removeAllObjects];
     //clr_PopupView.hidden = false;
     CZPickerView *picker = [[CZPickerView alloc] initWithHeaderTitle:@"Select Colors" cancelButtonTitle:@"Cancel" confirmButtonTitle:@"Done"];
@@ -948,6 +1072,7 @@
             NSLog(@"%@ is chosen!", AllcolorArr[row]);
              [selectedColorsArr addObject:AllcolorArr[row]];
            NSLog(@"%@",selectedColorsArr);
+            [self.view makeToast:@"Click on Save button to make changes"];
         }
     }else if(pickerView.tag == 2){
         for (NSNumber *n in rows) {
@@ -955,6 +1080,7 @@
             NSLog(@"%@ is chosen!", AllstylesArr[row]);
             [selectedStylesArr addObject:AllstylesArr[row]];
            NSLog(@"%@",selectedStylesArr);
+            [self.view makeToast:@"Click on Save button to make changes"];
         }
     }
     
@@ -976,7 +1102,7 @@
     NSMutableArray * selTempClrsArr = [[NSMutableArray alloc]init];
     NSLog(@"%lu",(unsigned long)selectedColorsArr.count);
     for(int i=0;i<selectedColorsArr.count;i++){
-        tempbody = [NSString stringWithFormat:@"COLOR[]=%@",selectedColorsArr[i]];
+        tempbody = [NSString stringWithFormat:@"COLOR[%d]=%@",i,selectedColorsArr[i]];
         [selTempClrsArr addObject:tempbody];
     }
     tempclrs = [selTempClrsArr componentsJoinedByString:@"&"];
@@ -985,7 +1111,7 @@
     NSString * tempbodystyles;
     NSMutableArray *selTempstyArr = [[NSMutableArray alloc]init];
     for(int i=0;i<selectedStylesArr.count;i++){
-        tempbodystyles = [NSString stringWithFormat:@"STYLE_PREF[]=%@",selectedStylesArr[i]];
+        tempbodystyles = [NSString stringWithFormat:@"STYLE_PREF[%d]=%@",i,selectedStylesArr[i]];
         [selTempstyArr addObject:tempbodystyles];
     }
     tempStyles = [selTempstyArr componentsJoinedByString:@"&"];
@@ -1037,9 +1163,11 @@
     requestType = @"Set_Profile";
     NSLog(@"%@",tempclrs);
     NSLog(@"%@",tempStyles);
+    NSLog(@"%@",selectedColorsArr);
+    NSLog(@"%@",selectedStylesArr);
     if([constant isActiveInternet] == YES){
     NSLog(@"aplrelstr %@",apparelstr);
-    NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&%@&%@&%@",[delegate.defaults valueForKey:@"logid"],tempclrs,tempStyles,apparelstr];
+    NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&name=%@&birthdate=%@&last_name=%@&%@&%@&%@",[delegate.defaults valueForKey:@"logid"],name,age,lastname,tempclrs,tempStyles,apparelstr];
     NSLog(@"body.. %@",messageBody);
     NSLog(@"constant.setProfileURL.. %@",constant.setProfileURL);
     [constant sendRequest:self.view mutableDta:getProfileData url:constant.setProfileURL msgBody:messageBody];
@@ -1182,9 +1310,12 @@
         [self.view makeToast:@"Shoes size is invalid"];
         shoesTxtFld.text = @"";
     }else{
-        style_PopupMainview.hidden = true;
-        //[self sendprofileParameters];
+     //  style_PopupMainview.hidden = true;
+     // [self sendprofileParameters];
+     // [self GetProfile];
+        
     }
-    
+    [self.view makeToast:@"Click on Save button to make changes"];
 }
+
 @end

@@ -56,6 +56,10 @@
     
     NSString *appFolderPath = [[NSBundle mainBundle] resourcePath];
     NSLog(@"%@", appFolderPath);
+
+    defaults = [NSUserDefaults standardUserDefaults];
+    [defaults synchronize];
+    
     locationManager = [[CLLocationManager alloc] init];
     locationManager.delegate=self;
     locationManager.desiredAccuracy=kCLLocationAccuracyBest;
@@ -63,8 +67,6 @@
     [locationManager requestWhenInUseAuthorization];
     [locationManager startMonitoringSignificantLocationChanges];
     [locationManager startUpdatingLocation];
-    defaults = [NSUserDefaults standardUserDefaults];
-    [defaults synchronize];
 //    [FBLoginView class];
 //    [FBProfilePictureView class];
     
@@ -107,8 +109,8 @@
 //    tokenStr = [tokenStr stringByReplacingOccurrencesOfString:@" " withString:@""];
 //    NSLog(@"tokenStr.. %@",tokenStr);
 //   [defaults setValue:tokenStr forKey:@"deviceToken"];
-    [defaults setValue:@"19.1183" forKey:@"latitude"];
-    [defaults setValue:@"73.0276" forKey:@"longitude"];
+//    [defaults setValue:@"19.1183" forKey:@"latitude"];
+//    [defaults setValue:@"73.0276" forKey:@"longitude"];
     //[defaults setValue:@"Mahape" forKey:@"loc_name"];
     [defaults setValue:@"3" forKey:@"radius"];
     [defaults synchronize];

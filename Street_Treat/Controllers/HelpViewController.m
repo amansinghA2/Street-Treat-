@@ -8,6 +8,9 @@
 
 #import "HelpViewController.h"
 
+
+
+
 @interface HelpViewController ()
 
 @end
@@ -40,7 +43,7 @@
     UIButton *current_Loc = (UIButton *)[self.view viewWithTag:444];
     current_Loc.hidden = TRUE;
     
-    helpArr = [[NSMutableArray alloc]initWithObjects:[UIImage imageNamed:@"help1.png"],[UIImage imageNamed:@"help2.png"],[UIImage imageNamed:@"help3.png"],[UIImage imageNamed:@"help4.png"],[UIImage imageNamed:@"help5.png"],nil];
+    helpArr = [[NSMutableArray alloc]initWithObjects:[UIImage imageNamed:@"Dashboard02.jpg"],[UIImage imageNamed:@"help1.png"],[UIImage imageNamed:@"help2.png"],[UIImage imageNamed:@"help3.png"],[UIImage imageNamed:@"help4.png"],[UIImage imageNamed:@"help5.png"],nil];
     HelpScroll.contentSize = CGSizeMake(HelpScroll.frame.size.width * helpArr.count, HelpScroll.frame.size.height);
     for (int j = 0; j < helpArr.count; j++) {
         CGRect frame;
@@ -61,6 +64,25 @@
     UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(skipTapped:)];
     tapGestureRecognizer.numberOfTapsRequired = 1;
     [self.view addGestureRecognizer:tapGestureRecognizer];
+    
+//    ProfileViewController * profile = [self.storyboard instantiateViewControllerWithIdentifier:@"ProfileViewController"];
+//    [self presentViewController:profile animated:YES completion:nil];
+//    self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
+}
+
+//-(void)viewDidDisappear:(BOOL)animated{
+//    [self dismissViewControllerAnimated:YES completion:nil];
+//}
+
+-(void)viewWillAppear:(BOOL)animated{
+    if([[NSUserDefaults standardUserDefaults] boolForKey:@"navigatefromprofiletohelp"]==YES)
+    {
+        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"navigatefromprofiletohelp"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        [self dismissViewControllerAnimated:YES completion:nil];
+    }else{
+        
+    }
 }
 
 -(void)backTapped{
@@ -74,10 +96,10 @@
         int page = floor((HelpScroll.contentOffset.x - pageWidth / 2) / pageWidth) + 1;
         helpPageControl.currentPage = page;
        // if(page == [helpArr count] - 1){
-        
         //}
     }
 }
+
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
     pageControlBeingUsed = NO;
 }
@@ -87,7 +109,16 @@
 }
 
 - (IBAction)skipTapped:(id)sender {
-    [self dismissViewControllerAnimated:YES completion:nil];
+    
+ // ProfileViewController* mcvc = (ProfileViewController*)self.presentingViewController;
+     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"navigatefromhelp"];
+     //  [self.delegate1 HelpViewControllerDidTapButton:self];
+   // [self dismissViewControllerAnimated:NO completion:^{
+        ProfileViewController * profile = [self.storyboard instantiateViewControllerWithIdentifier:@"ProfileViewController"];
+        [self presentViewController:profile animated:YES completion:nil];
+       // self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
+    //  }];
+    
 }
 
 - (void)didReceiveMemoryWarning {

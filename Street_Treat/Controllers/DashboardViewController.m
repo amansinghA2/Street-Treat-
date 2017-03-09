@@ -92,12 +92,14 @@ int btnwt,btnht;
 //    
 //    [delegate.defaults setValue:userLatitude1 forKey:@"user_latitude"];
 //    [delegate.defaults setValue:userLongitude1 forKey:@"user_longitude"];
+    
+//        float duration = 0.5;
+//        timer = [NSTimer scheduledTimerWithTimeInterval:duration target:self selector:@selector(showLocName) userInfo:nil repeats: YES];
+    [self showLocName];
     [delegate.defaults synchronize];
     
      [self getNearbyDealsWithLatitude:[[delegate.defaults valueForKey:@"user_latitude"]floatValue] longitude:[[delegate.defaults valueForKey:@"user_longitude"]floatValue] radius:userRadius];
-    
-    float duration = 0.5;
-    timer = [NSTimer scheduledTimerWithTimeInterval:duration target:self selector:@selector(showLocName) userInfo:nil repeats: YES];
+
 }
 
 -(void)getParentCategories{
@@ -224,6 +226,8 @@ int btnwt,btnht;
         [indicator stopAnimating];
         [[UIApplication sharedApplication] endIgnoringInteractionEvents];
      });
+    [indicator stopAnimating];
+    [[UIApplication sharedApplication] endIgnoringInteractionEvents];
 }
 
 -(void)setupDashboard:(NSMutableArray*)data{
@@ -275,7 +279,7 @@ int btnwt,btnht;
         UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(Pro_BannerTapped:)];
         tapGestureRecognizer.numberOfTapsRequired = 1;
         [imgView addGestureRecognizer:tapGestureRecognizer];
-        imgView.userInteractionEnabled = YES;
+        imgView.userInteractionEnabled = NO;
         [PromoScroll addSubview:imgView];
     }
     
@@ -590,8 +594,6 @@ int btnwt,btnht;
     delegate = (AppDelegate *)[[UIApplication sharedApplication]delegate];
     usrNameLbl.text = [delegate.defaults valueForKey:@"usr_name"];
     
-    
-    
     [constant addNavigationBar:self.view];
     promoArr = [[NSMutableArray alloc]init];
     exhibitionArr = [[NSMutableArray alloc]init];
@@ -832,7 +834,7 @@ int btnwt,btnht;
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self allocateRequired];
-    
+    brandedBtn.hidden = TRUE;
     [self CurrentLocationIdentifier];
     
     _ExhibitionTitleHdr.hidden = true;
@@ -896,7 +898,10 @@ int btnwt,btnht;
     
     if([[NSUserDefaults standardUserDefaults] boolForKey:@"firstLaunch"]==NO)
     {
+        
         HelpViewController * help = [self.storyboard instantiateViewControllerWithIdentifier:@"HelpViewController"];
+//        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:help];
+//        [self presentViewController:nav animated:YES completion:nil];
         [self presentViewController:help animated:YES completion:nil];
     }
     
@@ -983,9 +988,11 @@ int btnwt,btnht;
     [delegate.defaults setValue:[delegate.defaults valueForKey:@"longitude"] forKey:@"user_longitude"];
     
      [delegate.defaults setValue:@"myloc" forKey:@"locupdatefrom"];
-    
+     NSLog(@"%@",[delegate.defaults valueForKey:@"loc_name"]);
      txfSearchField.text = [delegate.defaults valueForKey:@"myloc_name"];
-        [delegate.defaults setValue:txfSearchField.text forKey:@"loc_name"];
+     [delegate.defaults setValue:[delegate.defaults valueForKey:@"myloc_name"] forKey:@"loc_name"];
+     NSLog(@"%@",[delegate.defaults valueForKey:@"loc_name"]);
+     [delegate.defaults synchronize];
      [self getNearbyDealsWithLatitude:[[delegate.defaults valueForKey:@"latitude"]floatValue] longitude:[[delegate.defaults valueForKey:@"longitude"]floatValue] radius:userRadius];
 }
 
@@ -1127,14 +1134,13 @@ int btnwt,btnht;
             }
                 break;
             case 14:{
-                
                 NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
-//               [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
-                [delegate.defaults setValue:@"19.1183" forKey:@"latitude"];
-                [delegate.defaults setValue:@"73.0276" forKey:@"longitude"];
-                //[delegate.defaults setValue:@"Mahape" forKey:@"loc_name"];
+              // [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
+              //  [delegate.defaults setValue:@"19.1183" forKey:@"latitude"];
+              //  [delegate.defaults setValue:@"73.0276" forKey:@"longitude"];
+              //  [delegate.defaults setValue:@"Mahape" forKey:@"loc_name"];
                 [delegate.defaults setValue:@"3" forKey:@"radius"];
-                ViewController * splash = [self.storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
+                LoginViewController * splash = [self.storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
                 UINavigationController *passcodeNavigationController = [[UINavigationController alloc] initWithRootViewController:splash];
                 [self presentViewController:passcodeNavigationController animated:YES completion:nil];
             }
@@ -1283,6 +1289,7 @@ int btnwt,btnht;
 
 -(void)GetHighstreetStores{
     [delegate.defaults setObject:@"High Street" forKey:@"verticalsCategory"];
+     [delegate.defaults setValue:@"Verticals" forKey:@"whichsegment"];
     [delegate.defaults setValue:@"Store" forKey:@"route"];
     [delegate.defaults synchronize];
     [self showVerticals];
@@ -1295,6 +1302,7 @@ int btnwt,btnht;
 
 - (IBAction)brandedTapped:(id)sender {
     [delegate.defaults setObject:@"Brands" forKey:@"verticalsCategory"];
+    [delegate.defaults setValue:@"Verticals" forKey:@"whichsegment"];
     [delegate.defaults setValue:@"Store" forKey:@"route"];
     [delegate.defaults synchronize];
     [self showVerticals];
@@ -1302,12 +1310,14 @@ int btnwt,btnht;
 
 - (IBAction)designerTapped:(id)sender {
     [delegate.defaults setObject:@"Designers" forKey:@"verticalsCategory"];
+    [delegate.defaults setValue:@"Verticals" forKey:@"whichsegment"];
     [delegate.defaults setValue:@"Store" forKey:@"route"];
     [delegate.defaults synchronize];
     [self showVerticals];
 }
 
 - (IBAction)checkInTapped:(id)sender {
+    [delegate.defaults setObject:@"High Street" forKey:@"verticalsCategory"];
     [delegate.defaults setObject:@"High Street" forKey:@"verticalsCategory"];
     [delegate.defaults setValue:@"CheckIn" forKey:@"resultType"];
     [delegate .defaults synchronize];
@@ -1367,7 +1377,7 @@ didAutocompleteWithPlace:(GMSPlace *)place {
     userLatitude = [[delegate.defaults valueForKey:@"user_latitude"] floatValue];
     userLongitude = [[delegate.defaults valueForKey:@"user_longitude"] floatValue];
     
-    [self getNearbyDealsWithLatitude:[[delegate.defaults valueForKey:@"latitude"]floatValue] longitude:[[delegate.defaults valueForKey:@"longitude"]floatValue] radius:userRadius];
+    [self getNearbyDealsWithLatitude:currentLatitude longitude:currentLongitude radius:userRadius];
     
     NSLog(@"Current latitude.. %f current longitude.. %f",currentLatitude,currentLongitude);
     NSLog(@"user latitude.. %f user longitude.. %f",userLatitude,userLongitude);
@@ -1404,6 +1414,7 @@ didFailAutocompleteWithError:(NSError *)error {
 
 - (IBAction)menTapped:(id)sender {
     [delegate.defaults setObject:@"High Street" forKey:@"verticalsCategory"];
+    [delegate.defaults setValue:@"High Street" forKey:@"whichsegment"];
     NSString * catID = [delegate.defaults valueForKey:@"MensCategory"];
     [delegate.defaults setValue:catID forKey:@"category"];
     [delegate.defaults setValue:@"Store" forKey:@"route"];
@@ -1413,6 +1424,7 @@ didFailAutocompleteWithError:(NSError *)error {
 
 - (IBAction)womenTapped:(id)sender {
     [delegate.defaults setObject:@"High Street" forKey:@"verticalsCategory"];
+     [delegate.defaults setValue:@"High Street" forKey:@"whichsegment"];
     NSString * catID = [delegate.defaults valueForKey:@"WomensCategory"];
     [delegate.defaults setValue:catID forKey:@"category"];
     [delegate.defaults setValue:@"Store" forKey:@"route"];
@@ -1423,6 +1435,7 @@ didFailAutocompleteWithError:(NSError *)error {
 
 - (IBAction)kidsTapped:(id)sender {
     [delegate.defaults setObject:@"High Street" forKey:@"verticalsCategory"];
+     [delegate.defaults setValue:@"High Street" forKey:@"whichsegment"];
     NSString * catID = [delegate.defaults valueForKey:@"ChildrenCategory"];
     [delegate.defaults setValue:catID forKey:@"category"];
     [delegate.defaults setValue:@"Store" forKey:@"route"];

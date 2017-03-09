@@ -31,6 +31,7 @@
 @synthesize CheckboxBtns,submitBtn,reportTxtView,reportString,otherBtn,reportScroll,ErrTypesLbls;
 
 -(void)viewWillAppear:(BOOL)animated{
+    otherBtn.hidden = true;
     [delegate.defaults setObject:@"ReportErrorViewController" forKey:@"internetdisconnect"];
     self.navigationItem.hidesBackButton = YES;
     reportTxtView.layer.borderWidth = 1.0f;

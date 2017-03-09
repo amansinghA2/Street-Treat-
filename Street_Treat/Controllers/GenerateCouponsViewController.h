@@ -31,9 +31,16 @@
     UIButton * backBtn;
     UIView * flyoutView;
     UIButton * DtlcheckInBtn;
-    
+    NSString *exclusiveCoupon;
+    long int imgcnt;
 
 }
+@property (weak, nonatomic) IBOutlet UILabel *rightSideLabel;
+@property (weak, nonatomic) IBOutlet UILabel *leftSideLabel;
+@property (weak, nonatomic) IBOutlet UILabel *plusLabel;
+
+@property (weak, nonatomic) IBOutlet UIButton *selectofferTappedButton;
+
 @property (weak, nonatomic) IBOutlet UIButton *cameraBtn;
 - (IBAction)cameraTapped:(id)sender;
 

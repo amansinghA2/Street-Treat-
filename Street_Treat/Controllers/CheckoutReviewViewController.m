@@ -33,13 +33,11 @@
  // http://www.webtest.streettreat.in/index.php?option=com_konnect&task=customer.tokentest
 
 - (IBAction)submitTapped:(id)sender {
-   
 //    NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&store_id=%@&ratings=%@&comments=%@&category_of_goods=%@&approximate_price=%@&salesman_review=%@&store_appeal=%@&trial_room=%@",[delegate.defaults valueForKey:@"log_id"],[delegate.defaults valueForKey:@"Store_ID"], overallShoppingLbl.text, _feedBackTextView.text ,];
 //    NSLog(@"body.. %@",messageBody);
 //    NSLog(@"commonclass.LoginURL.. %@",commonclass.shoppingReviewUrl);
 //    [commonclass sendRequest:self.view mutableDta:parentsData url:commonclass.shoppingReviewUrl msgBody:messageBody];
 }
-
 
 -(void)sendResponse:(Common *)response data:(NSMutableArray *)data indicator:(UIActivityIndicatorView *)indicator{
     

@@ -72,7 +72,7 @@
      menuImagesArray = [[NSArray alloc]initWithObjects:@"EBS.png",@"Loyalty_Sys.png",@"Menu_Webhold.png",@"Menu_Tracklist.png",@"Menu_MyOffer.png",@"Purchase_Account.png",@"Demand_CPO.png",@"MyView_Request.png",@"Edit_Profile.png",@"Change_Password.png",@"", nil];*/
     //commonclass = [[Common alloc]init];
     
-    menuNamesArray = [[NSArray alloc]initWithObjects:@"Search Stores",@"Stores for Men",@"Stores for Women",@"Stores for Kids",@"Exhibitions",@"About Us",@"News & Events ",@"Terms & Conditions",@"Faqs",@"Privacy Policy",@"Contact Us",@"Edit Profile",@"Rate App",@"Help",@"Logout",nil];
+    menuNamesArray = [[NSArray alloc]initWithObjects:@"Search Stores",@"Stores for Men",@"Stores for Women",@"Stores for Kids",@"Exhibitions",@"About Us",@"News & Events ",@"Terms & Conditions",@"FAQs",@"Privacy Policy",@"Contact Us",@"Edit Profile",@"Rate App",@"Help",@"Logout",nil];
     
     menuImagesArray = [[NSArray alloc]initWithObjects:searchStoreIcon,menIcon,womenIcon,childrenIcon,exhibitionsIcon,aboutUsIcon,news_eventsIcon,terms_conditionsIcon,faqsIcon,privacyIcon,contactUsIcon,editProfileIcon,rateAppIcon,helpIcon,logoutIcon, nil];
     
@@ -119,12 +119,13 @@
             self.drawerView.profilePic.layer.cornerRadius = self.drawerView.profilePic.frame.size.height/2;
             self.drawerView.profilePic.clipsToBounds = YES;
             //self.meunHeight = self.drawerView.frame.size.height;
-            self.drawerView.NameLbl.text = [NSString stringWithFormat:@"  Hi, %@",[delegate.defaults valueForKey:@"usr_name"]];
+            self.drawerView.NameLbl.text = [NSString stringWithFormat:@"  Hi, %@",[[NSUserDefaults standardUserDefaults] valueForKey:@"usr_name"]];
             self.drawerView.phoneNoLbl.text = [delegate.defaults valueForKey:@"mobile"];
             [self.drawerView.NameLbl setShadowColor:[UIColor lightGrayColor]];
             [self.drawerView.NameLbl setShadowOffset:CGSizeMake(0, -1)];
             [self.drawerView.phoneNoLbl setShadowColor:[UIColor lightGrayColor]];
             [self.drawerView.phoneNoLbl setShadowOffset:CGSizeMake(0, -1)];
+            [delegate.defaults synchronize];
 //            self.drawerView.LoyaltyLvlLbl.text = [delegate.defaults valueForKey:@"LoyaltyLvl"];
 //            self.drawerView.StatusLbl.text = [NSString stringWithFormat:@"365 days your purchase $%@. More to avail next loyalty level benifits $%@.",[delegate.defaults valueForKey:@"loyaltyVlu"],[delegate.defaults valueForKey:@"loyaltyDiff"]];
             //        [NameLbl setText:[NSString stringWithFormat:@"  Hi, %@",[delegate.defaults valueForKey:@"Name"]]];
@@ -520,7 +521,7 @@
 - (void)buttonPressedAction:(id)sender
 {
     NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
-    [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
+   // [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
     [self closeNavigationDrawer];
     [self.CCKFNavDrawerDelegate Drawer_Logout];
 }

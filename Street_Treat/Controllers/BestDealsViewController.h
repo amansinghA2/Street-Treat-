@@ -37,6 +37,7 @@
     long selectedIndex;
     NSMutableArray *indexpathArr;
     NSString * setType;
+    UIView * flyoutView;
     
     UITextField *txfSearchField;
     float userLatitude,userLongitude,userRadius,currentLatitude,currentLongitude;

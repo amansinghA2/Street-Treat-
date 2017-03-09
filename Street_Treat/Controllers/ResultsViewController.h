@@ -14,7 +14,6 @@
 #import "NormalListCell.h"
 #import "ExhibitionNormalCell.h"
 #import "PremiumListingCell.h"
-//#import ""
 #import "ExhibitionDetailViewController.h"
 #import "UIImageView+WebCache.h"
 #import "UIImageView+UIActivityIndicatorForSDWebImage.h"
@@ -22,15 +21,17 @@
 #import "GenerateCouponsViewController.h"
 @import GoogleMaps;
 #import <GooglePlaces/GooglePlaces.h>
+#import "ImageViewController.h"
 
 #import "UPStackMenu.h"
 
-@interface ResultsViewController : UIViewController<UITableViewDataSource,UITableViewDelegate,UITabBarControllerDelegate,commonProtocol,CCKFNavDrawerDelegate,GMSAutocompleteViewControllerDelegate,UPStackMenuDelegate,UITextFieldDelegate,CZPickerViewDelegate,CZPickerViewDataSource,CLLocationManagerDelegate , UIScrollViewDelegate>{
+@interface ResultsViewController : UIViewController<UITableViewDataSource,UITableViewDelegate,UITabBarControllerDelegate,commonProtocol,CCKFNavDrawerDelegate,GMSAutocompleteViewControllerDelegate,UPStackMenuDelegate,UITextFieldDelegate,CZPickerViewDelegate,CZPickerViewDataSource,CLLocationManagerDelegate , UIScrollViewDelegate , UIGestureRecognizerDelegate>{
     Common * commonclass;
     AppDelegate * delegate;
     NSMutableData *searchData,* extraData,* categoriesData;
     NSMutableArray * searchResponseArr,* highstreetArr,*brandedArr,* designerArr,* exhibitionArr,* verticalsArr,* favouritesArr,*categoriesArr,*selectedcategoriesIDArr,*selectedcategoriesArr,* premiumListArr;
     NSString * seg_string;
+    NSString * checkin;
     float PrevX,nextX,PrevY;
     NormalListCell *cell;
     ExhibitionNormalCell * cell1;
@@ -40,6 +41,8 @@
     NSMutableArray * phonenoArr;
     NSMutableArray * phoneno_StoreIDArr;
     NSMutableArray * distAwayArr;
+    NSMutableArray * arrForImage;
+    NSIndexPath * arrayIndexPath;
     NSMutableArray * premiumdistAwayArr;
     NSMutableArray * premiumphoneno_StoreIDArr;
     NSMutableArray * premiumphonenoArr;
@@ -47,12 +50,16 @@
     NSMutableArray * promoArr;
     UISearchBar * search;
     NSString * awayDist;
+    NSString * imglink1;
     NSString * premiumAwayDist;
     NSString * singleTime;
     NSString * tabType;
     UIView * flyoutView;
     int temppremiumCnt;
+    NSMutableData *  checkinsData;
     NSTimer *timer;
+    UIView *viewforImage;
+
    // int j;
     BOOL isUpdate;
     UILabel * premiumStoreNamelabel;
@@ -87,9 +94,10 @@
 }
 @property (weak, nonatomic) IBOutlet UITableView *resultTable;
 @property (weak, nonatomic) IBOutlet UIView *resultView;
-
+@property (weak, nonatomic) IBOutlet UIView *filterPopup;
 @property (strong, nonatomic) CCKFNavDrawer *rootNav;
 @property (nonatomic, strong) NSString * setType;
+@property (weak, nonatomic) IBOutlet UIView *imageShowView;
 
 @property (weak, nonatomic) IBOutlet UIView *couponDetMainView;
 - (IBAction)couponCloseTapped:(id)sender;

@@ -194,7 +194,7 @@
 -(void) updateCountdown{
     if([[delegate.defaults valueForKey:@"passroute"] isEqualToString:@"FromProfile"]){
         NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
-        [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
+       // [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
         ViewController * splash = [self.storyboard instantiateViewControllerWithIdentifier:@"ViewController"];
         UINavigationController *passcodeNavigationController = [[UINavigationController alloc] initWithRootViewController:splash];
         [self presentViewController:passcodeNavigationController animated:YES completion:nil];

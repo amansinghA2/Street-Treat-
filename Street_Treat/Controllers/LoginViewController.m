@@ -24,6 +24,7 @@
 #define MAX_LENGTH 10
 
 -(void)viewWillAppear:(BOOL)animated{
+    self.navigationController.navigationBar.hidden = true;
     commonclass.delegate = self;
     [self LoginHdrTapped:nil];
     LoginBtn.titleLabel.textColor = [UIColor redColor];
@@ -92,7 +93,7 @@
     // Login feilds
     usertxtFld = [[RPFloatingPlaceholderTextField alloc]initWithFrame:CGRectMake(LoginGoogleView.frame.origin.x,[commonclass.usryPos floatValue], LoginGoogleView.frame.size.width, 35)];
     usertxtFld.delegate=self;
-    usertxtFld.text = @"aman.singh181092@gmail.com";
+    usertxtFld.text = @"";
     usertxtFld.placeholder = @"USERNAME";
     usertxtFld.returnKeyType = UIReturnKeyNext;
     [commonclass addfeild:LoginView textfeild:usertxtFld];
@@ -102,7 +103,7 @@
     passTxtFld.secureTextEntry = YES;
     passTxtFld.returnKeyType = UIReturnKeyDefault;
     passTxtFld.placeholder = @"PASSWORD";
-    passTxtFld.text = @"123456";
+    passTxtFld.text = @"";
     [commonclass addfeild:LoginView textfeild:passTxtFld];
     //end
     
@@ -110,14 +111,14 @@
     firstnametxtFld = [[RPFloatingPlaceholderTextField alloc]initWithFrame:CGRectMake(LoginGoogleView.frame.origin.x,[commonclass.usryPos floatValue], LoginGoogleView.frame.size.width / 2.5, 35)];
     firstnametxtFld.delegate=self;
     firstnametxtFld.placeholder = @"FIRSTNAME*";
-    firstnametxtFld.text =@"Mahesh";
+    firstnametxtFld.text =@"";
     firstnametxtFld.returnKeyType = UIReturnKeyNext;
     [commonclass addfeild:RegisterView textfeild:firstnametxtFld];
     
     lastnametxtFld = [[RPFloatingPlaceholderTextField alloc]initWithFrame:CGRectMake(firstnametxtFld.frame.size.width * 1.80,[commonclass.usryPos floatValue], LoginGoogleView.frame.size.width / 2.5, 35)];
     lastnametxtFld.delegate=self;
     lastnametxtFld.placeholder = @"LASTNAME*";
-    lastnametxtFld.text =@"Jadhav";
+    lastnametxtFld.text =@"";
     lastnametxtFld.returnKeyType = UIReturnKeyNext;
     [commonclass addfeild:RegisterView textfeild:lastnametxtFld];
     
@@ -126,7 +127,7 @@
     emailtxtFld.returnKeyType = UIReturnKeyNext;
     emailtxtFld.keyboardType = UIKeyboardTypeEmailAddress;
     emailtxtFld.placeholder = @"EMAIL*";
-    emailtxtFld.text =@"mahesh@gmail.com";
+    emailtxtFld.text =@"";
     [commonclass addfeild:RegisterView textfeild:emailtxtFld];
     
     mobilenotxtFld = [[RPFloatingPlaceholderTextField alloc]initWithFrame:CGRectMake(LoginGoogleView.frame.origin.x, emailtxtFld.frame.origin.y+[commonclass.passyPos floatValue], LoginGoogleView.frame.size.width + 16, 35)];
@@ -142,14 +143,14 @@
     reg_passtxtFld.secureTextEntry = YES;
     reg_passtxtFld.returnKeyType = UIReturnKeyNext;
     reg_passtxtFld.placeholder = @"PASSWORD*";
-    reg_passtxtFld.text =@"mahesh123";
+    reg_passtxtFld.text =@"";
     [commonclass addfeild:RegisterView textfeild:reg_passtxtFld];
     
     reg_cnf_passtxtFld = [[RPFloatingPlaceholderTextField alloc]initWithFrame:CGRectMake(LoginGoogleView.frame.origin.x, reg_passtxtFld.frame.origin.y+[commonclass.passyPos floatValue], LoginGoogleView.frame.size.width + 16, 35)];
     reg_cnf_passtxtFld.delegate=self;
     reg_cnf_passtxtFld.secureTextEntry = YES;
     reg_cnf_passtxtFld.placeholder = @"CONFIRM PASSWORD*";
-    reg_cnf_passtxtFld.text =@"mahesh123";
+    reg_cnf_passtxtFld.text =@"";
     reg_cnf_passtxtFld.returnKeyType = UIReturnKeyNext;
     [commonclass addfeild:RegisterView textfeild:reg_cnf_passtxtFld];
     //end
@@ -414,6 +415,7 @@
         if(data != NULL){
             if([requestType isEqualToString:@"Login"]){
                 if([[data valueForKey:@"status"]intValue] == 1){
+                    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"firstLaunch"];
                     NSString * log_id = [[data valueForKey:@"items"] valueForKey:@"log_id"] ;
                    // NSString * log_id = @"4d0054923037ac2b343e804c432679f7";
                     NSString * log_name = [[data valueForKey:@"items"] valueForKey:@"username"];//name
@@ -460,7 +462,7 @@
                 }
             }else if ([requestType isEqualToString:@"Register"]){
                 if([[data valueForKey:@"status"]intValue] == 1){
-                   
+                   [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"firstLaunch"];
 //                    NSString * otp_Verified = [[data valueForKey:@"items"] valueForKey:@"otp_verified"];
 //                    [delegate.defaults setBool:otp_Verified forKey:@"otp_verified"];
                     [self.view makeToast:[data valueForKey:@"message"] duration:2.0 position:CSToastPositionBottom];
@@ -477,7 +479,8 @@
                         [delegate.defaults synchronize];
                         //[self ClearAll];
                         [self.navigationController pushViewController:result animated:YES];
-                    }else if([[data valueForKey:@"status"]intValue] == -1){
+                    }
+                    else if([[data valueForKey:@"status"]intValue] == -1){
                         [commonclass logoutFunction];
                     }else{
                         if([commonclass isActiveInternet] == YES){
@@ -516,7 +519,9 @@
                     
                     [delegate.defaults synchronize];
             UITabBarController *tabbar = [self.storyboard instantiateViewControllerWithIdentifier:@"Street_TreatTabbar"];
+                    
             [self.navigationController pushViewController:tabbar animated:YES];
+            [[FBSDKLoginManager new] logOut];
             [[GIDSignIn sharedInstance] signOut];
                 }else if([[data valueForKey:@"status"]intValue] == -1){
                     [commonclass logoutFunction];
@@ -555,9 +560,9 @@
                 }else{
                     
                 }
-            } else{
-            [self.view makeToast:@"Oops server error occured"];
-        }
+            }
+        }else{
+             [self.view makeToast:@"Oops server error occured"];
         }
         [indicator stopAnimating];
         [[UIApplication sharedApplication] endIgnoringInteractionEvents];
@@ -833,7 +838,7 @@ presentViewController:(UIViewController *)viewController {
 didSignInForUser:(GIDGoogleUser *)user
      withError:(NSError *)error {
     requestType = @"GoogleSignIn";
-
+  [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"firstLaunch"];
     // Perform any operations on signed in user here.
     NSLog(@"user gplus token..%@",user.authentication.idToken);
     NSString *userId = user.userID;                  // For client-side use only!
@@ -884,6 +889,7 @@ dismissViewController:(UIViewController *)viewController {
 didCompleteWithResult:	(FBSDKLoginManagerLoginResult *)result
 error:	(NSError *)error{
     requestType = @"FaceBook";
+    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"firstLaunch"];
     [delegate.defaults setObject:@"fb" forKey:@"fborgoogle"];
     NSString *fbAccessToken = [FBSDKAccessToken currentAccessToken].tokenString;
     
@@ -895,7 +901,7 @@ error:	(NSError *)error{
     NSLog(@"messageBody.. %@",messageBody);
     NSLog(@"constant.searchListURL.. %@",commonclass.searchListURL);
     [commonclass sendRequest:self.view mutableDta:LoginData url:commonclass.loginFBURL msgBody:messageBody];
- 
+    
     //[[PFFacebookUtils facebookLoginManager] setLoginBehavior:FBSDKLoginBehaviorSystemAccount];
 }
 
