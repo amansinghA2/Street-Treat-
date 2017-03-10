@@ -1018,6 +1018,9 @@
 							com.apple.ApplicationGroups.iOS = {
 								enabled = 0;
 							};
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
 							com.apple.GameCenter = {
 								enabled = 0;
 							};
@@ -1443,8 +1446,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Street_Treat/Street_Treat.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Sahil Nagpal (2Z5B84Z5QC)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Sahil Nagpal (2Z5B84Z5QC)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Sahil Nagpal (TA5H22SB2P)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Sahil Nagpal (TA5H22SB2P)";
 				DEVELOPMENT_TEAM = 2Z5B84Z5QC;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1457,8 +1460,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Digillence.Street-Treat";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "e41a6c77-80fa-4080-99bd-b8ba9bbd4baa";
-				PROVISIONING_PROFILE_SPECIFIER = Street_Consumer_Distribution;
+				PROVISIONING_PROFILE = "66573753-ca70-4626-a5ca-7e18711e4101";
+				PROVISIONING_PROFILE_SPECIFIER = "ApnsTest-Development";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -1469,8 +1472,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Street_Treat/Street_Treat.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Sahil Nagpal (2Z5B84Z5QC)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Sahil Nagpal (2Z5B84Z5QC)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Sahil Nagpal (TA5H22SB2P)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Sahil Nagpal (TA5H22SB2P)";
 				DEVELOPMENT_TEAM = 2Z5B84Z5QC;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1483,8 +1486,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Digillence.Street-Treat";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "e41a6c77-80fa-4080-99bd-b8ba9bbd4baa";
-				PROVISIONING_PROFILE_SPECIFIER = Street_Consumer_Distribution;
+				PROVISIONING_PROFILE = "66573753-ca70-4626-a5ca-7e18711e4101";
+				PROVISIONING_PROFILE_SPECIFIER = "ApnsTest-Development";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;

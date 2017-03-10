@@ -11,7 +11,9 @@
 #import <GoogleMaps/GoogleMaps.h>
 #import <GooglePlaces/GooglePlaces.h>
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
-
+#import "CheckoutReviewViewController.h"
+#import "ProfileViewController.h"
+#import "SubmitReviewViewController.h"
 
 @interface AppDelegate (){
     GMSPlacesClient *_placesClient;
@@ -50,6 +52,18 @@
         dUserInfo = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
         if (dUserInfo != nil)
         {
+//            NSString *a = [[dUserInfo valueForKey:@"aps"] valueForKey:@"message"];
+//            NSString *b = [[dUserInfo valueForKey:@"aps"] valueForKey:@"store_id"];
+//            NSString *c = [[dUserInfo valueForKey:@"aps"] valueForKey:@"store_name"];
+//            NSString *d = [[dUserInfo valueForKey:@"aps"] valueForKey:@"page_name"];
+//            [defaults setValue:a forKey:@"message"];
+//            [defaults setValue:b forKey:@"idstore"];
+//            [defaults setValue:c forKey:@"namestore"];
+//            [defaults setValue:d forKey:@"namepage"];
+//            
+            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+            ProfileViewController *securityCheck = [storyboard instantiateViewControllerWithIdentifier:@"ProfileViewController"];
+            [self.window.rootViewController presentViewController:securityCheck animated:YES completion:nil];
             //Do whatever you need
         }
     }
@@ -100,7 +114,7 @@
     }
     else
     {
-        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeSound|UIRemoteNotificationTypeBadge)];
+        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeBadge)];
     }
     
     //temporary for checking purpose
@@ -151,7 +165,7 @@
     NSLog(@"%@",dt);
     [defaults setValue:dt forKey:@"deviceToken"];
     
-//    NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&device_os=%@&device_token=%@",[delegate.defaults valueForKey:@"logid"],@"ios",[delegate.defaults valueForKey:@"deviceToken"]];
+//  NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&device_os=%@&device_token=%@",[delegate.defaults valueForKey:@"logid"],@"ios",[delegate.defaults valueForKey:@"deviceToken"]];
 //    NSLog(@"messageBody.. %@",messageBody);
 //    [constant sendRequest:self.view mutableDta:dealsdata url:constant.updateDeviceToken msgBody:messageBody];
     
@@ -183,19 +197,38 @@
     if ( application.applicationState == UIApplicationStateActive ){
         if (userInfo != nil)
         {
-            dUserInfo = userInfo;
+              dUserInfo = userInfo;
+//            NSString *a = [[dUserInfo valueForKey:@"aps"] valueForKey:@"message"];
+//            NSString *b = [[dUserInfo valueForKey:@"aps"] valueForKey:@"store_id"];
+//            NSString *c = [[dUserInfo valueForKey:@"aps"] valueForKey:@"store_name"];
+//            NSString *d = [[dUserInfo valueForKey:@"aps"] valueForKey:@"page_name"];
+//            [defaults setValue:a forKey:@"message"];
+//            [defaults setValue:b forKey:@"idstore"];
+//            [defaults setValue:c forKey:@"namestore"];
+//            [defaults setValue:d forKey:@"namepage"];
         }
-        
+//        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+//        ProfileViewController *securityCheck = [storyboard instantiateViewControllerWithIdentifier:@"ProfileViewController"];
+//        [self.window.rootViewController presentViewController:securityCheck animated:YES completion:nil];
         // app was already in the foreground
     }else{
         if (userInfo != nil)
         {
             dUserInfo = userInfo;
+//            NSString *a = [[dUserInfo valueForKey:@"aps"] valueForKey:@"message"];
+//            NSString *b = [[dUserInfo valueForKey:@"aps"] valueForKey:@"store_id"];
+//            NSString *c = [[dUserInfo valueForKey:@"aps"] valueForKey:@"store_name"];
+//            NSString *d = [[dUserInfo valueForKey:@"aps"] valueForKey:@"page_name"];
+//            [defaults setValue:a forKey:@"message"];
+//            [defaults setValue:b forKey:@"idstore"];
+//            [defaults setValue:c forKey:@"namestore"];
+//            [defaults setValue:d forKey:@"namepage"];
         }
-        id data = [dUserInfo objectForKey:@"data"];
+//        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+//        ProfileViewController *securityCheck = [storyboard instantiateViewControllerWithIdentifier:@"ProfileViewController"];
+//        [self.window.rootViewController presentViewController:securityCheck animated:YES completion:nil];
         // app was just brought from background to foreground
     }
-    
 }
 
 //

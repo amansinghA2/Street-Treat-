@@ -1240,7 +1240,7 @@
             NSLog(@"away dist..%@",awayDist);
             [premiumdistAwayArr addObject:premiumAwayDist];
             
-            if([arr[j] valueForKey:@"start_time"] == [NSNull null] && [arr[j] valueForKey:@"end_time"] == [NSNull null]){
+            if(([arr[j] valueForKey:@"start_time"] == [NSNull null] && [arr[j] valueForKey:@"end_time"] == [NSNull null]) || ([arr[j] valueForKey:@"start_time"] == [NSNull null] || [arr[j] valueForKey:@"end_time"] == [NSNull null])) {
                // cell.storeTimeLbl.backgroundColor = [UIColor redColor];
                 time = @"Closed";
                 [timeArray addObject:time];

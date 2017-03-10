@@ -12,9 +12,15 @@
 @interface CheckoutReviewViewController : UIViewController<commonProtocol>{
     Common * commonclass;
     NSMutableData *parentsData;
-     AppDelegate * delegate;
+    AppDelegate * delegate;
     NSString *typeReview;
+    NSString *categorySelString;
+    NSString *salesmanSelectString;
+    NSString *AppealSelectString;
+    NSString *trailRoomSelectString;
 }
+
+@property (weak, nonatomic) IBOutlet UITextField *pricetTextfield;
 
 @property (weak, nonatomic) IBOutlet UISegmentedControl *CategorySelect;
 - (IBAction)categoryChanged:(id)sender;

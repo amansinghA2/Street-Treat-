@@ -309,7 +309,7 @@
     selectedStylesArr = [[NSMutableArray alloc]init];
     
     userapparel_Arr = [[NSMutableArray alloc]init];
-    AllcolorArr = [[NSArray alloc]initWithObjects:@"RED",@"GREEN",@"BLUE",@"YELLOW", nil];
+    AllcolorArr = [[NSArray alloc]initWithObjects:@"RED",@"GREEN",@"BLUE",@"YELLOW",@"ORANGE",@"PURPLE",@"PINK",@"BROWN",@"BLACK",@"WHITE",nil];
     AllstylesArr = [[NSArray alloc]initWithObjects:@"INDIAN WEAR",@"WESTERN WEAR",@"SUBTLE WEAR" , @"FUNKY WEAR",@"FORMAL WEAR",@"CASUAL WEAR", nil];
     AllShirtsArr = [[NSArray alloc]initWithObjects:@"XS",@"S",@"M",@"L",@"XL",@"XXL",@"XXXL",@"XXXXL",nil];
     
@@ -593,7 +593,7 @@
                 }else if([[data valueForKey:@"status"]intValue] == -1){
                     [constant logoutFunction];
                 }else{
-                    [self.view makeToast:@"message"];
+                    [self.view makeToast:@"Invalid Value"];
                 }
                
             }else if ([requestType isEqualToString:@"uploadImage"]){

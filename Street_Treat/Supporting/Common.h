@@ -209,14 +209,9 @@
 @property (strong, nonatomic) NSString *updateDeviceToken;
 @property (strong, nonatomic) NSString *updateMobileURL;
 @property (strong, nonatomic) NSString *shoppingReviewUrl;
-
-
-
 @property (strong, nonatomic) NSString *myCouponsURL;
-
 @property (strong, nonatomic) NSString *bucketsListURL;
 @property (strong, nonatomic) NSString *bucketsDeatilURL;
-
 @property (strong, nonatomic) NSString *otpURL;
 @property (strong, nonatomic) NSString *getParentCategoriesURL;
 @property (strong, nonatomic) NSString *generatenewotpURL;
