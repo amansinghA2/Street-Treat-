@@ -72,9 +72,9 @@
      menuImagesArray = [[NSArray alloc]initWithObjects:@"EBS.png",@"Loyalty_Sys.png",@"Menu_Webhold.png",@"Menu_Tracklist.png",@"Menu_MyOffer.png",@"Purchase_Account.png",@"Demand_CPO.png",@"MyView_Request.png",@"Edit_Profile.png",@"Change_Password.png",@"", nil];*/
     //commonclass = [[Common alloc]init];
     
-    menuNamesArray = [[NSArray alloc]initWithObjects:@"Search Stores",@"Stores for Men",@"Stores for Women",@"Stores for Kids",@"Exhibitions",@"About Us",@"News & Events ",@"Terms & Conditions",@"FAQs",@"Privacy Policy",@"Contact Us",@"Edit Profile",@"Rate App",@"Help",@"Logout",nil];
+    menuNamesArray = [[NSArray alloc]initWithObjects:@"Search Stores",@"Stores for Men",@"Stores for Women",@"Stores for Kids",@"About Us",@"News & Events ",@"Terms & Conditions",@"FAQs",@"Privacy Policy",@"Contact Us",@"Edit Profile",@"Help",@"Rate App",@"Logout",nil];
     
-    menuImagesArray = [[NSArray alloc]initWithObjects:searchStoreIcon,menIcon,womenIcon,childrenIcon,exhibitionsIcon,aboutUsIcon,news_eventsIcon,terms_conditionsIcon,faqsIcon,privacyIcon,contactUsIcon,editProfileIcon,rateAppIcon,helpIcon,logoutIcon, nil];
+    menuImagesArray = [[NSArray alloc]initWithObjects:searchStoreIcon,menIcon,womenIcon,childrenIcon,aboutUsIcon,news_eventsIcon,terms_conditionsIcon,faqsIcon,privacyIcon,contactUsIcon,editProfileIcon,helpIcon,rateAppIcon,logoutIcon, nil];
     
     earlyBirdArray = [[NSArray alloc]initWithObjects:@"Day 1",@"Day 2",@"Day 3",@"Coming Soon", nil];
     

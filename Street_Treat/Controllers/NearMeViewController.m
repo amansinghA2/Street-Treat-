@@ -224,38 +224,42 @@
             }
                 break;
             case 4:
-                // [self showExhibitions];
-                break;
-            case 5:
                 setType = @"about-us";
                 [self StaticContent];
                 break;
-            case 6:
+            case 5:
                 setType = @"News-Events";
                 [self StaticContent];
                 break;
-            case 7:
+            case 6:
                 setType = @"Terms And Conditions";
                 [self StaticContent];
                 break;
-            case 8:
+            case 7:
                 setType = @"faqs";
                 [self StaticContent];
                 break;
-            case 9:
+            case 8:
                 setType = @"privacy";
                 [self StaticContent];
                 break;
-            case 10:{
+            case 9:{
                 [commonclass Redirect:self.navigationController Identifier:@"ContactViewController"];
                 //                ContactViewController * contact = [self.storyboard instantiateViewControllerWithIdentifier:@"ContactViewController"];
                 //                [self.navigationController pushViewController:contact animated:YES];
             }
                 break;
-            case 11:{
+            case 10:{
                 ProfileViewController * profile = [self.storyboard instantiateViewControllerWithIdentifier:@"ProfileViewController"];
                 [self.navigationController pushViewController:profile animated:YES];
                 self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
+            }
+                break;
+            case 11:{
+                HelpViewController * help = [self.storyboard instantiateViewControllerWithIdentifier:@"HelpViewController"];
+                [self.navigationController pushViewController:help animated:YES];
+                self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
+                
             }
                 break;
             case 12:{
@@ -265,19 +269,13 @@
             }
                 break;
             case 13:{
-                HelpViewController * help = [self.storyboard instantiateViewControllerWithIdentifier:@"HelpViewController"];
-                [self.navigationController pushViewController:help animated:YES];
-                self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
-            }
-                break;
-            case 14:{
                 NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
-                //[[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
-              //  [delegate.defaults setValue:@"19.1183" forKey:@"latitude"];
-              //  [delegate.defaults setValue:@"73.0276" forKey:@"longitude"];
+                //      [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
+                //  [delegate.defaults setValue:@"19.1183" forKey:@"latitude"];
+                // [delegate.defaults setValue:@"73.0276" forKey:@"longitude"];
                 //[delegate.defaults setValue:@"Mahape" forKey:@"loc_name"];
                 [delegate.defaults setValue:@"3" forKey:@"radius"];
-                ViewController * splash = [self.storyboard instantiateViewControllerWithIdentifier:@"ViewController"];
+                ViewController * splash = [self.storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
                 UINavigationController *passcodeNavigationController = [[UINavigationController alloc] initWithRootViewController:splash];
                 [self presentViewController:passcodeNavigationController animated:YES completion:nil];
             }

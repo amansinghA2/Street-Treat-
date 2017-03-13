@@ -191,7 +191,7 @@
     });
 }
 
--(void) updateCountdown{
+-(void)updateCountdown{
     if([[delegate.defaults valueForKey:@"passroute"] isEqualToString:@"FromProfile"]){
         NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
        // [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
