@@ -93,7 +93,7 @@
     // Login feilds
     usertxtFld = [[RPFloatingPlaceholderTextField alloc]initWithFrame:CGRectMake(LoginGoogleView.frame.origin.x,[commonclass.usryPos floatValue], LoginGoogleView.frame.size.width, 35)];
     usertxtFld.delegate=self;
-    usertxtFld.text = @"";
+    usertxtFld.text = @"aman.singh181092@gmail.com";
     usertxtFld.placeholder = @"USERNAME";
     usertxtFld.returnKeyType = UIReturnKeyNext;
     [commonclass addfeild:LoginView textfeild:usertxtFld];
@@ -103,7 +103,7 @@
     passTxtFld.secureTextEntry = YES;
     passTxtFld.returnKeyType = UIReturnKeyDefault;
     passTxtFld.placeholder = @"PASSWORD";
-    passTxtFld.text = @"";
+    passTxtFld.text = @"123456";
     [commonclass addfeild:LoginView textfeild:passTxtFld];
     //end
     

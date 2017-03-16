@@ -9,6 +9,7 @@ target 'Street_Treat' do
   pod 'Google/SignIn'
   pod 'GooglePlaces'
   pod 'GoogleMaps'
+  pod 'CustomIOSAlertView', '~> 0.9.5'
 
   target 'Street_TreatTests' do
     inherit! :search_paths

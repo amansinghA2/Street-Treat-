@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import "Common.h"
+#import "DashboardViewController.h"
+#import "ViewController.h"
 
 @interface CheckoutReviewViewController : UIViewController<commonProtocol>{
     Common * commonclass;
@@ -18,8 +20,11 @@
     NSString *salesmanSelectString;
     NSString *AppealSelectString;
     NSString *trailRoomSelectString;
+    float ratingsVal;
 }
-
+@property (weak, nonatomic) IBOutlet UILabel *storeNameLabel;
+@property (weak, nonatomic) IBOutlet UILabel *ratingsMaxLbl;
+@property (weak, nonatomic) IBOutlet UISlider *sliderOutlet;
 @property (weak, nonatomic) IBOutlet UITextField *pricetTextfield;
 
 @property (weak, nonatomic) IBOutlet UISegmentedControl *CategorySelect;
@@ -41,6 +46,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *overallShoppingLbl;
 - (IBAction)submitTapped:(id)sender;
 - (IBAction)closeTapped:(id)sender;
+- (IBAction)ratingsAction:(id)sender;
 
 
 @end

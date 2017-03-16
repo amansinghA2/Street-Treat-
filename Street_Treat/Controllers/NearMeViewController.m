@@ -26,10 +26,13 @@
 //    UIButton *back = (UIButton *)[self.view viewWithTag:1111];
 //    back.hidden = true;
     self.tabBarController.tabBar.tintColor = [UIColor redColor];
+    
+    
 }
 
 -(void)viewDidAppear:(BOOL)animated{
     [self setUpstackMenu];
+    
 }
 
 -(void)setUpstackMenu{
@@ -143,19 +146,24 @@
     
     userLatitude = [[delegate.defaults valueForKey:@"latitude"] floatValue];
     userLongitude = [[delegate.defaults valueForKey:@"longitude"] floatValue];
-    currentLatitude = [[delegate.defaults valueForKey:@"latitude"] floatValue];
-    currentLongitude = [[delegate.defaults valueForKey:@"longitude"] floatValue];
+    currentLatitude = [[delegate.defaults valueForKey:@"user_latitude"] floatValue];
+    currentLongitude = [[delegate.defaults valueForKey:@"user_longitude"] floatValue];
     userRadius = [[delegate.defaults valueForKey:@"radius"] floatValue];
 
     mapView.delegate = self;
-    
-    [self setCircleOverlaywithlatitude:userLatitude longitude:userLongitude];
+   
+    [self setCircleOverlaywithlatitude:currentLatitude longitude:currentLongitude];
+
 }
 
 -(void)FindCurrentTapped{
     [delegate.defaults setValue:@"myloc" forKey:@"locupdatefrom"];
     searchField.text = [delegate.defaults valueForKey:@"myloc_name"];
-   [self setCircleOverlaywithlatitude:userLatitude longitude:userLongitude];
+    
+    currentLatitude = [[delegate.defaults valueForKey:@"latitude"]floatValue];
+    currentLongitude = [[delegate.defaults valueForKey:@"longitude"]floatValue];
+    
+   [self setCircleOverlaywithlatitude:currentLatitude longitude:currentLongitude];
 }
 
 
@@ -336,7 +344,7 @@
 }
 
 -(void)getNearbyShopswithlatitude:(float)latitude longitude:(float)longitude{
-    NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%f&current_longitude=%f&radius=%f",[delegate.defaults valueForKey:@"logid"],latitude,longitude,currentLatitude,currentLongitude,userRadius];
+    NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%@&current_longitude=%@&radius=%f",[delegate.defaults valueForKey:@"logid"],latitude,longitude,[delegate.defaults valueForKey:@"latitude"],[delegate.defaults valueForKey:@"longitude"],userRadius];
     NSLog(@"body.. %@",messageBody);
     NSLog(@"commonclass.searchListURL.. %@",commonclass.searchListURL);
     [commonclass sendRequest:self.view mutableDta:nearMeData url:commonclass.searchListURL msgBody:messageBody];
@@ -366,7 +374,6 @@
         NSString * discamm = [markers[i] valueForKey:@"exclusive_discount"];
         
         CLLocationCoordinate2D position = CLLocationCoordinate2DMake([latstr floatValue], [longstr floatValue]);
-        
         
         GMSMarker *marker = [GMSMarker markerWithPosition:position];
         marker.icon = [UIImage imageNamed:@"Map_Pin.png"];
@@ -549,7 +556,7 @@
 {
     if (buttonIndex == 1) {
         locationenablerView.hidden = true;
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"prefs:root=Privacy&path=Contacts"]];
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"App-Prefs:root=Privacy&path=Contacts"]];
     }
 }
 

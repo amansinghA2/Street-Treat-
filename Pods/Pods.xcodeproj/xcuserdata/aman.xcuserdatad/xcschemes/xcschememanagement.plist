@@ -4,6 +4,11 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>CustomIOSAlertView.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>GTMOAuth2.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -47,12 +52,17 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>96B0DB2AE274B9A71F8EDA7342186C80</key>
+		<key>B1C4AAFAF49036C7007633DAA3C806AD</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>B1C4AAFAF49036C7007633DAA3C806AD</key>
+		<key>D906A54537D2453590F9B925C18B4AC4</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>E50B2ECAE255921DF7778768AAADA7D3</key>
 		<dict>
 			<key>primary</key>
 			<true/>

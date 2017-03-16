@@ -14,6 +14,7 @@
 #import "SubmitReviewViewController.h"
 #import "GenerateCouponsViewController.h"
 #import "ProfileViewController.h"
+#import "ImageViewController.h"
 
 #import "UPStackMenu.h"
 
@@ -47,10 +48,10 @@
     UIView * flyoutView;
     UIButton * backBtn;
     double  userLatitude,userLongitude,currentLatitude,currentLongitude;
-    
+    NSString *imgLink1;
     UIView * Popupmainview,*verifyView, * OTPView;
     UITextField *mobileFld,* otpFld;
-    
+    NSMutableArray *imagesList;
     UIView * locationenablerView;
     CLLocationManager *locationManager;
     CLLocation *currentLocation;

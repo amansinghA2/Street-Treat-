@@ -789,7 +789,6 @@
 //            }
         }else{
             storeCountLbl.text = [NSString stringWithFormat:@"0 Stores"];
-            [self.view makeToast:@"Oops server Error!"];
         }
         
         [indicator stopAnimating];
@@ -1123,6 +1122,7 @@
                 NSLog(@"%@",highstreetArr);
                 if (highstreetArr.count > newIndexPath.row){
                 [self setData:highstreetArr indexpath:newIndexPath];
+                   
                 }
             }else if([seg_string isEqualToString:@"Brands"]){
 //                if(counter == brandedArr.count){
@@ -1473,48 +1473,67 @@
 //    
 //}
 
--(void)selectImage:(id)sender{
-    
-    UITapGestureRecognizer *tapRecognizer = (UITapGestureRecognizer *)sender;
-  //  NSLog (@"%d",[tapRecognizer.view tag]);
-    
-//    NSString * imglink = [NSString stringWithFormat:@"%@/%@",commonclass.siteURL,[arrForImage[arrayIndexPath.row] valueForKey:@"images"][[tapRecognizer.view tag]]];
-    
-    viewforImage = [[UIView alloc]initWithFrame:CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height)];
-    //view.backgroundColor = [UIColor PopupBackground];
-    //   view.alpha = 0.2;
-   UIImageView *premiumImage1 = [[UIImageView alloc]initWithFrame:CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height)];
-    [premiumImage1 setImageWithURL:[NSURL URLWithString:imglink1] placeholderImage:[UIImage imageNamed:@"splash_iPhone.png"] usingActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    
-    UIButton * closeBtn = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [closeBtn setFrame:CGRectMake(self.view.frame.origin.x - 40 , self.view.frame.origin.y + 20, 30, 30)];
-  //  closeBtn.frame = CGRectMake(self.view.frame.origin.x - 40 , self.view.frame.origin.y + 20, 30, 30);
-    //resendBtn.titleLabel.textColor = [UIColor redColor];
-    [closeBtn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-    [closeBtn setTitle:@"Resend" forState:UIControlStateNormal];
-    closeBtn.titleLabel.font = [UIFont fontWithName:@"Roboto-Regular" size:14.0];
-    [closeBtn addTarget:self action:@selector(closeTapped) forControlEvents:UIControlEventTouchUpInside];
-    
-    [self.view addSubview:viewforImage];
-    [viewforImage addSubview:premiumImage1];
-    [premiumImage1 addSubview:closeBtn];
-    
-//    ImageViewController *vcb = [[ImageViewController alloc] init];
-//    vcb.imglink = imglink;
-//    [self addChildViewController:vcb];
-//    [self.view setFrame:CGRectMake(0,0,320,320)];
-//    [self.view addSubview:vcb.view];
-//    [vcb didMoveToParentViewController:self];
-    
 
-//    ResultsViewController *vcb1 = [[ResultsViewController alloc] init];
-//    [self addChildViewController:vcb];
+- (UIView *)createDemoView:(NSString *)sender
+{
+     demoView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height)];
+    
+    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(demoView.frame.origin.x, demoView.frame.origin.y, demoView.frame.size.width, demoView.frame.size.height - 50)];
+    
+    UIButton *closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    
+    [closeButton setFrame:CGRectMake(demoView.frame.origin.x,demoView.frame.origin.y + imageView.frame.size.height, demoView.frame.size.width, 50)];
+    [closeButton setTitle:@"Close" forState:UIControlStateNormal];
+    [closeButton setBackgroundColor:[UIColor redColor]];
+    [closeButton addTarget:self action:@selector(closeTapped:) forControlEvents:UIControlEventTouchUpInside];
+    
+    [imageView setImageWithURL:[NSURL URLWithString:sender] placeholderImage:[UIImage imageNamed:@"splash_iPhone.png"] usingActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+   // [imageView setImage:[UIImage imageNamed:@"demo"]];
+    [demoView addSubview:imageView];
+    [demoView addSubview:closeButton];
+    
+    return demoView;
+}
 
-//    vcb.view.frame = [self vcb1];
-//    [self.view addSubview:vcb.view];
-//    [vcb didMoveToParentViewController:self];
+-(void)closeTapped:(UIButton *)sender{
+    [demoView removeFromSuperview];
+}
 
-  //  [self.view addSubview:vcb.view];
+- (void)customIOS7dialogButtonTouchUpInside: (CustomIOSAlertView *)alertView clickedButtonAtIndex: (NSInteger)buttonIndex
+{
+    NSLog(@"Delegate: Button at position %d is clicked on alertView %d.", (int)buttonIndex, (int)[alertView tag]);
+    [alertView close];
+}
+
+-(void)selectImage:(UITapGestureRecognizer *)sender{
+    
+    CGPoint location = [sender locationInView: self.resultTable];
+    NSIndexPath * indexPath = [self.resultTable indexPathForRowAtPoint:location];
+    
+    
+    NSString * imglink = [NSString stringWithFormat:@"%@/%@",commonclass.siteURL,[arrForImage[indexPath.row] valueForKey:@"images"][sender.view.tag]];
+    
+    [self.view addSubview:[self createDemoView:imglink]];
+    
+//    CustomIOSAlertView *alertView = [[CustomIOSAlertView alloc] init];
+//    
+//    // Add some custom content to the alert view
+//    [alertView setContainerView:[self createDemoView:imglink]];
+//    
+//    // Modify the parameters
+//    [alertView setButtonTitles:[NSMutableArray arrayWithObjects:@"Close", nil]];
+//    [alertView setDelegate:self];
+//    
+//    // You may use a Block, rather than a delegate.
+//    [alertView setOnButtonTouchUpInside:^(CustomIOSAlertView *alertView, int buttonIndex) {
+//        NSLog(@"Block: Button at position %d is clicked on alertView %d.", buttonIndex, (int)[alertView tag]);
+//        [alertView close];
+//    }];
+//    
+//    [alertView setUseMotionEffects:true];
+//    
+//    // And launch the dialog
+//    [alertView show];
     
 }
 
@@ -1529,6 +1548,7 @@
     NSLog(@"%@",[delegate.defaults valueForKey:@"store_id"]);
     cell.storeNameLbl.text = [NSString stringWithFormat:@"%@",[arr[indexpath.row] valueForKey:@"store_name"]];
     cell.storeAddLbl.text = [NSString stringWithFormat:@"%@, %@",[arr[indexpath.row] valueForKey:@"address_1"],[arr[indexpath.row] valueForKey:@"address_2"]];
+    
     arrForImage = arr;
     arrayIndexPath = indexpath;
     if([[arr[indexpath.row] valueForKey:@"rating"] intValue] == 0){
@@ -1570,17 +1590,22 @@
         [view removeFromSuperview];
     }
     
+
+    
     if([arr[indexpath.row] valueForKey:@"images"] != [NSNull null]){
         imgcnt = [[arr[indexpath.row] valueForKey:@"images"] count];
         for (int j = 0; j < imgcnt; j++) {
-//            UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(selectImage:)];
-//            tapRecognizer.delegate = self;
-//            [storeimgview addGestureRecognizer:tapRecognizer];
-//            storeimgview.userInteractionEnabled = YES;
+           
+            UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(selectImage:)];
+            tapRecognizer.delegate = self;
+            [storeimgview addGestureRecognizer:tapRecognizer];
+            storeimgview.userInteractionEnabled = YES;
+            
             NSString * imglink = [NSString stringWithFormat:@"%@/%@",commonclass.siteURL,[arr[indexpath.row] valueForKey:@"images"][j]];
-            imglink1 = [NSString stringWithFormat:@"%@/%@",commonclass.siteURL,[arr[indexpath.row] valueForKey:@"images"][j]];
+            //storeimgview.tag = indexpath.row;
             storeimgview = [[UIImageView alloc]initWithFrame:CGRectMake(70 * j, 0, 65,cell.storeGalleryView.frame.size.height)];
             storeimgview.tag = j;
+            //storeimgview.tag = indexpath.row;
             storeimgview.layer.borderWidth = 1.0f;
             storeimgview.layer.borderColor = [[UIColor View_Border] CGColor];
             storeimgview.layer.backgroundColor = [[UIColor coupon_back]CGColor];
@@ -1732,6 +1757,7 @@
 }
 
 -(void)CheckinTapped:(UIButton*)sender{
+    
     NSString *storeNo;
     NSLog(@"%ld",(long)sender.tag);
     if([seg_string isEqualToString:@"High Street"]){

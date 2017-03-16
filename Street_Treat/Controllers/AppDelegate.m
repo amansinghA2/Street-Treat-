@@ -26,7 +26,6 @@
 @synthesize defaults,locationManager;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-   
 //    NSString * tempstr = @"qwerty\nrwererer\nqwerwerwerwer\n";
 //    tempstr = [tempstr stringByReplacingOccurrencesOfString:@"\n" withString:@""];
 //    NSLog(@"tempstr.. %@",tempstr);
@@ -52,17 +51,18 @@
         dUserInfo = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
         if (dUserInfo != nil)
         {
-//            NSString *a = [[dUserInfo valueForKey:@"aps"] valueForKey:@"message"];
-//            NSString *b = [[dUserInfo valueForKey:@"aps"] valueForKey:@"store_id"];
-//            NSString *c = [[dUserInfo valueForKey:@"aps"] valueForKey:@"store_name"];
-//            NSString *d = [[dUserInfo valueForKey:@"aps"] valueForKey:@"page_name"];
-//            [defaults setValue:a forKey:@"message"];
-//            [defaults setValue:b forKey:@"idstore"];
-//            [defaults setValue:c forKey:@"namestore"];
-//            [defaults setValue:d forKey:@"namepage"];
-//            
+            NSString *a = [[dUserInfo valueForKey:@"aps"] valueForKey:@"message"];
+            NSString *b = [[dUserInfo valueForKey:@"aps"] valueForKey:@"store_id"];
+            NSString *c = [[dUserInfo valueForKey:@"aps"] valueForKey:@"store_name"];
+            NSString *d = [[dUserInfo valueForKey:@"aps"] valueForKey:@"page_name"];
+            NSLog(@"store id %@",b);
+            [defaults setValue:a forKey:@"message"];
+            [defaults setValue:b forKey:@"idstore"];
+            [defaults setValue:c forKey:@"namestore"];
+            [defaults setValue:d forKey:@"namepage"];
+             [defaults synchronize];
             UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-            ProfileViewController *securityCheck = [storyboard instantiateViewControllerWithIdentifier:@"ProfileViewController"];
+            CheckoutReviewViewController *securityCheck = [storyboard instantiateViewControllerWithIdentifier:@"CheckoutReviewViewController"];
             [self.window.rootViewController presentViewController:securityCheck animated:YES completion:nil];
             //Do whatever you need
         }
@@ -197,15 +197,20 @@
     if ( application.applicationState == UIApplicationStateActive ){
         if (userInfo != nil)
         {
-              dUserInfo = userInfo;
-//            NSString *a = [[dUserInfo valueForKey:@"aps"] valueForKey:@"message"];
-//            NSString *b = [[dUserInfo valueForKey:@"aps"] valueForKey:@"store_id"];
-//            NSString *c = [[dUserInfo valueForKey:@"aps"] valueForKey:@"store_name"];
-//            NSString *d = [[dUserInfo valueForKey:@"aps"] valueForKey:@"page_name"];
-//            [defaults setValue:a forKey:@"message"];
-//            [defaults setValue:b forKey:@"idstore"];
-//            [defaults setValue:c forKey:@"namestore"];
-//            [defaults setValue:d forKey:@"namepage"];
+            dUserInfo = userInfo;
+            NSString *a = [[dUserInfo valueForKey:@"aps"] valueForKey:@"message"];
+            NSString *b = [[dUserInfo valueForKey:@"aps"] valueForKey:@"store_id"];
+            NSString *c = [[dUserInfo valueForKey:@"aps"] valueForKey:@"store_name"];
+            NSString *d = [[dUserInfo valueForKey:@"aps"] valueForKey:@"page_name"];
+            NSLog(@"store id %@",b);
+            [defaults setValue:a forKey:@"message"];
+            [defaults setValue:b forKey:@"idstore"];
+            [defaults setValue:c forKey:@"namestore"];
+            [defaults setValue:d forKey:@"namepage"];
+            [defaults synchronize];
+            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+            CheckoutReviewViewController *securityCheck = [storyboard instantiateViewControllerWithIdentifier:@"CheckoutReviewViewController"];
+            [self.window.rootViewController presentViewController:securityCheck animated:YES completion:nil];
         }
 //        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
 //        ProfileViewController *securityCheck = [storyboard instantiateViewControllerWithIdentifier:@"ProfileViewController"];
@@ -215,15 +220,25 @@
         if (userInfo != nil)
         {
             dUserInfo = userInfo;
-//            NSString *a = [[dUserInfo valueForKey:@"aps"] valueForKey:@"message"];
-//            NSString *b = [[dUserInfo valueForKey:@"aps"] valueForKey:@"store_id"];
-//            NSString *c = [[dUserInfo valueForKey:@"aps"] valueForKey:@"store_name"];
-//            NSString *d = [[dUserInfo valueForKey:@"aps"] valueForKey:@"page_name"];
-//            [defaults setValue:a forKey:@"message"];
-//            [defaults setValue:b forKey:@"idstore"];
-//            [defaults setValue:c forKey:@"namestore"];
-//            [defaults setValue:d forKey:@"namepage"];
+            NSString *a = [[dUserInfo valueForKey:@"aps"] valueForKey:@"message"];
+            NSString *b = [[dUserInfo valueForKey:@"aps"] valueForKey:@"store_id"];
+            NSString *c = [[dUserInfo valueForKey:@"aps"] valueForKey:@"store_name"];
+            NSString *d = [[dUserInfo valueForKey:@"aps"] valueForKey:@"page_name"];
+            NSLog(@"store id %@",b);
+            [defaults setValue:a forKey:@"message"];
+            [defaults setValue:b forKey:@"idstore"];
+            [defaults setValue:c forKey:@"namestore"];
+            [defaults setValue:d forKey:@"namepage"];
+             [defaults synchronize];
+
+            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+            CheckoutReviewViewController *securityCheck = [storyboard instantiateViewControllerWithIdentifier:@"CheckoutReviewViewController"];
+            [self.window.rootViewController presentViewController:securityCheck animated:YES completion:nil];
         }
+        
+ 
+        
+        
 //        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
 //        ProfileViewController *securityCheck = [storyboard instantiateViewControllerWithIdentifier:@"ProfileViewController"];
 //        [self.window.rootViewController presentViewController:securityCheck animated:YES completion:nil];
@@ -338,7 +353,20 @@ didDisconnectWithUser:(GIDGoogleUser *)user
     
     if (dUserInfo != nil)
     {
-        //Do whatever you need
+        NSString *a = [[dUserInfo valueForKey:@"aps"] valueForKey:@"message"];
+        NSString *b = [[dUserInfo valueForKey:@"aps"] valueForKey:@"store_id"];
+        NSString *c = [[dUserInfo valueForKey:@"aps"] valueForKey:@"store_name"];
+        NSString *d = [[dUserInfo valueForKey:@"aps"] valueForKey:@"page_name"];
+        
+        NSLog(@"store id %@",b);
+        [defaults setValue:a forKey:@"message"];
+        [defaults setValue:b forKey:@"idstore"];
+        [defaults setValue:c forKey:@"namestore"];
+        [defaults setValue:d forKey:@"namepage"];
+         [defaults synchronize];
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        CheckoutReviewViewController *securityCheck = [storyboard instantiateViewControllerWithIdentifier:@"CheckoutReviewViewController"];
+        [self.window.rootViewController presentViewController:securityCheck animated:YES completion:nil];
     }
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
 }

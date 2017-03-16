@@ -1,4 +1,5 @@
 PODS:
+  - CustomIOSAlertView (0.9.5)
   - FirebaseAnalytics (3.7.0):
     - FirebaseCore (~> 3.5)
     - FirebaseInstanceID (~> 1.0)
@@ -42,11 +43,13 @@ PODS:
     - GTMSessionFetcher/Core (= 1.1.8)
 
 DEPENDENCIES:
+  - CustomIOSAlertView (~> 0.9.5)
   - Google/SignIn
   - GoogleMaps
   - GooglePlaces
 
 SPEC CHECKSUMS:
+  CustomIOSAlertView: cc4fa8e36219be3fd5ebcd40789f5b4aaae0f38e
   FirebaseAnalytics: 0d1b7d81d5021155be37702a94ba1ec16d45365d
   FirebaseCore: 1c0a13bf59bb95cdd19577252499f0ec6a03e999
   FirebaseInstanceID: 2d0518b1378fe9d685ef40cbdd63d2fdc1125339
@@ -58,6 +61,6 @@ SPEC CHECKSUMS:
   GTMOAuth2: 7fc9c10f5c745f4d9850419ea88889fe3baa6b7d
   GTMSessionFetcher: 6f8d8b28b7e345549ac471071608170b31cb4977
 
-PODFILE CHECKSUM: 7fdf013762776eb6bd4d03203542234ad0b7fba7
+PODFILE CHECKSUM: cb096e638a3733200c51e7d5159b9024427356b7
 
 COCOAPODS: 1.2.0

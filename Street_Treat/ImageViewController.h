@@ -9,8 +9,15 @@
 #import <UIKit/UIKit.h>
 #import "UIImageView+WebCache.h"
 #import "UIImageView+UIActivityIndicatorForSDWebImage.h"
+#import "Common.h"
 
-@interface ImageViewController : UIViewController
+@interface ImageViewController : UIViewController<commonProtocol>{
+    Common * commonclass;
+    UIButton *backBtn;
+     UIButton * DtlcheckInBtn;
+}
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
+@property (weak, nonatomic) IBOutlet UIScrollView *ScrollImageView;
 @property (weak, nonatomic) NSString *imglink;
+@property (weak, nonatomic) NSMutableArray *imagesList;
 @end

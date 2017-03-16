@@ -398,10 +398,17 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    if ([expandedSections containsIndex:section] && section == 0)
-    {
-        return 5;
+    
+    if (isExpandable == true && selectedIndex == 2 && section == 2){
+        return 3;
+    }else if (isExpandable == true && selectedIndex == 3 && section == 3){
+        return 2;
     }
+    
+//    if ([expandedSections containsIndex:section] && section == 0)
+//    {
+//        return 5;
+//    }
     return 1; // only top row showing
 }
 
@@ -461,6 +468,29 @@
         }
     }
     
+    if (indexPath.section == 2 ) {
+        if (indexPath.row == 0){
+        UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(self.menuWidth, 5, 30, 30)];
+        if (isExpandable == true && selectedIndex == 2 && indexPath.section == 2){
+           [button setTitle:@"-" forState:UIControlStateNormal];
+        }else{
+           [button setTitle:@"+" forState:UIControlStateNormal];
+        }
+        [button addTarget:self action:@selector(buttonTapped:) forControlEvents:UIControlEventTouchUpInside];
+        [cell addSubview:button];
+        }
+    }else if (indexPath.section == 3) {
+        if (indexPath.row == 0){
+            UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(self.menuWidth, 5, 30, 30)];
+            if (isExpandable == true && selectedIndex == 3 && indexPath.section == 3){
+                [button setTitle:@"-" forState:UIControlStateNormal];
+            }else{
+                [button setTitle:@"+" forState:UIControlStateNormal];
+            }
+            [button addTarget:self action:@selector(buttonTapped:) forControlEvents:UIControlEventTouchUpInside];
+            [cell addSubview:button];
+        }
+    }
     
 //        if (cell == nil) {
 //            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
@@ -518,6 +548,10 @@
     return cell;
 }
 
+-(void)buttonTapped:(id)sender{
+    
+}
+
 - (void)buttonPressedAction:(id)sender
 {
     NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
@@ -532,10 +566,17 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    selectedIndex = (int)indexPath.section;
+    if (indexPath.section == 2 ){
+        isExpandable = !isExpandable;
+    }else if (indexPath.section == 3){
+        isExpandable = !isExpandable;
+    }
+    
   /*  BOOL currentlyExpanded;
     NSMutableArray *tmpArray;
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    
+   
     
     if (!indexPath.row)
     {

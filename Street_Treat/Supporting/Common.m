@@ -139,13 +139,13 @@
        // NSString * masterUrl = @"http://services.streettreat.in/index.php?option=com_konnect&task=";
         
        //Test
-       siteURL = @"http://www.webtest.streettreat.in";
-       NSString * masterUrl = @"http://www.webtest.streettreat.in/index.php?option=com_konnect&task=";
+//       siteURL = @"http://www.webtest.streettreat.in";
+//       NSString * masterUrl = @"http://www.webtest.streettreat.in/index.php?option=com_konnect&task=";
         
         
        // LIVE
-//        siteURL = @"http://www.web.streettreat.in";
-//        NSString * masterUrl = @"http://www.web.streettreat.in/index.php?option=com_konnect&task=";
+        siteURL = @"http://www.web.streettreat.in";
+        NSString * masterUrl = @"http://www.web.streettreat.in/index.php?option=com_konnect&task=";
         
         getMastersURL = [NSString stringWithFormat:@"%@getMasterData",masterUrl];
         

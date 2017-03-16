@@ -316,6 +316,7 @@
     dealsArr = [[NSMutableArray alloc]init];
     amenitiesArr = [[NSMutableArray alloc]init];
     deatilsArr = [[NSMutableArray alloc]init];
+    imagesList = [[NSMutableArray alloc]init];
     checkinsData = [[NSMutableData  alloc]init];
     backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     backBtn.frame = CGRectMake(5, 5, 30, 30);
@@ -527,6 +528,52 @@
     self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
 }
 
+- (UIView *)createDemoView
+{
+    UIView *demoView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width - 10, self.view.frame.size.height - 20)];
+    
+    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.frame.origin.x + 10 , self.view.frame.origin.y + 10 , self.view.frame.size.width - 10, self.view.frame.size.height - 30)];
+    [imageView setImageWithURL:[NSURL URLWithString:imgLink1] placeholderImage:[UIImage imageNamed:@"splash_iPhone.png"] usingActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    // [imageView setImage:[UIImage imageNamed:@"demo"]];
+    [demoView addSubview:imageView];
+    
+    return demoView;
+}
+
+
+- (void)customIOS7dialogButtonTouchUpInside: (CustomIOSAlertView *)alertView clickedButtonAtIndex: (NSInteger)buttonIndex
+{
+    NSLog(@"Delegate: Button at position %d is clicked on alertView %d.", (int)buttonIndex, (int)[alertView tag]);
+    [alertView close];
+}
+
+-(void)selectImage:(id)sender{
+//    ImageViewController * searchStore = [self.storyboard instantiateViewControllerWithIdentifier:@"ImageViewController"];
+//    searchStore.imagesList = imagesList;
+//    [self.navigationController pushViewController:searchStore animated:YES];
+    
+    CustomIOSAlertView *alertView = [[CustomIOSAlertView alloc] init];
+    
+    // Add some custom content to the alert view
+    [alertView setContainerView:[self createDemoView]];
+    
+    // Modify the parameters
+    [alertView setButtonTitles:[NSMutableArray arrayWithObjects:@"Close", nil]];
+    [alertView setDelegate:self];
+    
+    // You may use a Block, rather than a delegate.
+    [alertView setOnButtonTouchUpInside:^(CustomIOSAlertView *alertView, int buttonIndex) {
+        NSLog(@"Block: Button at position %d is clicked on alertView %d.", buttonIndex, (int)[alertView tag]);
+        [alertView close];
+    }];
+    
+    [alertView setUseMotionEffects:true];
+    
+    // And launch the dialog
+    [alertView show];
+    
+}
+
 -(void)Setdata:(NSMutableArray*)details{
     NSLog(@"details.. %@",details);
    if([details valueForKey:@"images"] != [NSNull null]){
@@ -534,13 +581,22 @@
    Promoscroll.contentSize = CGSizeMake(Promoscroll.frame.size.width * imgcnt, Promoscroll.frame.size.height);
     
     for (int j = 0; j < imgcnt; j++) {
+        
         NSString * imglink = [NSString stringWithFormat:@"%@/%@",commonclass.siteURL,[details valueForKey:@"images"][j]];
+        
+        [imagesList addObject:imglink];
+        imgLink1 = imglink;
         CGRect frame;
         frame.origin.x = Promoscroll.frame.size.width * j;
         frame.origin.y = 0;
         frame.size = Promoscroll.frame.size;
         UIImageView* imgView = [[UIImageView alloc] init];
         imgView.frame = frame;
+        UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(selectImage:)];
+        tapRecognizer.delegate = self;
+        imgView.tag = j;
+        [imgView addGestureRecognizer:tapRecognizer];
+        imgView.userInteractionEnabled = YES;
         [imgView setImageWithURL:[NSURL URLWithString:imglink] placeholderImage:[UIImage imageNamed:@"splash_iPhone.png"] usingActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
         [Promoscroll addSubview:imgView];
     }
@@ -931,15 +987,13 @@
 {
     if (buttonIndex == 1) {
         locationenablerView.hidden = true;
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"prefs:root=Privacy&path=Contacts"]];
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"App-Prefs:root=Privacy&path=Contacts"]];
     }
 }
 
 -(void)EnterManualLocation{
     [self.view makeToast:@"coming soon"];
 }
-
-
 
 - (void)sendResponse:(Common *)response data:(NSMutableArray*)data indicator:(UIActivityIndicatorView *)indicator{
     dispatch_sync(dispatch_get_main_queue(), ^{

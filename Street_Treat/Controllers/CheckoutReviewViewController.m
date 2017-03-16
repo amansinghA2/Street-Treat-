@@ -14,13 +14,21 @@
 -(void)viewDidLoad{
     commonclass = [[Common alloc]init];
     commonclass.delegate = self;
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
+    
+    [self.view addGestureRecognizer:tap];
+    
     delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     parentsData = [[NSMutableData alloc]init];
-    
+    ratingsVal = 0;
     categorySelString = @"Good";
     AppealSelectString = @"Good";
     trailRoomSelectString = @"Good";
     salesmanSelectString = @"Good";
+}
+
+-(void)viewWillAppear:(BOOL)animated{
+    _storeNameLabel.text = [delegate.defaults valueForKey:@"namestore"];
 }
 
 - (IBAction)categoryChanged:(id)sender {
@@ -35,14 +43,20 @@
     
 }
 
+
+-(void)dismissKeyboard
+{
+    [self.view endEditing:YES];
+    [_feedBackTextView resignFirstResponder];
+}
+
 - (IBAction)submitTapped:(id)sender {
-    
     if ([_pricetTextfield.text isEqualToString:@""]){
         [self.view makeToast:@"Price field cannot be left blank"];
     }else if([_feedBackTextView.text isEqualToString:@""]){
         [self.view makeToast:@"Feedback cannot be left blank"];
     }else{
-        NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&store_id=%@&ratings=%@&comments=%@&category_of_goods=%@&approximate_price=%@&salesman_review=%@&store_appeal=%@&trial_room=%@",[delegate.defaults valueForKey:@"log_id"],[delegate.defaults valueForKey:@"Store_ID"], overallShoppingLbl.text, _feedBackTextView.text , categorySelString , _pricetTextfield.text ,salesmanSelectString ,AppealSelectString ,trailRoomSelectString];
+        NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&store_id=%@&ratings=%f&comments=%@&category_of_goods=%@&approximate_price=%@&salesman_review=%@&store_appeal=%@&trial_room=%@",[delegate.defaults valueForKey:@"logid"],[delegate.defaults valueForKey:@"idstore"], ratingsVal, _feedBackTextView.text , categorySelString , _pricetTextfield.text ,salesmanSelectString ,AppealSelectString ,trailRoomSelectString];
         NSLog(@"body.. %@",messageBody);
         NSLog(@"commonclass.LoginURL.. %@",commonclass.shoppingReviewUrl);
         [commonclass sendRequest:self.view mutableDta:parentsData url:commonclass.shoppingReviewUrl msgBody:messageBody];
@@ -53,17 +67,36 @@
     
     dispatch_async(dispatch_get_main_queue(), ^{
         if([[data valueForKey:@"status"]intValue] == 1){
-            [commonclass Redirect:self.navigationController Identifier:@"DashboardViewController"];
+            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+            ViewController *splash = [self.storyboard instantiateViewControllerWithIdentifier:@"ViewController"];
+            UINavigationController *passcodeNavigationController = [[UINavigationController alloc] initWithRootViewController:splash];
+            [self presentViewController:passcodeNavigationController animated:YES completion:nil];
+            
+//            DashboardViewController *securityCheck = [storyboard instantiateViewControllerWithIdentifier:@"DashboardViewController"];
+//            [self presentViewController:securityCheck animated:YES completion:nil];
+          //  [commonclass Redirect:self.navigationController Identifier:@"DashboardViewController"];
         }else if([[data valueForKey:@"status"]intValue] == -1){
             [commonclass logoutFunction];
         }else{
             
         }
+        [indicator stopAnimating];
+        [[UIApplication sharedApplication] endIgnoringInteractionEvents];
     });
     
 }
 
 - (IBAction)closeTapped:(id)sender {
+    [self.view makeToast:@"Review is required"];
+}
+
+- (IBAction)ratingsAction:(id)sender {
+    
+    float increment = 1.0;
+    float newValue = _sliderOutlet.value /increment;
+    _sliderOutlet.value = floor(newValue) * increment;
+    ratingsVal = _sliderOutlet.value;
+  _ratingsMaxLbl.text = [NSString stringWithFormat:@"%.0f/5",_sliderOutlet.value];
     
 }
 

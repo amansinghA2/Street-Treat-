@@ -127,7 +127,7 @@ int btnwt,btnht;
         NSLog(@"constant.searchListURL.. %@",constant.searchListURL);
         [constant sendRequest:self.view mutableDta:dealsdata url:constant.searchListURL msgBody:messageBody1];
     }else{
-        [self CreateNetworkEnabler];
+        //[self CreateNetworkEnabler];
         [constant Redirect:self.navigationController Identifier:@"InternetDisconnectViewController"];
         //[self.view makeToast:@"Check your internet connection"];
     }
@@ -212,7 +212,7 @@ int btnwt,btnht;
             }else if([[data valueForKey:@"status"]intValue] == -1){
                 [constant logoutFunction];
             }else{
-                [self.view makeToast:@"Some problem occured"];
+               // [self.view makeToast:@"Some problem occured"];
             }
         }
        /*else if([requestType isEqualToString:@"Dashboard"]){
@@ -786,17 +786,21 @@ int btnwt,btnht;
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
     if (buttonIndex == 1) {
         locationenablerView.hidden = true;
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"prefs:root=Wi-Fi"]];
-        
+         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"App-Prefs:root=Privacy"]];
         // [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"prefs:root=General&path=Keyboard"]];
     }else{
         networkEnablerView.hidden = true;
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"prefs:root=Privacy"]];
     }
 }
 
 -(void)EnterManualLocation{
-    [self.view makeToast:@"coming soon"];
+    
+    [locationenablerView removeFromSuperview];
+    
+    GMSAutocompleteViewController *acController = [[GMSAutocompleteViewController alloc] init];
+    acController.delegate = self;
+    [self presentViewController:acController animated:YES completion:nil];
+    
 }
 
 -(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
@@ -1463,7 +1467,8 @@ didFailAutocompleteWithError:(NSError *)error {
 }
 
 -(void)showExhibitions{
-    [self.view makeToast:@"Coming Soon"];
+    //[self.view makeToast:@"Coming Soon"];
+    txfSearchField = [search valueForKey:@"_searchField"];
 //    ExhibitionListingViewController * result = [self.storyboard instantiateViewControllerWithIdentifier:@"ExhibitionListingViewController"];
 //    [self.navigationController pushViewController:result animated:YES];
 //    self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];

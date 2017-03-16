@@ -22,7 +22,7 @@
 	<string>????</string>
 	<key>CFBundleURLSchemes</key>
 	<array>
-		<string>prefs</string>
+		<string>App-Prefs</string>
 	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
@@ -45,7 +45,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>prefs</string>
+				<string>App-Prefs</string>
 			</array>
 		</dict>
 	</array>

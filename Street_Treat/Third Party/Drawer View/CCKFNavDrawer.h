@@ -19,6 +19,8 @@
 
 @interface CCKFNavDrawer : UINavigationController<UIGestureRecognizerDelegate, UITableViewDataSource, UITableViewDelegate>{
     CGRect temp;
+    BOOL isExpandable;
+    int selectedIndex;
      //Common * commonclass;
     NSMutableIndexSet *expandedSections;
     NSArray * menuNamesArray;

@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "DetailViewController.h"
 #import "DashboardViewController.h"
+#import "CustomIOSAlertView.h"
 #import "Common.h"
 #import "AppDelegate.h"
 #import "NormalListCell.h"
@@ -37,6 +38,7 @@
     ExhibitionNormalCell * cell1;
     PremiumListingCell * premiumcell;
     long int imgcnt;
+   // NSString *stringArray[][];
     UIImageView * storeimgview;
     NSMutableArray * phonenoArr;
     NSMutableArray * phoneno_StoreIDArr;
@@ -64,7 +66,7 @@
     BOOL isUpdate;
     UILabel * premiumStoreNamelabel;
     NSString * time;
-
+    UIView *demoView;
     NSString * locality;
     
     NSString *post;
