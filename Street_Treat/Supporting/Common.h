@@ -19,6 +19,7 @@
 #import "UIImageView+UIActivityIndicatorForSDWebImage.h"
 #import <QuartzCore/QuartzCore.h>
 #import "Reachability.h"
+
 //#import "ViewController.h"
 
 @class Common;
@@ -37,6 +38,10 @@
     UIActivityIndicatorView * indicator;
      AppDelegate * maindelegate;
     UIView * loaderView;
+    UIStoryboard *storyboard;
+    UITabBarController *tabBarController;
+    UINavigationController *navigationController;
+    
 }
 
 #define TextColor_TxtFld colorWithRed:(217/255.0) green:(6/255.0) blue:(43/255.0) alpha:1.0
@@ -231,12 +236,21 @@
 @property (strong, nonatomic) NSString *reportErrorURL;
 @property (strong, nonatomic) NSString *viewFeedbacksURL;
 @property (strong, nonatomic) NSString *generateOTPURL;
+@property (strong, nonatomic) NSString *promotionalBannerUrl;
 
 
 @property (strong, nonatomic) NSString *newsEventsURL;
 @property (strong, nonatomic) NSString *termsconditionsURL;
 
 @property (strong, nonatomic) NSString *loginFBURL;
+@property (strong, nonatomic) NSString *setType;
+
+- (void)setCategoryData: (NSString *) catId selectedRow: (NSInteger) row;
+- (void)DrawerTapped:(NSInteger)selectionIndex selectedRow: (NSInteger)row;
+-(void)setNavigationController: (UINavigationController *)Navigation tabBarController: (UITabBarController *)tabBarVC;
+
+-(void)setNavigationController: (UINavigationController *)Navigation tabBarController: (UITabBarController *)tabBarVC viewController: (UIViewController *)viewController;;
 
 
+-(void)showResults;
 @end

@@ -11,7 +11,7 @@
 #import "DashboardViewController.h"
 #import "ViewController.h"
 
-@interface CheckoutReviewViewController : UIViewController<commonProtocol>{
+@interface CheckoutReviewViewController : UIViewController<commonProtocol , UITextViewDelegate>{
     Common * commonclass;
     NSMutableData *parentsData;
     AppDelegate * delegate;

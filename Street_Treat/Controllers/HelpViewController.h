@@ -22,6 +22,7 @@
      BOOL pageControlBeingUsed;
     Common * constant;
     AppDelegate *delegate;
+    BOOL isNavigationBarHidden;
 }
 //@property (nonatomic, weak) id <HelpViewControllerDelegate> delegate1;
 @property (weak, nonatomic) IBOutlet UIScrollView *HelpScroll;

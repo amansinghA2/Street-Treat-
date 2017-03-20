@@ -66,7 +66,7 @@
                 <outlet property="phoneNoLbl" destination="aUN-dN-OhB" id="qKO-jO-ETa"/>
                 <outlet property="profilePic" destination="jlh-np-9MP" id="4us-Fu-o6Y"/>
             </connections>
-            <point key="canvasLocation" x="-4" y="302"/>
+            <point key="canvasLocation" x="-83" y="58"/>
         </view>
     </objects>
     <resources>

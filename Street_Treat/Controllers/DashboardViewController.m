@@ -14,6 +14,7 @@
     UPStackMenu *stack;
 }
 
+
 @end
 
 @implementation DashboardViewController
@@ -27,8 +28,40 @@ int btnwt,btnht;
 @synthesize couponDetMainView,couponDtlSubview,couponValLbl,couponCloseBtn,couponDescLbl,couponSubmitBtn;
 
 -(void)viewDidAppear:(BOOL)animated{
-    [self setUpstackMenu];
     
+    [self setUpstackMenu];
+//    if([[NSUserDefaults standardUserDefaults] boolForKey:@"navigatefromprofiletohelp"]==YES){
+//        for (UIView *view in couponScroll.subviews)  {
+//            if ([view isKindOfClass:[UIView class]]) {
+//                [view removeFromSuperview];
+//            }
+//        }
+//        [delegate.defaults setObject:@"DashboardViewController" forKey:@"internetdisconnect"];
+//        [delegate.defaults setValue:@"notShared" forKey:@"shareStore"];
+//        self.rootNav = (CCKFNavDrawer *)self.navigationController;
+//        [self.rootNav setCCKFNavDrawerDelegate:self];
+//        self.tabBarController.tabBar.tintColor = [UIColor redColor];
+//        currentLatitude = [[delegate.defaults valueForKey:@"latitude"] floatValue];
+//        currentLongitude = [[delegate.defaults valueForKey:@"longitude"] floatValue];
+//        [self getBanners];
+//        // [self CreatePromotionalWebview];
+//        //[self getNearbyDeals];
+//  
+//        // [self setupExhibitions:promoArr];
+//        
+//        //    NSString *userLatitude1 = [delegate.defaults valueForKey:@"user_latitude"];
+//        //    NSString *userLongitude1 = [delegate.defaults valueForKey:@"user_longitude"];
+//        //
+//        //    [delegate.defaults setValue:userLatitude1 forKey:@"user_latitude"];
+//        //    [delegate.defaults setValue:userLongitude1 forKey:@"user_longitude"];
+//        
+//        //        float duration = 0.5;
+//        //        timer = [NSTimer scheduledTimerWithTimeInterval:duration target:self selector:@selector(showLocName) userInfo:nil repeats: YES];
+//        [self showLocName];
+//        [delegate.defaults synchronize];
+//    }else{
+//        
+//    }
 //    userLatitude = [[delegate.defaults valueForKey:@"latitude"] floatValue];
 //    userLongitude = [[delegate.defaults valueForKey:@"longitude"] floatValue];
     
@@ -64,10 +97,13 @@ int btnwt,btnht;
     if(loc.length == 0){
         txfSearchField.text = [delegate.defaults valueForKey:@"myloc_name"];
         txfSearchField.textColor = [UIColor whiteColor];
-       
+        currentLatitude = [[delegate.defaults valueForKey:@"latitude"] floatValue];
+        currentLongitude = [[delegate.defaults valueForKey:@"longitude"] floatValue];
         [timer invalidate];
     }else{
         txfSearchField.text = [delegate.defaults valueForKey:@"loc_name"];
+        currentLatitude = [[delegate.defaults valueForKey:@"user_latitude"] floatValue];
+        currentLongitude = [[delegate.defaults valueForKey:@"user_longitude"] floatValue];
         txfSearchField.textColor = [UIColor whiteColor];
 //        [self getNearbyDealsWithLatitude:[[delegate.defaults valueForKey:@"user_latitude"]floatValue] longitude:[[delegate.defaults valueForKey:@"user_longitude"]floatValue] radius:userRadius];
         [timer invalidate];
@@ -76,30 +112,29 @@ int btnwt,btnht;
 }
 
 -(void)viewWillAppear:(BOOL)animated{
+    [delegate.defaults setValue:@"" forKey:@"navigateFromReport"];
+    [self CurrentLocationIdentifier];
+    [self showLocName];
+    
+    for (UIView *view in couponScroll.subviews)  {
+        if ([view isKindOfClass:[UIView class]]) {
+            [view removeFromSuperview];
+        }
+    }
+    
+//    currentLatitude = [[delegate.defaults valueForKey:@"user_latitude"] floatValue];
+//    currentLongitude = [[delegate.defaults valueForKey:@"user_longitude"] floatValue];
+    userRadius = [[delegate.defaults valueForKey:@"radius"] floatValue];
+    
     [delegate.defaults setObject:@"DashboardViewController" forKey:@"internetdisconnect"];
     [delegate.defaults setValue:@"notShared" forKey:@"shareStore"];
     self.rootNav = (CCKFNavDrawer *)self.navigationController;
     [self.rootNav setCCKFNavDrawerDelegate:self];
     self.tabBarController.tabBar.tintColor = [UIColor redColor];
+    [self getBanners];
     
-    [self CreatePromotionalWebview];
-    //[self getNearbyDeals];
-    [self setupPromotionalBanners:promoArr];
-    [self setupExhibitions:promoArr];
-    
-//    NSString *userLatitude1 = [delegate.defaults valueForKey:@"user_latitude"];
-//    NSString *userLongitude1 = [delegate.defaults valueForKey:@"user_longitude"];
-//    
-//    [delegate.defaults setValue:userLatitude1 forKey:@"user_latitude"];
-//    [delegate.defaults setValue:userLongitude1 forKey:@"user_longitude"];
-    
-//        float duration = 0.5;
-//        timer = [NSTimer scheduledTimerWithTimeInterval:duration target:self selector:@selector(showLocName) userInfo:nil repeats: YES];
-    [self showLocName];
     [delegate.defaults synchronize];
-    
-     [self getNearbyDealsWithLatitude:[[delegate.defaults valueForKey:@"user_latitude"]floatValue] longitude:[[delegate.defaults valueForKey:@"user_longitude"]floatValue] radius:userRadius];
-
+    [constant setNavigationController:self.navigationController tabBarController:self.tabBarController viewController:self];
 }
 
 -(void)getParentCategories{
@@ -108,11 +143,20 @@ int btnwt,btnht;
         NSString *messageBody = [NSString stringWithFormat:@"parent_id=%@",@"1"];
         NSLog(@"body.. %@",messageBody);
         NSLog(@"commonclass.LoginURL.. %@",constant.getParentCategoriesURL);
-        [constant sendRequest:self.view mutableDta:parentsData url:constant.getParentCategoriesURL msgBody:messageBody];
+        [constant sendRequest:self.view mutableDta:parentsData url:constant.getParentCategoriesURL msgBody:nil];
     }else{
         [constant Redirect:self.navigationController Identifier:@"InternetDisconnectViewController"];
         //[self.view makeToast:@"Check your internet connection"];
     }
+}
+
+-(void)getBanners{
+    
+    requestType = @"GetBanners";
+    NSString *messageBody1 = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f",[delegate.defaults valueForKey:@"logid"] ,currentLatitude ,currentLongitude];
+    NSLog(@"mesage body %@", messageBody1);
+    [constant sendRequest:self.view mutableDta:dealsdata url:constant.promotionalBannerUrl msgBody:messageBody1];
+    
 }
 
 -(void)getNearbyDealsWithLatitude:(float)storeLatitude longitude:(float)storeLongitude radius:(float)storeradius{
@@ -150,14 +194,26 @@ int btnwt,btnht;
 
 
 - (void)sendResponse:(Common *)response data:(NSMutableArray*)data indicator:(UIActivityIndicatorView *)indicator{
-    NSLog(@"data.. %@",data);
     dispatch_sync(dispatch_get_main_queue(), ^{
-         if([requestType isEqualToString:@"GetDeals"]){
+        if([requestType isEqualToString:@"GetBanners"]){
+            if([[data valueForKey:@"status"]intValue] == 1){
+                promoArr = [data valueForKey:@"items"];
+                [self setupPromotionalBanners:promoArr];
+               // promoArr = [data valueForKey:@"items"];
+            }
+      //      if([[NSUserDefaults standardUserDefaults] boolForKey:@"navigatefromprofiletohelp"]==YES){
+               [self getNearbyDealsWithLatitude:currentLatitude longitude:currentLongitude radius:[[delegate.defaults valueForKey:@"radius"] floatValue]];
+                [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"navigatefromprofiletohelp"];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+//            }else{
+//              [self getNearbyDealsWithLatitude:[[delegate.defaults valueForKey:@"user_latitude"]floatValue] longitude:[[delegate.defaults valueForKey:@"user_longitude"]floatValue] radius:[[delegate.defaults valueForKey:@"radius"] floatValue]];
+//            }
+            
+        }else if([requestType isEqualToString:@"GetDeals"]){
             if([[data valueForKey:@"status"]intValue] == 1){
                 if ([data valueForKey:@"items"] == (id)[NSNull null]) {
                     [self.view makeToast:@""];
                 }else{
-                NSLog(@"deals are.. %@",data);
                 dealsArr = [data valueForKey:@"items"];
                 [self setupCoupons:dealsArr];
                 _bestDlsLbl.hidden = false;
@@ -168,7 +224,8 @@ int btnwt,btnht;
                 [constant changeFrameforDashboardWRT:_CheckinDtlsView ofview:_CollectionsLblHdr];
                 [constant changeFrameforDashboardWRT:_CheckinDtlsView ofview:_collectionMoreBtn];
                 [self getBuckets];
-                }}else if([[data valueForKey:@"status"]intValue] == -1){
+                }
+            }else if([[data valueForKey:@"status"]intValue] == -1){
                 [constant logoutFunction];
             }else{
                 _bestDlsLbl.hidden = true;
@@ -195,17 +252,35 @@ int btnwt,btnht;
              }
          }
        else if([requestType isEqualToString:@"GetParents"]){
+           
             if([[data valueForKey:@"status"]intValue] == 1){
-                for(int k=0;k<data.count;k++){
+                NSMutableArray *mensArray = [[NSMutableArray alloc]init];
+                NSMutableArray *womensArray = [[NSMutableArray alloc]init];
+                NSMutableArray *childrenArray = [[NSMutableArray alloc]init];
+                
+                delegate.itemsArray = [data valueForKey:@"items"];
+                for(int k=0;k<[[data valueForKey:@"items"] count];k++){
                     if([[[data valueForKey:@"items"][k] valueForKey:@"title"] isEqualToString:@"Mens"]){
                         NSString * catID = [NSString stringWithFormat:@"%@",[[data valueForKey:@"items"][k] valueForKey:@"id"]];
                         [delegate.defaults setValue:catID forKey:@"MensCategory"];
+                       
                     }else if([[[data valueForKey:@"items"][k] valueForKey:@"title"] isEqualToString:@"Womens"]){
                         NSString * catID = [NSString stringWithFormat:@"%@",[[data valueForKey:@"items"][k] valueForKey:@"id"]];
                         [delegate.defaults setValue:catID forKey:@"WomensCategory"];
                     }else if([[[data valueForKey:@"items"][k] valueForKey:@"title"] isEqualToString:@"Children"]){
                         NSString * catID = [NSString stringWithFormat:@"%@",[[data valueForKey:@"items"][k] valueForKey:@"id"]];
                         [delegate.defaults setValue:catID forKey:@"ChildrenCategory"];
+                    }
+                    
+                    if ([[[data valueForKey:@"items"][k] valueForKey:@"parent_id"] isEqualToString: @"9"]){
+                        [mensArray addObject:[[data valueForKey:@"items"][k] valueForKey:@"title"]];
+                        [delegate.defaults setObject:mensArray forKey:@"mensArray"];
+                    }else if([[[data valueForKey:@"items"][k] valueForKey:@"parent_id"] isEqualToString: @"16"]){
+                        [womensArray addObject:[[data valueForKey:@"items"][k] valueForKey:@"title"]];
+                        [delegate.defaults setObject:womensArray forKey:@"womensArray"];
+                    }else if([[[data valueForKey:@"items"][k] valueForKey:@"parent_id"] isEqualToString: @"25"]){
+                        [childrenArray addObject:[[data valueForKey:@"items"][k] valueForKey:@"title"]];
+                        [delegate.defaults setObject:childrenArray forKey:@"childrenArray"];
                     }
                 }
                 [delegate.defaults synchronize];
@@ -223,11 +298,9 @@ int btnwt,btnht;
                 [self.view makeToast:@"Some problem occured"];
             }
         }*/
-        [indicator stopAnimating];
         [[UIApplication sharedApplication] endIgnoringInteractionEvents];
+        [indicator stopAnimating];
      });
-    [indicator stopAnimating];
-    [[UIApplication sharedApplication] endIgnoringInteractionEvents];
 }
 
 -(void)setupDashboard:(NSMutableArray*)data{
@@ -273,13 +346,18 @@ int btnwt,btnht;
         frame.origin.y = 0;
         frame.size = PromoScroll.frame.size;
         UIImageView* imgView = [[UIImageView alloc] init];
-        imgView.image = [promoArr objectAtIndex:j];
+//        imgView.image = [promoArr objectAtIndex:j];
         imgView.frame = frame;
         imgView.tag = j;
+        [self CreatePromotionalWebview:[data[j] valueForKey:@"url"]];
+        NSString *imglink = [NSString stringWithFormat:@"%@/%@",constant.siteURL,[data[j] valueForKey:@"image"]];
         UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(Pro_BannerTapped:)];
         tapGestureRecognizer.numberOfTapsRequired = 1;
         [imgView addGestureRecognizer:tapGestureRecognizer];
-        imgView.userInteractionEnabled = NO;
+        imgView.userInteractionEnabled = YES;
+        imgView.tag = j;
+        [imgView setImageWithURL:[NSURL URLWithString:imglink] placeholderImage:[UIImage imageNamed:@""] usingActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+        
         [PromoScroll addSubview:imgView];
     }
     
@@ -290,14 +368,14 @@ int btnwt,btnht;
     //end
 }
 
--(void)CreatePromotionalWebview{
+-(void)CreatePromotionalWebview:(NSString *)urlString{
     promoBannerDet_view = [[UIView alloc]initWithFrame:CGRectMake(5, 50, self.view.frame.size.width-10, self.view.frame.size.height-55)];
     [promoBannerDet_view setBackgroundColor:[UIColor darkGrayColor]];
     promoDtlWebview = [[UIWebView alloc]initWithFrame:CGRectMake(0, 0, promoBannerDet_view.frame.size.width, promoBannerDet_view.frame.size.height)];
     promoDtlWebview.layer.cornerRadius = 5.0f;
     promoDtlWebview.layer.masksToBounds = YES;
     promoDtlWebview.delegate=self;
-    [promoDtlWebview loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://www.google.com"]]];
+    [promoDtlWebview loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",urlString]]]];
     [promoBannerDet_view addSubview:promoDtlWebview];
     promoBannerDet_view.layer.cornerRadius = 5.0f;
     promoBannerDetclose = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -323,8 +401,58 @@ int btnwt,btnht;
     promoBannerDet_view.hidden = true;
 }
 
+
+//if (promotiondata.external_link == 0) {
+//    if (promotiondata.checked_in) {
+//        if (promotiondata.start_time == null && promotiondata.end_time == null) {
+//            Toast.makeText(context, "Seems store is closed, please visit later", Toast.LENGTH_LONG).show();
+//        } else {
+//            if (Constant.Getdistanceinmeters(promotiondata.distance_in_kms)) {
+//                Constant.store_id = promotiondata.store_id;
+//                fragmentClick.onClick(CheckedInFragment.newInstance());
+//            } else {
+//                Constant.store_id = promotiondata.store_id;
+//                fragmentClick.onClick(StoreDeatailFragment.newInstance());
+//            }
+//        }
+//    } else if (!promotiondata.checked_in && promotiondata.can_review) {
+//        Constant.store_id = promotiondata.store_id;
+//        fragmentClick.onClick(StoreDeatailFragment.newInstance());
+//    } else if (!promotiondata.checked_in && !promotiondata.can_review) {
+//        Constant.store_id = promotiondata.store_id;
+//        fragmentClick.onClick(StoreDeatailFragment.newInstance());
+//    }
+//} else if (promotiondata.external_link == 1) {
+//    dialogWeb(promotiondata.url);
+//    
+//} else if (promotiondata.external_link == 2) {
+//    
+//}
+
 -(void)Pro_BannerTapped:(UIGestureRecognizer *)sender{
-    promoBannerDet_view.hidden = false;
+    
+    if([[[promoArr[sender.view.tag] valueForKey:@"external_link"]stringValue] isEqualToString:@"0"]){
+        
+        if ([[[promoArr[sender.view.tag] valueForKey:@"checked_in"]stringValue] isEqualToString:@"1"]) {
+            if ([promoArr[sender.view.tag] valueForKey:@"start_time"] == [NSNull null] && [promoArr[sender.view.tag] valueForKey:@"end_time"] == [NSNull null]) {
+                [self.view makeToast:@"Seems store is closed, please visit later"];
+            }else{
+                
+            }
+        }else if([[[promoArr[sender.view.tag] valueForKey:@"checked_in"]stringValue] isEqualToString:@"0"] &&  [[[promoArr[sender.view.tag] valueForKey:@"can_review"]stringValue] isEqualToString:@"1"]){
+            [delegate.defaults setInteger:[[promoArr[sender.view.tag] valueForKey:@"store_id"]intValue] forKey:@"store_ID"];
+            [constant Redirect:self.navigationController Identifier:@"DetailViewController"];
+        }else if([[[promoArr[sender.view.tag] valueForKey:@"checked_in"]stringValue] isEqualToString:@"0"] &&  [[[promoArr[sender.view.tag] valueForKey:@"can_review"]stringValue] isEqualToString:@"0"]) {
+            [delegate.defaults setInteger:[[promoArr[sender.view.tag] valueForKey:@"store_id"]intValue] forKey:@"store_ID"];
+            [constant Redirect:self.navigationController Identifier:@"DetailViewController"];
+        }
+    }else if([[[promoArr[sender.view.tag] valueForKey:@"external_link"]stringValue] isEqualToString:@"1"]){
+        promoBannerDet_view.hidden = false;
+    }else{
+        
+    }
+    
+    [delegate.defaults synchronize];
 }
 
 -(void)webViewDidStartLoad:(UIWebView *)webView{
@@ -344,6 +472,15 @@ int btnwt,btnht;
    // [promoBannerDet_view removeFromSuperview];
     //[couponDet_view removeFromSuperview];
 }
+
+//- (void)resetAll:(id)sender
+//{
+//    for (UIView *view in self.subviews) {
+//        if ([view isKindOfClass:[StatusView class]]) {
+//            [view removeFromSuperview];
+//        }
+//    }
+//}
 
 -(void)setupCoupons:(NSMutableArray*)data{
    btnwt = 85;
@@ -805,6 +942,8 @@ int btnwt,btnht;
 
 -(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
+    
+    CLLocation* loc = [locations lastObject];
     NSString * latstring = [NSString stringWithFormat:@"%f", locationManager.location.coordinate.latitude];
     NSString * longstring = [NSString stringWithFormat:@"%f", locationManager.location.coordinate.longitude];
     
@@ -818,7 +957,7 @@ int btnwt,btnht;
                            return;
                        }
                        
-                       CLPlacemark *placemark = [placemarks objectAtIndex:0];
+                       CLPlacemark *placemark = [placemarks firstObject];
                        locality = [NSString stringWithFormat:@"%@",placemark.subLocality];
                     }];
     
@@ -830,7 +969,9 @@ int btnwt,btnht;
     
     [delegate.defaults setValue:locality forKey:@"updateloc_name"];
     [delegate.defaults setValue:@"myloc" forKey:@"locupdatefrom"];
+    if (locality != nil){
     [delegate.defaults setValue:locality forKey:@"myloc_name"];
+    }
     [delegate.defaults synchronize];
 }
 
@@ -839,7 +980,7 @@ int btnwt,btnht;
     [super viewDidLoad];
     [self allocateRequired];
     brandedBtn.hidden = TRUE;
-    [self CurrentLocationIdentifier];
+    
     
     _ExhibitionTitleHdr.hidden = true;
     _ExhibitionMoreBtn.hidden = true;
@@ -851,7 +992,7 @@ int btnwt,btnht;
     [constant changeFrameforDashboardWRT:_CheckinDtlsView ofview:_CollectionsLblHdr];
     [constant changeFrameforDashboardWRT:_CheckinDtlsView ofview:_collectionMoreBtn];
     
-    //[self getParentCategories];
+   
     
     //Without webservice Integration
     promoArr = [[NSMutableArray alloc]initWithObjects:[UIImage imageNamed:@"Promo1.png"],[UIImage imageNamed:@"Promo2.png"],[UIImage imageNamed:@"Promo3.png"],[UIImage imageNamed:@"Promo4.png"],nil];
@@ -902,92 +1043,23 @@ int btnwt,btnht;
     
     if([[NSUserDefaults standardUserDefaults] boolForKey:@"firstLaunch"]==NO)
     {
-        
         HelpViewController * help = [self.storyboard instantiateViewControllerWithIdentifier:@"HelpViewController"];
-//        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:help];
-//        [self presentViewController:nav animated:YES completion:nil];
-        [self presentViewController:help animated:YES completion:nil];
+        [self.navigationController pushViewController:help animated:true];
+        //[self presentViewController:help animated:YES completion:nil];
     }
-    
     constant.delegate = self;
-    
-    currentLatitude = [[delegate.defaults valueForKey:@"user_latitude"] floatValue];
-    currentLongitude = [[delegate.defaults valueForKey:@"user_longitude"] floatValue];
-    userRadius = [[delegate.defaults valueForKey:@"radius"] floatValue];
-    
-//  UIButton*  checkInBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-//    checkInBtn.frame = CGRectMake(self.view.frame.size.height/4, self.view.frame.size.width/2, 100, 100);
-//    checkInBtn.backgroundColor = [UIColor redColor];
-//    //checkInBtn.layer.cornerRadius = 20.0f;
-//    [checkInBtn setImage:[UIImage imageNamed:@"Checkin_dtl.png"] forState:UIControlStateNormal];
-//    [checkInBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-//    [checkInBtn addTarget:self action:@selector(checkInTapped:) forControlEvents:UIControlEventTouchUpInside];
-//    [DashboardScroll addSubview:checkInBtn];
-//    
-//    [self.view bringSubviewToFront:checkInBtn];
-
-    
-//    //dynamic
-//      NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%@&longitude=%@&radius=%@",[delegate.defaults valueForKey:@"logid"],[delegate.defaults valueForKey:@"latitude"],[delegate.defaults valueForKey:@"longitude"],[delegate.defaults valueForKey:@"radius"]];
-//        [constant sendRequest:self.view mutableDta:DashboardData url:constant.dashboardURL msgBody:messageBody];
-
-    
-    
-    //    NSArray *collectionArr = [[NSArray alloc]initWithObjects:@"Summer Collection",@"Winter Collection",@"Rainy Collection",@"Holi Collection",@"Diwali Collection",@"Eid Collection",nil];
-    //    float yht=collectionLbl.frame.origin.y - 15;
-    //    for (int j = 0; j < collectionArr.count; j++) {
-    //        if(j%2 == 0){
-    //            collectionsbtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    //            collectionsbtn.frame = CGRectMake(5, yht, (self.view.frame.size.width/2 - 10), 35);
-    //            [collectionsbtn setTitle:[collectionArr objectAtIndex:j] forState:UIControlStateNormal];
-    //            [collectionsbtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
-    //            [collectionsbtn.titleLabel setFont:[UIFont fontWithName:@"Roboto-Regular" size:14]];
-    //            collectionsbtn.tag = j;
-    //            collectionsbtn.layer.borderWidth = 1.0f;
-    //            collectionsbtn.layer.borderColor = [[UIColor View_Border] CGColor];
-    //            collectionsbtn.layer.cornerRadius = 18.0f;
-    //            [collectionsbtn addTarget:self action:@selector(collectionTapped:) forControlEvents:UIControlEventTouchUpInside];
-    //            [DashboardScroll addSubview:collectionsbtn];
-    //
-    //        }else{
-    //
-    //            collectionsbtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    //            collectionsbtn.frame = CGRectMake(self.view.frame.size.width/2, yht, (self.view.frame.size.width/2 - 10), 35);
-    //            [collectionsbtn setTitle:[collectionArr objectAtIndex:j] forState:UIControlStateNormal];
-    //            [collectionsbtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
-    //            collectionsbtn.tag = j;
-    //            collectionsbtn.layer.borderWidth = 1.0f;
-    //            [collectionsbtn.titleLabel setFont:[UIFont fontWithName:@"Roboto-Regular" size:14]];
-    //            collectionsbtn.layer.borderColor = [[UIColor View_Border] CGColor];
-    //            collectionsbtn.layer.cornerRadius = 18.0f;
-    //            [collectionsbtn addTarget:self action:@selector(collectionTapped:) forControlEvents:UIControlEventTouchUpInside];
-    //            [DashboardScroll addSubview:collectionsbtn];
-    //            yht = (yht+collectionsbtn.frame.size.height)+5.0f;
-    //        }
-    //    }
-    //
-    //    NSLog(@"y ht.. %f",yht);
-    //
-    //    DashboardScroll.contentSize = CGSizeMake(self.view.frame.size.width, yht);
-    
-    //   contentView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width - 60, self.view.frame.size.height - 45, 40, 40)];
-    //     [contentView setBackgroundColor:[UIColor redColor]];
-    //     [contentView.layer setCornerRadius:20.0f];
-    //     UIImageView *icon = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"plus"]];
-    //     [icon setContentMode:UIViewContentModeScaleAspectFit];
-    //     [icon setFrame:CGRectInset(contentView.frame, 10, 10)];
-    //     [contentView addSubview:icon];
-    
-    
-    // contentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
- 
 }
 
 -(void)FindCurrentTapped{
     
+    for (UIView *view in couponScroll.subviews)  {
+        if ([view isKindOfClass:[UIView class]]) {
+            [view removeFromSuperview];
+        }
+    }
+    
     currentLatitude = [[delegate.defaults valueForKey:@"latitude"]floatValue];
     currentLongitude = [[delegate.defaults valueForKey:@"longitude"]floatValue];
-    
     [delegate.defaults setValue:[delegate.defaults valueForKey:@"latitude"] forKey:@"user_latitude"];
     [delegate.defaults setValue:[delegate.defaults valueForKey:@"longitude"] forKey:@"user_longitude"];
     
@@ -1047,140 +1119,10 @@ int btnwt,btnht;
     [self presentViewController:notifications animated:YES completion:nil];
 }
 
-#pragma mark - photoShotSavedDelegate
 
-- (void)DrawerTapped:(NSInteger)selectionIndex{
-    if([[delegate.defaults valueForKey:@"drawerRoute"] isEqualToString:@"Section"]){
-        NSLog(@"index.. %ld",(long)selectionIndex);
-        switch (selectionIndex) {
-            case 0:
-            {
-                SearchStoreViewController * searchStore = [self.storyboard instantiateViewControllerWithIdentifier:@"SearchStoreViewController"];
-               // [self.navigationController pushViewController:searchStore animated:NO];
-                //MyModalViewController *modalViewController = [[MyModalViewController alloc] init];
-                [searchStore setReferencedNavigation:self.navigationController];
-                searchStore.modalPresentationStyle = UIModalPresentationOverCurrentContext;
-                [self.tabBarController presentViewController:searchStore animated:YES completion:nil];
-            }
-                break;
-            case 1:
-            {
-                NSString * catID = [delegate.defaults valueForKey:@"MensCategory"];
-                [delegate.defaults setValue:catID forKey:@"category"];
-                [delegate.defaults setValue:@"Store" forKey:@"route"];
-                [delegate.defaults synchronize];
-                [self showResults];
-            }
-                break;
-            case 2:
-            {
-                NSString * catID = [delegate.defaults valueForKey:@"WomensCategory"];
-                [delegate.defaults setValue:catID forKey:@"category"];
-                [delegate.defaults setValue:@"Store" forKey:@"route"];
-                [delegate.defaults synchronize];
-                [self showResults];
-            }
-                break;
-            case 3:
-            {
-                NSString * catID = [delegate.defaults valueForKey:@"ChildrenCategory"];
-                [delegate.defaults setValue:catID forKey:@"category"];
-                [delegate.defaults setValue:@"Store" forKey:@"route"];
-                [delegate.defaults synchronize];
-                [self showResults];
-            }
-                break;
-            case 4:
-                setType = @"about-us";
-                [self StaticContent];
-                break;
-            case 5:
-                setType = @"News-Events";
-                [self StaticContent];
-                break;
-            case 6:
-                setType = @"Terms And Conditions";
-                [self StaticContent];
-                break;
-            case 7:
-                setType = @"faqs";
-                [self StaticContent];
-                break;
-            case 8:
-                setType = @"privacy";
-                [self StaticContent];
-                break;
-            case 9:{
-                [constant Redirect:self.navigationController Identifier:@"ContactViewController"];
-                //                ContactViewController * contact = [self.storyboard instantiateViewControllerWithIdentifier:@"ContactViewController"];
-                //                [self.navigationController pushViewController:contact animated:YES];
-            }
-                break;
-            case 10:{
-                ProfileViewController * profile = [self.storyboard instantiateViewControllerWithIdentifier:@"ProfileViewController"];
-                [self.navigationController pushViewController:profile animated:YES];
-                self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
-            }
-                break;
-            case 11:{
-                HelpViewController * help = [self.storyboard instantiateViewControllerWithIdentifier:@"HelpViewController"];
-                [self.navigationController pushViewController:help animated:YES];
-                self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
-                
-            }
-                break;
-            case 12:{
-                //                ChangePasswordViewController * password = [self.storyboard instantiateViewControllerWithIdentifier:@"ChangePasswordViewController"];
-                //                [self.navigationController pushViewController:password animated:YES];
-                //                self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
-            }
-                break;
-            case 13:{
-                NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
-                //      [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
-                //  [delegate.defaults setValue:@"19.1183" forKey:@"latitude"];
-                // [delegate.defaults setValue:@"73.0276" forKey:@"longitude"];
-                //[delegate.defaults setValue:@"Mahape" forKey:@"loc_name"];
-                [delegate.defaults setValue:@"3" forKey:@"radius"];
-                ViewController * splash = [self.storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
-                UINavigationController *passcodeNavigationController = [[UINavigationController alloc] initWithRootViewController:splash];
-                [self presentViewController:passcodeNavigationController animated:YES completion:nil];
-            }
-                break;
-                
-            default:
-                break;
-        }
-    }
-    else{
-        if(selectionIndex == 1){
-            
-        }
-        if(selectionIndex == 2){
-            
-        }
-        if(selectionIndex == 3){
-            
-        }
-        if(selectionIndex == 4){
-            
-        }
-    }
+-(void)CCKFNavDrawerSelection:(NSInteger)selectedSession selectedRow: (NSInteger) row {
+    [constant DrawerTapped:selectedSession selectedRow: row];
 }
-
--(void)StaticContent{
-    //NSLog(@"type StaticContent .. %@",setType);
-    [delegate.defaults setObject:setType forKey:@"staticType"];
-    [delegate.defaults synchronize];
-    StaticDataViewController * info = [self.storyboard instantiateViewControllerWithIdentifier:@"StaticDataViewController"];
-    [self.navigationController pushViewController:info animated:YES];
-    self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
-}
-
--(void)CCKFNavDrawerSelection:(NSInteger)selectionIndex{
-    [self DrawerTapped:selectionIndex];
-}
-
 
 #pragma mark - UPStackMenuDelegate
 - (void)setStackIconClosed:(BOOL)closed{
@@ -1262,19 +1204,6 @@ int btnwt,btnht;
     [self.navigationController popViewControllerAnimated:YES];
 }
 
--(void)showResults{
-    
-    [delegate.defaults setObject:@"Category" forKey:@"resultType"];
-    [delegate.defaults synchronize];
-     if([constant isActiveInternet] == YES){
-    ResultsViewController * result = [self.storyboard instantiateViewControllerWithIdentifier:@"ResultsViewController"];
-    [self.navigationController pushViewController:result animated:YES];
-    self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
-     }else{
-         [constant Redirect:self.navigationController Identifier:@"InternetDisconnectViewController"];
-         //[self.view makeToast:@"Check your internet connection"];
-     }
-}
 
 -(void)showVerticals{
     [delegate.defaults setObject:@"StoreType" forKey:@"resultType"];
@@ -1327,9 +1256,6 @@ int btnwt,btnht;
     ResultsViewController * result = [self.storyboard instantiateViewControllerWithIdentifier:@"ResultsViewController"];
     [self.navigationController pushViewController:result animated:YES];
     self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
-    
-    //[[delegate.defaults valueForKey:@"resultType"] isEqualToString:@"Keyword"]
-   //[self GetHighstreetStores];
 }
 
 - (IBAction)moreCollectionsTapped:(id)sender {
@@ -1421,7 +1347,7 @@ didFailAutocompleteWithError:(NSError *)error {
     [delegate.defaults setValue:catID forKey:@"category"];
     [delegate.defaults setValue:@"Store" forKey:@"route"];
     [delegate.defaults synchronize];
-    [self showResults];
+    [constant showResults];
 }
 
 - (IBAction)womenTapped:(id)sender {
@@ -1431,7 +1357,7 @@ didFailAutocompleteWithError:(NSError *)error {
     [delegate.defaults setValue:catID forKey:@"category"];
     [delegate.defaults setValue:@"Store" forKey:@"route"];
     [delegate.defaults synchronize];
-    [self showResults];
+    [constant showResults];
     
 }
 
@@ -1442,7 +1368,7 @@ didFailAutocompleteWithError:(NSError *)error {
     [delegate.defaults setValue:catID forKey:@"category"];
     [delegate.defaults setValue:@"Store" forKey:@"route"];
     [delegate.defaults synchronize];
-    [self showResults];
+    [constant showResults];
 }
 
 - (void)tabBarController:(UITabBarController *)tabBarController
@@ -1489,5 +1415,9 @@ didFailAutocompleteWithError:(NSError *)error {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+
+
+
 
 @end

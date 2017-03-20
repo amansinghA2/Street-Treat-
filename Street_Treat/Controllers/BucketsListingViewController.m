@@ -30,9 +30,49 @@
     [self.rootNav setCCKFNavDrawerDelegate:self];
 //    UIButton *back = (UIButton *)[self.view viewWithTag:1111];
 //    back.hidden = true;
+    [commonclass setNavigationController:self.navigationController tabBarController:self.tabBarController];
     self.tabBarController.tabBar.tintColor = [UIColor redColor];
-    
+    [self showLocName];
     //[back addTarget:self action:@selector(backTapped) forControlEvents:UIControlEventTouchUpInside];
+}
+
+-(void)showLocName{
+    
+    //    if ([[delegate.defaults valueForKey:@"myloc"] isEqualToString:@"locupdatefrom"]){
+    //        txfSearchField.text = [delegate.defaults valueForKey:@"myloc_name"];
+    //                txfSearchField.textColor = [UIColor whiteColor];
+    //                [self getNearbyDealsWithLatitude:currentLatitude longitude:currentLongitude radius:userRadius];
+    //                [timer invalidate];
+    //    }else{
+    //        txfSearchField.text = [delegate.defaults valueForKey:@"loc_name"];
+    //            NSString * loc = [delegate.defaults valueForKey:@"loc_name"];
+    //            if(loc.length == 0){
+    //                txfSearchField.text = [delegate.defaults valueForKey:@"myloc_name"];
+    //            }
+    //                txfSearchField.textColor = [UIColor whiteColor];
+    //                [self getNearbyDealsWithLatitude:currentLatitude longitude:currentLongitude radius:userRadius];
+    //                [timer invalidate];
+    //        }
+    
+    //    if ([[delegate.defaults valueForKey:@"myloc"] isEqualToString:@"locupdatefrom"]){
+    //        searchField.text = [delegate.defaults valueForKey:@"myloc_name"];
+    //    }else{
+    //        searchField.text = [delegate.defaults valueForKey:@"loc_name"];
+    //    }
+    
+    NSString * loc = [delegate.defaults valueForKey:@"loc_name"];
+    if(loc.length == 0){
+        txfSearchField.text = [delegate.defaults valueForKey:@"myloc_name"];
+        txfSearchField.textColor = [UIColor whiteColor];
+        //        [self getNearbyDealsWithLatitude:currentLatitude longitude:currentLongitude radius:userRadius];
+        //        [timer invalidate];
+    }else{
+        txfSearchField.text = [delegate.defaults valueForKey:@"loc_name"];
+        txfSearchField.textColor = [UIColor whiteColor];
+        //        [self getNearbyDealsWithLatitude:currentLatitude longitude:currentLongitude radius:userRadius];
+        //        [timer invalidate];
+    }
+    //NSLog(@"loc.. %@",loc);
 }
 
 -(void)setUpstackMenu{
@@ -164,148 +204,9 @@
     [self.rootNav drawerToggle];
 }
 
--(void)CCKFNavDrawerSelection:(NSInteger)selectionIndex{
-    [self DrawerTapped:selectionIndex];
+-(void)CCKFNavDrawerSelection:(NSInteger)selectedSession selectedRow: (NSInteger) row {
+    [commonclass DrawerTapped:selectedSession selectedRow: row];
 }
-
-#pragma mark - photoShotSavedDelegate
-- (void)DrawerTapped:(NSInteger)selectionIndex{
-    if([[delegate.defaults valueForKey:@"drawerRoute"] isEqualToString:@"Section"]){
-        NSLog(@"index.. %ld",(long)selectionIndex);
-        switch (selectionIndex) {
-            case 0:
-            {
-                SearchStoreViewController * searchStore = [self.storyboard instantiateViewControllerWithIdentifier:@"SearchStoreViewController"];
-                // [self.navigationController pushViewController:searchStore animated:NO];
-                //MyModalViewController *modalViewController = [[MyModalViewController alloc] init];
-                [searchStore setReferencedNavigation:self.navigationController];
-                searchStore.modalPresentationStyle = UIModalPresentationOverCurrentContext;
-                [self.tabBarController presentViewController:searchStore animated:YES completion:nil];
-            }
-                break;
-            case 1:
-            {
-                NSString * catID = [delegate.defaults valueForKey:@"MensCategory"];
-                [delegate.defaults setValue:catID forKey:@"category"];
-                [delegate.defaults setValue:@"Store" forKey:@"route"];
-                [delegate.defaults synchronize];
-                [self showResults];
-            }
-                break;
-            case 2:
-            {
-                NSString * catID = [delegate.defaults valueForKey:@"WomensCategory"];
-                [delegate.defaults setValue:catID forKey:@"category"];
-                [delegate.defaults setValue:@"Store" forKey:@"route"];
-                [delegate.defaults synchronize];
-                [self showResults];
-            }
-                break;
-            case 3:
-            {
-                NSString * catID = [delegate.defaults valueForKey:@"ChildrenCategory"];
-                [delegate.defaults setValue:catID forKey:@"category"];
-                [delegate.defaults setValue:@"Store" forKey:@"route"];
-                [delegate.defaults synchronize];
-                [self showResults];
-            }
-                break;
-            case 4:
-                setType = @"about-us";
-                [self StaticContent];
-                break;
-            case 5:
-                setType = @"News-Events";
-                [self StaticContent];
-                break;
-            case 6:
-                setType = @"Terms And Conditions";
-                [self StaticContent];
-                break;
-            case 7:
-                setType = @"faqs";
-                [self StaticContent];
-                break;
-            case 8:
-                setType = @"privacy";
-                [self StaticContent];
-                break;
-            case 9:{
-                [commonclass Redirect:self.navigationController Identifier:@"ContactViewController"];
-                //                ContactViewController * contact = [self.storyboard instantiateViewControllerWithIdentifier:@"ContactViewController"];
-                //                [self.navigationController pushViewController:contact animated:YES];
-            }
-                break;
-            case 10:{
-                ProfileViewController * profile = [self.storyboard instantiateViewControllerWithIdentifier:@"ProfileViewController"];
-                [self.navigationController pushViewController:profile animated:YES];
-                self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
-            }
-                break;
-            case 11:{
-                HelpViewController * help = [self.storyboard instantiateViewControllerWithIdentifier:@"HelpViewController"];
-                [self.navigationController pushViewController:help animated:YES];
-                self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
-                
-            }
-                break;
-            case 12:{
-                //                ChangePasswordViewController * password = [self.storyboard instantiateViewControllerWithIdentifier:@"ChangePasswordViewController"];
-                //                [self.navigationController pushViewController:password animated:YES];
-                //                self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
-            }
-                break;
-            case 13:{
-                NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
-                //      [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
-                //  [delegate.defaults setValue:@"19.1183" forKey:@"latitude"];
-                // [delegate.defaults setValue:@"73.0276" forKey:@"longitude"];
-                //[delegate.defaults setValue:@"Mahape" forKey:@"loc_name"];
-                [delegate.defaults setValue:@"3" forKey:@"radius"];
-                ViewController * splash = [self.storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
-                UINavigationController *passcodeNavigationController = [[UINavigationController alloc] initWithRootViewController:splash];
-                [self presentViewController:passcodeNavigationController animated:YES completion:nil];
-            }
-                break;
-                
-            default:
-                break;
-        }
-    }
-    else{
-        if(selectionIndex == 1){
-            
-        }
-        if(selectionIndex == 2){
-            
-        }
-        if(selectionIndex == 3){
-            
-        }
-        if(selectionIndex == 4){
-            
-        }
-    }
-}
-
--(void)showResults{
-    [delegate.defaults setObject:@"Category" forKey:@"resultType"];
-    [delegate.defaults synchronize];
-    ResultsViewController * result = [self.storyboard instantiateViewControllerWithIdentifier:@"ResultsViewController"];
-    [self.navigationController pushViewController:result animated:YES];
-    self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
-}
-
--(void)StaticContent{
-    //NSLog(@"type StaticContent .. %@",setType);
-    [delegate.defaults setObject:setType forKey:@"staticType"];
-    [delegate.defaults synchronize];
-    StaticDataViewController * info = [self.storyboard instantiateViewControllerWithIdentifier:@"StaticDataViewController"];
-    [self.navigationController pushViewController:info animated:YES];
-    self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
-}
-
-
 
 -(void)tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController
 {

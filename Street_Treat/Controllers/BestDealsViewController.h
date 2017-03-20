@@ -30,6 +30,7 @@
     AppDelegate * delegate;
     NSMutableData * dealsdata;
     NSMutableArray * dealsArr;
+    NSArray * smalldealsArr;
     BestDealsCell * cell;
     
     BOOL isexpand, isselecttapped;
@@ -38,7 +39,6 @@
     NSMutableArray *indexpathArr;
     NSString * setType;
     UIView * flyoutView;
-    
     UITextField *txfSearchField;
     float userLatitude,userLongitude,userRadius,currentLatitude,currentLongitude;
 }

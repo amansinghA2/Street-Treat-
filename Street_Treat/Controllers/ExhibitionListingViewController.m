@@ -148,7 +148,7 @@
         storeimgview.layer.borderColor = [[UIColor View_Border] CGColor];
         storeimgview.layer.backgroundColor = [[UIColor coupon_back]CGColor];
         storeimgview.layer.cornerRadius = 5.0f;
-        [storeimgview setImageWithURL:[NSURL URLWithString:imglink] placeholderImage:[UIImage imageNamed:@"splash_iPhone.png"] usingActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+        [storeimgview setImageWithURL:[NSURL URLWithString:imglink] placeholderImage:[UIImage imageNamed:@""] usingActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
         [cell.storeGalleryView addSubview:storeimgview];
     }
     

@@ -28,6 +28,7 @@
     commonclass.delegate = self;
     [self LoginHdrTapped:nil];
     LoginBtn.titleLabel.textColor = [UIColor redColor];
+//    [commonclass setNavigationController:self.navigationController tabBarController:self.tabBarController viewController:self];
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -77,13 +78,11 @@
     LoginFBData = [[NSMutableData alloc]init];
     genderStr = @"Male";
     
-    
     if ([FBSDKAccessToken currentAccessToken]) {
         UITabBarController *tabbar = [self.storyboard instantiateViewControllerWithIdentifier:@"Street_TreatTabbar"];
         [self.navigationController pushViewController:tabbar animated:YES];
         // User is logged in, do work such as go to next view controller.
     }
-    
     
     fbicon.text = commonclass.Fbicon;
     gplusicon.text = commonclass.gPlusicon;
@@ -93,7 +92,7 @@
     // Login feilds
     usertxtFld = [[RPFloatingPlaceholderTextField alloc]initWithFrame:CGRectMake(LoginGoogleView.frame.origin.x,[commonclass.usryPos floatValue], LoginGoogleView.frame.size.width, 35)];
     usertxtFld.delegate=self;
-    usertxtFld.text = @"aman.singh181092@gmail.com";
+    usertxtFld.text = @"";
     usertxtFld.placeholder = @"USERNAME";
     usertxtFld.returnKeyType = UIReturnKeyNext;
     [commonclass addfeild:LoginView textfeild:usertxtFld];
@@ -103,7 +102,7 @@
     passTxtFld.secureTextEntry = YES;
     passTxtFld.returnKeyType = UIReturnKeyDefault;
     passTxtFld.placeholder = @"PASSWORD";
-    passTxtFld.text = @"123456";
+    passTxtFld.text = @"";
     [commonclass addfeild:LoginView textfeild:passTxtFld];
     //end
     
@@ -422,7 +421,7 @@
                     NSString * usr_name = [[data valueForKey:@"items"] valueForKey:@"name"];
                     NSString * mobile = [[data valueForKey:@"items"] valueForKey:@"mobile"];
                     
-                    if (mobile == nil){
+                    if (mobile == nil || [mobile isEqualToString:@""]){
                         [delegate.defaults setBool:false forKey:@"updateMobile"];
                     }else{
                         [delegate.defaults setBool:true forKey:@"updateMobile"];
@@ -479,20 +478,25 @@
                         [delegate.defaults synchronize];
                         //[self ClearAll];
                         [self.navigationController pushViewController:result animated:YES];
-                    }
-                    else if([[data valueForKey:@"status"]intValue] == -1){
-                        [commonclass logoutFunction];
-                    }else{
+                    }else {
                         if([commonclass isActiveInternet] == YES){
-                       // [delegate.defaults setBool:false forKey:@"otp_verified"];
-                        [commonclass sendRequest:self.view mutableDta:LoginData url:commonclass.LoginURL msgBody:SetLoginBody];
+                            // [delegate.defaults setBool:false forKey:@"otp_verified"];
+                            [commonclass sendRequest:self.view mutableDta:LoginData url:commonclass.LoginURL msgBody:SetLoginBody];
                         }else{
                             [commonclass Redirect:self.navigationController Identifier:@"InternetDisconnectViewController"];
                             //[self.view makeToast:@"Check your internet connection"];
                         }
                     }
+                }else if([[data valueForKey:@"status"]intValue] == -1){
+                    [commonclass logoutFunction];
                 }else{
-                    [self.view makeToast:[data valueForKey:@"message"]];
+//                    if([commonclass isActiveInternet] == YES){
+//                        // [delegate.defaults setBool:false forKey:@"otp_verified"];
+//                        [commonclass sendRequest:self.view mutableDta:LoginData url:commonclass.LoginURL msgBody:SetLoginBody];
+//                    }else{
+//                        [commonclass Redirect:self.navigationController Identifier:@"InternetDisconnectViewController"];
+//                        //[self.view makeToast:@"Check your internet connection"];
+//                    }
                 }
             }else if ([requestType isEqualToString:@"GoogleSignIn"]){
                 if([[data valueForKey:@"status"]intValue] == 1){
@@ -503,7 +507,7 @@
                     NSString * usr_name = [[data valueForKey:@"items"] valueForKey:@"name"];
                     NSString * mobile = [[data valueForKey:@"items"] valueForKey:@"mobile"];
                     
-                    if (mobile == nil){
+                    if (mobile == nil || [mobile isEqualToString:@""]){
                         [delegate.defaults setBool:false forKey:@"updateMobile"];
                     }else{
                         [delegate.defaults setBool:true forKey:@"updateMobile"];
@@ -536,7 +540,7 @@
                     NSString * usr_name = [[data valueForKey:@"items"] valueForKey:@"name"];
                     NSString * mobile = [[data valueForKey:@"items"] valueForKey:@"mobile"];
                     
-                    if (mobile == nil){
+                    if (mobile == nil || [mobile isEqualToString:@""]){
                         [delegate.defaults setBool:false forKey:@"updateMobile"];
                     }else{
                         [delegate.defaults setBool:true forKey:@"updateMobile"];
@@ -601,7 +605,9 @@
          for (CLPlacemark *placemark in placemarks) {
              locality = [NSString stringWithFormat:@"%@",placemark.subLocality];
              [delegate.defaults setValue:locality forKey:@"updateloc_name"];
+             if (locality != nil){
              [delegate.defaults setValue:locality forKey:@"myloc_name"];
+             }
       //     [delegate.defaults setValue:locality forKey:@"loc_name"];
          }
      }];

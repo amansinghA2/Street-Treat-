@@ -15,12 +15,12 @@
 @interface AppDelegate : UIResponder <UIApplicationDelegate,GIDSignInDelegate,CLLocationManagerDelegate>{
     NSString * locality;
 }
-
+@property (strong ,retain) UIViewController *rootVC;
 @property (strong, nonatomic) UIWindow *window;
 @property (strong, nonatomic) NSUserDefaults * defaults;
 //@property (strong, nonatomic) NSUserDefaults * defaults;
 @property(nonatomic,retain) CLLocationManager *locationManager;
-
+@property(nonatomic, strong) NSMutableArray * itemsArray;
 
 @end
 

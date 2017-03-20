@@ -78,12 +78,13 @@
 //}
 
 -(void)viewWillAppear:(BOOL)animated{
-  //[self setPersonalPopup];
+
+//    [self setPersonalPopup];
     [self GetProfile];
     [delegate.defaults setObject:@"ProfileViewController" forKey:@"internetdisconnect"];
     self.rootNav = (CCKFNavDrawer *)self.navigationController;
     [self.rootNav setCCKFNavDrawerDelegate:self];
-    
+    [constant setNavigationController:self.navigationController tabBarController:self.tabBarController];
     tagListView = [[AMTagListView alloc] initWithFrame:CGRectMake(20, 40, style_PopupInnerView.frame.size.width-40, style_PopupInnerView.frame.size.height)];
    // [style_PopupInnerView addSubview:tagListView];
     [tagListView setTapHandler:^(AMTagView *view) {
@@ -91,7 +92,6 @@
     }];
     
     [apparelSizesViews removeAllObjects];
-    
 }
 
 -(void)CurrentLocationIdentifier
@@ -157,7 +157,9 @@
     //    }else{
     [delegate.defaults setValue:locality forKey:@"updateloc_name"];
     [delegate.defaults setValue:@"myloc" forKey:@"locupdatefrom"];
+    if (locality != nil){
     [delegate.defaults setValue:locality forKey:@"myloc_name"];
+    }
     //}
     [delegate.defaults synchronize];
 }
@@ -270,7 +272,7 @@
 }
 
 -(void)EnterManualLocation{
-    [self.view makeToast:@"coming soon"];
+    [self.view makeToast:@"Coming Soon"];
 }
 
 - (void)keyboardDidShow:(NSNotification *)notification
@@ -328,6 +330,7 @@
     
     if([[NSUserDefaults standardUserDefaults] boolForKey:@"navigatefromhelp"]==YES)
     {
+        [self.view makeToast:@"Update your profile"];
         notifications.frame = CGRectMake(Menu.frame.origin.x,Menu.frame.origin.y + 5, 25, 25);
         Menu.hidden = true;
     }else{
@@ -345,147 +348,8 @@
     [self.rootNav drawerToggle];
 }
 
--(void)CCKFNavDrawerSelection:(NSInteger)selectionIndex{
-    [self DrawerTapped:selectionIndex];
-}
-
-#pragma mark - photoShotSavedDelegate
-- (void)DrawerTapped:(NSInteger)selectionIndex{
-    
-    
-    if([[delegate.defaults valueForKey:@"drawerRoute"] isEqualToString:@"Section"]){
-        NSLog(@"index.. %ld",(long)selectionIndex);
-        switch (selectionIndex) {
-            case 0:
-            {
-                SearchStoreViewController * searchStore = [self.storyboard instantiateViewControllerWithIdentifier:@"SearchStoreViewController"];
-                // [self.navigationController pushViewController:searchStore animated:NO];
-                //MyModalViewController *modalViewController = [[MyModalViewController alloc] init];
-                [searchStore setReferencedNavigation:self.navigationController];
-                searchStore.modalPresentationStyle = UIModalPresentationOverCurrentContext;
-                [self.tabBarController presentViewController:searchStore animated:YES completion:nil];
-            }
-                break;
-            case 1:
-            {
-                NSString * catID = [delegate.defaults valueForKey:@"MensCategory"];
-                [delegate.defaults setValue:catID forKey:@"category"];
-                [delegate.defaults setValue:@"Store" forKey:@"route"];
-                [delegate.defaults synchronize];
-                [self showResults];
-            }
-                break;
-            case 2:
-            {
-                NSString * catID = [delegate.defaults valueForKey:@"WomensCategory"];
-                [delegate.defaults setValue:catID forKey:@"category"];
-                [delegate.defaults setValue:@"Store" forKey:@"route"];
-                [delegate.defaults synchronize];
-                [self showResults];
-            }
-                break;
-            case 3:
-            {
-                NSString * catID = [delegate.defaults valueForKey:@"ChildrenCategory"];
-                [delegate.defaults setValue:catID forKey:@"category"];
-                [delegate.defaults setValue:@"Store" forKey:@"route"];
-                [delegate.defaults synchronize];
-                [self showResults];
-            }
-                break;
-            case 4:
-                setType = @"about-us";
-                [self StaticContent];
-                break;
-            case 5:
-                setType = @"News-Events";
-                [self StaticContent];
-                break;
-            case 6:
-                setType = @"Terms And Conditions";
-                [self StaticContent];
-                break;
-            case 7:
-                setType = @"faqs";
-                [self StaticContent];
-                break;
-            case 8:
-                setType = @"privacy";
-                [self StaticContent];
-                break;
-            case 9:{
-                [constant Redirect:self.navigationController Identifier:@"ContactViewController"];
-                //                ContactViewController * contact = [self.storyboard instantiateViewControllerWithIdentifier:@"ContactViewController"];
-                //                [self.navigationController pushViewController:contact animated:YES];
-            }
-                break;
-            case 10:{
-                ProfileViewController * profile = [self.storyboard instantiateViewControllerWithIdentifier:@"ProfileViewController"];
-                [self.navigationController pushViewController:profile animated:YES];
-                self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
-            }
-                break;
-            case 11:{
-                HelpViewController * help = [self.storyboard instantiateViewControllerWithIdentifier:@"HelpViewController"];
-                [self.navigationController pushViewController:help animated:YES];
-                self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
-                
-            }
-                break;
-            case 12:{
-                //                ChangePasswordViewController * password = [self.storyboard instantiateViewControllerWithIdentifier:@"ChangePasswordViewController"];
-                //                [self.navigationController pushViewController:password animated:YES];
-                //                self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
-            }
-                break;
-            case 13:{
-                NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
-                //      [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
-                //  [delegate.defaults setValue:@"19.1183" forKey:@"latitude"];
-                // [delegate.defaults setValue:@"73.0276" forKey:@"longitude"];
-                //[delegate.defaults setValue:@"Mahape" forKey:@"loc_name"];
-                [delegate.defaults setValue:@"3" forKey:@"radius"];
-                ViewController * splash = [self.storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
-                UINavigationController *passcodeNavigationController = [[UINavigationController alloc] initWithRootViewController:splash];
-                [self presentViewController:passcodeNavigationController animated:YES completion:nil];
-            }
-                break;
-                
-            default:
-                break;
-        }
-    }
-    else{
-        if(selectionIndex == 1){
-            
-        }
-        if(selectionIndex == 2){
-            
-        }
-        if(selectionIndex == 3){
-            
-        }
-        if(selectionIndex == 4){
-            
-        }
-    }
-}
-
--(void)showResults{
-    [delegate.defaults setObject:@"Category" forKey:@"resultType"];
-    [delegate.defaults synchronize];
-    ResultsViewController * result = [self.storyboard instantiateViewControllerWithIdentifier:@"ResultsViewController"];
-    [self.navigationController pushViewController:result animated:YES];
-    self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
-}
-
--(void)StaticContent{
-    //NSLog(@"type StaticContent .. %@",setType);
-    [delegate.defaults setObject:setType forKey:@"staticType"];
-    [delegate.defaults synchronize];
-    StaticDataViewController * info = [self.storyboard instantiateViewControllerWithIdentifier:@"StaticDataViewController"];
-    [self.navigationController pushViewController:info animated:YES];
-    self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
+-(void)CCKFNavDrawerSelection:(NSInteger)selectedSession selectedRow: (NSInteger) row {
+    [constant DrawerTapped:selectedSession selectedRow: row];
 }
 
 -(void)GetProfile{
@@ -506,9 +370,14 @@
     if([[NSUserDefaults standardUserDefaults] boolForKey:@"navigatefromhelp"]==YES)
     {
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"navigatefromprofiletohelp"];
-        [self dismissViewControllerAnimated:YES completion:nil];
+       
+        // [self dismissViewControllerAnimated:YES completion:nil];
         [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"navigatefromhelp"];
         [[NSUserDefaults standardUserDefaults] synchronize];
+        [self.navigationController popViewControllerAnimated:YES];
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName:@"fromProfile"
+        object:self];
     }else{
         // skipBtn.hidden = TRUE;
         [self.navigationController popViewControllerAnimated:YES];
@@ -529,8 +398,13 @@
                     [apparel_Arr removeAllObjects];
                     [userapparel_Arr removeAllObjects];
                     usrProfileArr = data;
-                    [self setUserdata];
+                    
+//                    for (UIView *subView in per_InfoMainView.subviews){
+//                         [subView removeFromSuperview];
+//                    }
                     [self setPersonalPopup];
+                    [self setUserdata];
+                    
                     
                     NSArray *keys = [[data valueForKey:@"items"] allKeys];
                     NSArray *values = [[data valueForKey:@"items"] allValues];
@@ -576,7 +450,7 @@
             }else if([requestType isEqualToString:@"Set_Profile"]){
                  NSLog(@"data.. %@",data);
                 if([[data valueForKey:@"status"]intValue] == 1){
-                    
+                    [self.view makeToast:@"Profile Updated"];
                     if([[NSUserDefaults standardUserDefaults] boolForKey:@"navigatefromhelp"]==YES)
                     {
                         ViewController *splash = [self.storyboard instantiateViewControllerWithIdentifier:@"ViewController"];
@@ -602,14 +476,12 @@
                     [constant logoutFunction];
                 }
             }
-            [indicator stopAnimating];
-            [[UIApplication sharedApplication] endIgnoringInteractionEvents];
         }else{
-            [indicator stopAnimating];
-            [[UIApplication sharedApplication] endIgnoringInteractionEvents];
+          
             [self GetProfile];
         }
-       
+        [indicator stopAnimating];
+        [[UIApplication sharedApplication] endIgnoringInteractionEvents];
     });
 }
 
@@ -680,14 +552,15 @@
     //[tempclrarr removeAllObjects];
     tempclrarr = data[0];
     btnwt = 85;
-    colorPrefScroll.contentSize = CGSizeMake(btnwt * tempclrarr.count, colorPrefScroll.frame.size.height);
+    colorPrefScroll.contentSize = CGSizeMake(btnwt * tempclrarr.count + 5, colorPrefScroll.frame.size.height + 1);
    //  UILabel * clrnamelabel = [[UILabel alloc]initWithFrame:CGRectMake(5, 0, 75, 15)];
      for (int j = 0; j < tempclrarr.count; j++) {
        UIView *clrView = [[UIView alloc]initWithFrame:CGRectMake(85 * j, 0, 80,colorPrefScroll.frame.size.height)];
          clrView.tag = j;
         clrView.backgroundColor = [UIColor whiteColor];
-        UILabel * clrlabel = [[UILabel alloc]initWithFrame:CGRectMake(5, 0, 75, 15)];
+        UILabel * clrlabel = [[UILabel alloc]initWithFrame:CGRectMake(2, 0, 80, 15)];
         clrlabel.backgroundColor = [constant getUIColorObjectFromHexString:[tempclrarr[j] valueForKey:@"code"] alpha:1];
+         clrlabel.layer.cornerRadius = 2.0;
      //   clrlabel.textColor = [UIColor darkGrayColor];
      //   clrlabel = [[UILabel alloc]initWithFrame:CGRectMake(5, 0, 75, 15)];
         [clrlabel setFont:[UIFont fontWithName:@"Roboto-Regular" size:10]];
@@ -725,7 +598,7 @@
 //        }
 //    }
     btnwt = 85;
-    stylePrefScroll.contentSize = CGSizeMake(btnwt * tempstylerarr.count, stylePrefScroll.frame.size.height);
+    stylePrefScroll.contentSize = CGSizeMake(btnwt * tempstylerarr.count, stylePrefScroll.frame.size.height + 1);
     
     for (int j = 0; j < tempstylerarr.count; j++) {
         UIView *clrView = [[UIView alloc]initWithFrame:CGRectMake(85 * j, 0, 80,stylePrefScroll.frame.size.height)];
@@ -735,8 +608,11 @@
         UILabel * clrnamelabel = [[UILabel alloc]initWithFrame:CGRectMake(2, 0, 80, 15)];
         [clrnamelabel setFont:[UIFont fontWithName:@"Roboto-Regular" size:9]];
         clrnamelabel.text = [NSString stringWithFormat:@"%@",tempstylerarr[j]];
+        clrnamelabel.textAlignment = UITextAlignmentCenter;
         [selectedStylesArr addObject:tempstylerarr[j]];
-        clrnamelabel.textColor = [UIColor darkGrayColor];
+        clrnamelabel.backgroundColor = [UIColor colorWithRed:211/255.0 green:211/255.0 blue:211/255.0 alpha:1];
+        clrnamelabel.textColor = [UIColor blackColor];
+        clrnamelabel.layer.cornerRadius = 2.0;
         [clrView addSubview:clrnamelabel];
         
         [stylePrefScroll addSubview:clrView];
@@ -750,11 +626,6 @@
     int xpos = 10,ypos = 25,temp = 1;
 //    UIView *viewToRemove = [self.view viewWithTag:221];
 //    [viewToRemove removeFromSuperview];
-    for(UIView * view in apparelSizesViews){
-        if ([view isKindOfClass:[UIView class]]){
-         [view removeFromSuperview];
-        }
-    }
     
     for(int i =0;i<userapparel_Arr.count;i++){
         if(![userapparel_Arr[i] isEqualToString:@"userprofile"]){
@@ -811,8 +682,6 @@
 }
 
 -(void)setPersonalPopup{
-    // Login feilds
-    
     nametxtFld = [[RPFloatingPlaceholderTextField alloc]initWithFrame:CGRectMake(15,45, per_infoInnerView.frame.size.width - 30, 25)];
     nametxtFld.delegate=self;
     nametxtFld.placeholder = @"First Name";
@@ -1157,6 +1026,23 @@
 }
 
 - (IBAction)saveProfileTapped:(id)sender {
+    
+    for(UIView * view in apparelSizesViews){
+        if ([view isKindOfClass:[UIView class]]){
+            [view removeFromSuperview];
+        }
+    }
+    
+        for (UIView *view in colorPrefScroll.subviews)  {
+            if ([view isKindOfClass:[UIView class]]) {
+                [view removeFromSuperview];
+            }
+        }
+        for (UIView *view in stylePrefScroll.subviews)  {
+            if ([view isKindOfClass:[UIView class]]) {
+                [view removeFromSuperview];
+            }
+        }
     [self sendprofileParameters];
     requestType = @"Set_Profile";
     NSLog(@"%@",tempclrs);
@@ -1308,12 +1194,14 @@
         [self.view makeToast:@"Shoes size is invalid"];
         shoesTxtFld.text = @"";
     }else{
-     //  style_PopupMainview.hidden = true;
+       style_PopupMainview.hidden = true;
+       [self.view makeToast:@"Click on Save button to make changes"];
      // [self sendprofileParameters];
      // [self GetProfile];
         
     }
-    [self.view makeToast:@"Click on Save button to make changes"];
+    
+
 }
 
 @end

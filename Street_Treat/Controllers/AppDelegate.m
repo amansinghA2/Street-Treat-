@@ -314,7 +314,9 @@ didDisconnectWithUser:(GIDGoogleUser *)user
          for (CLPlacemark *placemark in placemarks) {
              locality = [NSString stringWithFormat:@"%@",placemark.subLocality];
              [defaults setValue:locality forKey:@"updateloc_name"];
+             if (locality != nil){
              [defaults setValue:locality forKey:@"myloc_name"];
+             }
              //[defaults setValue:locality forKey:@"loc_name"];
          }
      }];

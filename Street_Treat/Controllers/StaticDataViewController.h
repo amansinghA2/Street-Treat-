@@ -9,8 +9,9 @@
 #import <UIKit/UIKit.h>
 #import "AppDelegate.h"
 #import "Common.h"
+#import "UPStackMenu.h"
 
-@interface StaticDataViewController : UIViewController<commonProtocol,UIWebViewDelegate>
+@interface StaticDataViewController : UIViewController<commonProtocol,UIWebViewDelegate , UPStackMenuDelegate>
 {
     NSString *post;
     NSData *postData;
@@ -21,6 +22,7 @@
     AppDelegate * delegate;
     Common * commonclass;
     NSString* requestType;
+    UIView * flyoutView;
 }
 
 @property (nonatomic, strong) NSString * getType;

@@ -16,7 +16,21 @@
     commonclass.delegate = self;
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
     
+    _feedBackTextView.layer.borderWidth = 1.0f;
+    _feedBackTextView.layer.borderColor = [[UIColor lightGrayColor] CGColor];
+    _feedBackTextView.delegate = self;
     [self.view addGestureRecognizer:tap];
+    
+    UIToolbar* numberToolbarTxtFlds = [[UIToolbar alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 50)];
+    numberToolbarTxtFlds.barStyle = UIBarStyleBlackTranslucent;
+    numberToolbarTxtFlds.items = @[[[UIBarButtonItem alloc]initWithTitle:@"Cancel" style:UIBarButtonItemStyleBordered target:self action:@selector(cancelKeyboard)],
+                                   [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil],
+                                   [[UIBarButtonItem alloc]initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(doneWithKeyboard)]];
+    [numberToolbarTxtFlds sizeToFit];
+    _feedBackTextView.inputAccessoryView = numberToolbarTxtFlds;
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidShow:) name:UIKeyboardDidShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidHide:) name:UIKeyboardDidHideNotification object:nil];
     
     delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     parentsData = [[NSMutableData alloc]init];
@@ -25,6 +39,15 @@
     AppealSelectString = @"Good";
     trailRoomSelectString = @"Good";
     salesmanSelectString = @"Good";
+}
+
+
+-(void)cancelKeyboard{
+    [_feedBackTextView resignFirstResponder];
+}
+
+-(void)doneWithKeyboard{
+    [_feedBackTextView resignFirstResponder];
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -143,4 +166,28 @@
         trailRoomSelectString = @"Good";
     }
 }
+
+//-(void)textViewDidBeginEditing:(UITextView *)textView{
+//    textView.text = @"";
+//    textView.textColor = [UIColor darkGrayColor];
+//}
+
+//-(void)textViewDidEndEditing:(UITextView *)textView{
+//    if(textView.text.length>0){
+//        _feedbackString = textView.text;
+//        if([_feedbackString isEqualToString:@" Please provide your valuable feedback"]){
+//            _feedbackString = @"";
+//        }else{
+//            _feedbackString = textView.text;
+//        }
+//    }else{
+//        textView.text = @" Please provide your valuable feedback";
+//        textView.textColor = [UIColor lightGrayColor];
+//    }
+// }
+
+- (void) touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    [self.view endEditing:YES];
+}
+
 @end

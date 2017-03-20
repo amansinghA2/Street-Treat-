@@ -45,6 +45,7 @@
 -(void)viewWillAppear:(BOOL)animated{
     screenHeight = [UIScreen mainScreen].bounds.size.height;
     screenWidth = [UIScreen mainScreen].bounds.size.width;
+    
 }
 
 - (void)viewDidLoad{
@@ -65,13 +66,15 @@
     rateAppIcon = @"\ue068";
     helpIcon = @"\ue044";
     logoutIcon = @"\ue052";
-
+    
+    isExpandable = false;
+    selectedIndex = [[NSIndexPath alloc]init];
     //[self setUpDrawer];
     /*menuNamesArray = [[NSArray alloc]initWithObjects:@"EARLY BIRD SYSTEM",@"KPU LOYALTY SYSTEM",@"WEBHOLD",@"TRACK LIST",@"MY OFFER",@"PURCHASES ACCOUNT",@"DEMAND/CPO",@"MY VIEW REQUEST",@"EDIT PROFILE",@"CHANGE PASSWORD",@"", nil];
      
      menuImagesArray = [[NSArray alloc]initWithObjects:@"EBS.png",@"Loyalty_Sys.png",@"Menu_Webhold.png",@"Menu_Tracklist.png",@"Menu_MyOffer.png",@"Purchase_Account.png",@"Demand_CPO.png",@"MyView_Request.png",@"Edit_Profile.png",@"Change_Password.png",@"", nil];*/
     //commonclass = [[Common alloc]init];
-    
+    subMenuArray = [[NSMutableArray alloc]initWithObjects:@"hello", nil];
     menuNamesArray = [[NSArray alloc]initWithObjects:@"Search Stores",@"Stores for Men",@"Stores for Women",@"Stores for Kids",@"About Us",@"News & Events ",@"Terms & Conditions",@"FAQs",@"Privacy Policy",@"Contact Us",@"Edit Profile",@"Help",@"Rate App",@"Logout",nil];
     
     menuImagesArray = [[NSArray alloc]initWithObjects:searchStoreIcon,menIcon,womenIcon,childrenIcon,aboutUsIcon,news_eventsIcon,terms_conditionsIcon,faqsIcon,privacyIcon,contactUsIcon,editProfileIcon,helpIcon,rateAppIcon,logoutIcon, nil];
@@ -114,7 +117,7 @@
     if (!self.drawerView) {
         
         if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone){
-           
+            
             self.drawerView = [[[NSBundle mainBundle] loadNibNamed:@"DrawerView" owner:self options:nil] objectAtIndex:0];
             self.drawerView.profilePic.layer.cornerRadius = self.drawerView.profilePic.frame.size.height/2;
             self.drawerView.profilePic.clipsToBounds = YES;
@@ -126,13 +129,13 @@
             [self.drawerView.phoneNoLbl setShadowColor:[UIColor lightGrayColor]];
             [self.drawerView.phoneNoLbl setShadowOffset:CGSizeMake(0, -1)];
             [delegate.defaults synchronize];
-//            self.drawerView.LoyaltyLvlLbl.text = [delegate.defaults valueForKey:@"LoyaltyLvl"];
-//            self.drawerView.StatusLbl.text = [NSString stringWithFormat:@"365 days your purchase $%@. More to avail next loyalty level benifits $%@.",[delegate.defaults valueForKey:@"loyaltyVlu"],[delegate.defaults valueForKey:@"loyaltyDiff"]];
+            //            self.drawerView.LoyaltyLvlLbl.text = [delegate.defaults valueForKey:@"LoyaltyLvl"];
+            //            self.drawerView.StatusLbl.text = [NSString stringWithFormat:@"365 days your purchase $%@. More to avail next loyalty level benifits $%@.",[delegate.defaults valueForKey:@"loyaltyVlu"],[delegate.defaults valueForKey:@"loyaltyDiff"]];
             //        [NameLbl setText:[NSString stringWithFormat:@"  Hi, %@",[delegate.defaults valueForKey:@"Name"]]];
             //        TermsLbl.text = [delegate.defaults valueForKey:@"Terms"];
             //        LoyaltyLvlLbl.text = [delegate.defaults valueForKey:@"LoyaltyLvl"];
             //        StatusLbl.text = [NSString stringWithFormat:@"365 days your purchase $%@. More to avail next loyalty level benifits $%@.",[delegate.defaults valueForKey:@"loyaltyVlu"],[delegate.defaults valueForKey:@"loyaltyDiff"]];
-
+            
             self.meunHeight = ht;
             self.menuWidth = self.drawerView.frame.size.width;
             
@@ -165,7 +168,7 @@
                 tempTable.size.height = tempTable.size.height;
                 self.drawerView.drawerTableView.frame = tempTable;
                 self.inFrame = CGRectMake (self.menuWidth-120,0,self.menuWidth+100,self.drawerView.frame.size.height);
-             }
+            }
             else if(ht == 667){
                 self.outFrame = CGRectMake(self.menuWidth+180,0,self.menuWidth,self.meunHeight);
                 temp = self.outFrame;
@@ -201,7 +204,7 @@
             [self.drawerView.NameLbl setShadowOffset:CGSizeMake(0, -1)];
             [self.drawerView.phoneNoLbl setShadowColor:[UIColor lightGrayColor]];
             [self.drawerView.phoneNoLbl setShadowOffset:CGSizeMake(0, -1)];
-
+            
             //self.meunHeight = self.drawerView.frame.size.height;
             self.meunHeight = ht;
             self.menuWidth = self.drawerView.frame.size.width;
@@ -227,19 +230,19 @@
             [[[UIApplication sharedApplication] keyWindow] addSubview:self.drawerView];
         }
     }else{
-//           NSLog(@"name.. %@",[delegate.defaults valueForKey:@"Name"]);
-//         self.drawerView.NameLbl.text = [NSString stringWithFormat:@"  Hi, %@",[delegate.defaults valueForKey:@"Name"]];
-//        self.drawerView.TermsLbl.text = [delegate.defaults valueForKey:@"Terms"];
-//        self.drawerView.LoyaltyLvlLbl.text = [delegate.defaults valueForKey:@"LoyaltyLvl"];
-//        self.drawerView.StatusLbl.text = [NSString stringWithFormat:@"365 days your purchase $%@. More to avail next loyalty level benifits $%@.",[delegate.defaults valueForKey:@"loyaltyVlu"],[delegate.defaults valueForKey:@"loyaltyDiff"]];
+        //           NSLog(@"name.. %@",[delegate.defaults valueForKey:@"Name"]);
+        //         self.drawerView.NameLbl.text = [NSString stringWithFormat:@"  Hi, %@",[delegate.defaults valueForKey:@"Name"]];
+        //        self.drawerView.TermsLbl.text = [delegate.defaults valueForKey:@"Terms"];
+        //        self.drawerView.LoyaltyLvlLbl.text = [delegate.defaults valueForKey:@"LoyaltyLvl"];
+        //        self.drawerView.StatusLbl.text = [NSString stringWithFormat:@"365 days your purchase $%@. More to avail next loyalty level benifits $%@.",[delegate.defaults valueForKey:@"loyaltyVlu"],[delegate.defaults valueForKey:@"loyaltyDiff"]];
     }
     
-//    }else{
-//        self.drawerView = [[[NSBundle mainBundle] loadNibNamed:@"DrawerView" owner:self options:nil] objectAtIndex:0];
-//        self.outFrame = CGRectMake(self.menuWidth + 768,45,self.menuWidth,self.meunHeight);
-//        
-//        [self.view addSubview:self.drawerView];
-   // }
+    //    }else{
+    //        self.drawerView = [[[NSBundle mainBundle] loadNibNamed:@"DrawerView" owner:self options:nil] objectAtIndex:0];
+    //        self.outFrame = CGRectMake(self.menuWidth + 768,45,self.menuWidth,self.meunHeight);
+    //
+    //        [self.view addSubview:self.drawerView];
+    // }
     
     /*else{
      self.outFrame = CGRectMake(self.menuWidth+175,0,self.menuWidth+100,self.meunHeight);
@@ -252,7 +255,7 @@
      self.drawerView.drawerTableView.frame = tempTable;
      self.inFrame = CGRectMake (self.menuWidth-175,0,self.menuWidth+100,self.drawerView.frame.size.height);
      }
-*/
+     */
     
     
     
@@ -348,22 +351,22 @@
 
 -(void)moveDrawer:(UIPanGestureRecognizer *)recognizer
 {
-//    ViewController * view = [self.storyboard instantiateViewControllerWithIdentifier:@"ViewController"];
-//    if([NSStringFromClass([view class]) isEqualToString:@"ViewController"]){
-//        
-//    }else{
-        CGPoint translation = [recognizer translationInView:self.view];
-        CGPoint velocity = [(UIPanGestureRecognizer*)recognizer velocityInView:self.view];
-        //    NSLog(@"velocity x=%f",velocity.x);
-        
-        if([(UIPanGestureRecognizer*)recognizer state] == UIGestureRecognizerStateBegan) {
-            //        NSLog(@"start");
-            if ( velocity.x > MENU_TRIGGER_VELOCITY && !self.isOpen) {
-                [self openNavigationDrawer];
-            }else if (velocity.x < -MENU_TRIGGER_VELOCITY && self.isOpen) {
-                [self closeNavigationDrawer];
-            }
-       // }
+    //    ViewController * view = [self.storyboard instantiateViewControllerWithIdentifier:@"ViewController"];
+    //    if([NSStringFromClass([view class]) isEqualToString:@"ViewController"]){
+    //
+    //    }else{
+    CGPoint translation = [recognizer translationInView:self.view];
+    CGPoint velocity = [(UIPanGestureRecognizer*)recognizer velocityInView:self.view];
+    //    NSLog(@"velocity x=%f",velocity.x);
+    
+    if([(UIPanGestureRecognizer*)recognizer state] == UIGestureRecognizerStateBegan) {
+        //        NSLog(@"start");
+        if ( velocity.x > MENU_TRIGGER_VELOCITY && !self.isOpen) {
+            [self openNavigationDrawer];
+        }else if (velocity.x < -MENU_TRIGGER_VELOCITY && self.isOpen) {
+            [self closeNavigationDrawer];
+        }
+        // }
         
         if([(UIPanGestureRecognizer*)recognizer state] == UIGestureRecognizerStateChanged) {
             //        NSLog(@"changing");
@@ -399,48 +402,14 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     
-    if (isExpandable == true && selectedIndex == 2 && section == 2){
-        return 3;
-    }else if (isExpandable == true && selectedIndex == 3 && section == 3){
-        return 2;
+    if (selectedIndex.section == section) {
+        return [subMenuArray count] + 1;
     }
-    
-//    if ([expandedSections containsIndex:section] && section == 0)
-//    {
-//        return 5;
-//    }
-    return 1; // only top row showing
+    return 1;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     return 35;
-    
-   /* if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone){
-         if(ht == 480){
-             if(indexPath.section == 9){
-                 return 50;
-             }
-             else{
-                return 33; // only top row showing
-             }
-             
-         }else{
-        if(indexPath.section == 9){
-            return 100;
-        }
-        else{
-            return 38; // only top row showing
-        }
-         }
-    }else{
-        if(indexPath.section == 9){
-            return 500;
-        }
-        else{
-            return 50; // only top row showing
-        }
-    }*/
-    
 }
 
 - (void)AccessoryType:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath
@@ -460,102 +429,106 @@
     if (cell == nil)
     {
         if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone){
-        NSArray *nib = [[NSBundle mainBundle] loadNibNamed:@"MenuCell" owner:self options:nil];
-        cell = [nib objectAtIndex:0];
+            NSArray *nib = [[NSBundle mainBundle] loadNibNamed:@"MenuCell" owner:self options:nil];
+            cell = [nib objectAtIndex:0];
         }else{
             NSArray *nib = [[NSBundle mainBundle] loadNibNamed:@"MenuCell_iPad" owner:self options:nil];
             cell = [nib objectAtIndex:0];
         }
+        cell.nameLabel.text = [NSString stringWithFormat:@"%@",[menuNamesArray objectAtIndex:indexPath.section]];
+        cell.thumbImg.text = [menuImagesArray objectAtIndex:indexPath.section];
     }
-    
-    if (indexPath.section == 2 ) {
+    if (indexPath.section == 1 ) {
         if (indexPath.row == 0){
-        UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(self.menuWidth, 5, 30, 30)];
-        if (isExpandable == true && selectedIndex == 2 && indexPath.section == 2){
-           [button setTitle:@"-" forState:UIControlStateNormal];
-        }else{
-           [button setTitle:@"+" forState:UIControlStateNormal];
-        }
-        [button addTarget:self action:@selector(buttonTapped:) forControlEvents:UIControlEventTouchUpInside];
-        [cell addSubview:button];
-        }
-    }else if (indexPath.section == 3) {
-        if (indexPath.row == 0){
-            UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(self.menuWidth, 5, 30, 30)];
-            if (isExpandable == true && selectedIndex == 3 && indexPath.section == 3){
+            UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(self.menuWidth, 5, 50, 30)];
+            if (isExpandable == true && selectedIndex.section == 1){
                 [button setTitle:@"-" forState:UIControlStateNormal];
             }else{
                 [button setTitle:@"+" forState:UIControlStateNormal];
             }
             [button addTarget:self action:@selector(buttonTapped:) forControlEvents:UIControlEventTouchUpInside];
+            button.tag = indexPath.section;
             [cell addSubview:button];
+        }else{
+            cell.nameLabel.text = [NSString stringWithFormat:@" ->  %@",[subMenuArray objectAtIndex:indexPath.row - 1]];
+            cell.thumbImg.text = @"";
+        }
+    }else if (indexPath.section == 2 ) {
+        if (indexPath.row == 0){
+            UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(self.menuWidth, 5, 50, 30)];
+            if (isExpandable == true && selectedIndex.section == 2){
+                [button setTitle:@"-" forState:UIControlStateNormal];
+            }else{
+                [button setTitle:@"+" forState:UIControlStateNormal];
+            }
+            [button addTarget:self action:@selector(buttonTapped:) forControlEvents:UIControlEventTouchUpInside];
+            button.tag = indexPath.section;
+            [cell addSubview:button];
+        }else{
+            cell.nameLabel.text = [NSString stringWithFormat:@" ->  %@",[subMenuArray objectAtIndex:indexPath.row - 1]];
+            cell.thumbImg.text = @"";
+        }
+    }else if (indexPath.section == 3) {
+        if (indexPath.row == 0){
+            UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(self.menuWidth, 5, 50, 30)];
+            if (isExpandable == true && selectedIndex.section == 3 ){
+                [button setTitle:@"-" forState:UIControlStateNormal];
+            }else{
+                [button setTitle:@"+" forState:UIControlStateNormal];
+            }
+            [button addTarget:self action:@selector(buttonTapped:) forControlEvents:UIControlEventTouchUpInside];
+            button.tag = indexPath.section;
+            [cell addSubview:button];
+        }else{
+            cell.nameLabel.text = [NSString stringWithFormat:@" ->  %@",[subMenuArray objectAtIndex:indexPath.row - 1]];
+            cell.thumbImg.text = @"";
         }
     }
     
-//        if (cell == nil) {
-//            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-//    
-//        }
-    
-    /*switch (indexPath.section) {
-        case 0:
-            if (!indexPath.row)
-            {
-                cell.nameLabel.text = [menuNamesArray objectAtIndex:indexPath.section];
-                cell.thumbnailImageView.image = [UIImage imageNamed:[menuImagesArray objectAtIndex:indexPath.section]];
-                [self AccessoryType:cell indexPath:indexPath];
-            }
-            else
-            {
-                cell.nameLabel.text = [earlyBirdArray objectAtIndex:indexPath.row - 1];//earlyBirdImagesArray
-                cell.thumbnailImageView.image = [UIImage imageNamed:[earlyBirdImagesArray objectAtIndex:indexPath.row - 1]];
-                cell.accessoryView = nil;
-                cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-            }
-            break;
-        case 9:
-        {
-            UIButton * btn = [UIButton buttonWithType:UIButtonTypeCustom];
-            if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
-            btn.frame = CGRectMake(110, 5, 122, 35);
-            else
-                 btn.frame = CGRectMake(200, 5, 122, 35);
-            [btn setImage:[UIImage imageNamed:@"Log Out.png"] forState:UIControlStateNormal];
-            btn.tag = 83;
-            [btn addTarget:self action:@selector(buttonPressedAction:) forControlEvents:UIControlEventTouchUpInside];
-            [cell addSubview:btn];//39,53,54
-     
-        }
-            break;
-            
-        default:
-            cell.nameLabel.text = [menuNamesArray objectAtIndex:indexPath.section];
-            //cell.nameLabel.font = [UIFont fontWithName:@"Lato-Regular" size:15];
-            cell.thumbnailImageView.image = [UIImage imageNamed:[menuImagesArray objectAtIndex:indexPath.section]];
-            break;
-    }*/
-  [cell setBackgroundColor:[UIColor colorWithRed:255.0f/255.0f green:23.0f/255.0f blue:68.0f/255.0f alpha:1.0f]];
-    
-    cell.nameLabel.text = [menuNamesArray objectAtIndex:indexPath.section];
-     cell.thumbImg.text = [menuImagesArray objectAtIndex:indexPath.section];
-    //cell.thumbnailImageView.image = [UIImage imageNamed:[menuImagesArray objectAtIndex:indexPath.section]];
-    //[self AccessoryType:cell indexPath:indexPath];
-    
-//    if(indexPath.section == 0){
-//        [cell setBackgroundColor:[UIColor redColor]];
-//       // cell.nameLabel.textColor = [UIColor whiteColor];
-//    }
+    [cell setBackgroundColor:[UIColor colorWithRed:255.0f/255.0f green:23.0f/255.0f blue:68.0f/255.0f alpha:1.0f]];
     return cell;
 }
 
--(void)buttonTapped:(id)sender{
+-(void)buttonTapped:(UIButton *)sender{
+    
+    
+    CGPoint buttonPosition = [sender convertPoint:CGPointZero
+                                           toView:self.drawerView.drawerTableView];
+    NSIndexPath *tappedIP = [self.drawerView.drawerTableView indexPathForRowAtPoint:buttonPosition];
+    selectedIndex = tappedIP;
+    
+    isExpandable = !isExpandable;
+    
+    subMenuArray = nil;
+    
+    
+    if (tappedIP.section == 1){
+        if (isExpandable == true) {
+            subMenuArray =  [delegate.defaults objectForKey:@"mensArray"];
+        }
+        
+    }else if(tappedIP.section == 2){
+        if (isExpandable == true) {
+            
+            subMenuArray =  [delegate.defaults objectForKey:@"womensArray"];
+            
+        }
+    }else if(tappedIP.section == 3){
+        
+        if (isExpandable == true) {
+            subMenuArray =  [delegate.defaults objectForKey:@"childrenArray"];
+        }
+    }else{
+        
+    }
+    [self.drawerView.drawerTableView reloadData];
     
 }
 
 - (void)buttonPressedAction:(id)sender
 {
     NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
-   // [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
+    // [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
     [self closeNavigationDrawer];
     [self.CCKFNavDrawerDelegate Drawer_Logout];
 }
@@ -564,80 +537,12 @@
 
 #pragma mark - Table view delegate
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    selectedIndex = (int)indexPath.section;
-    if (indexPath.section == 2 ){
-        isExpandable = !isExpandable;
-    }else if (indexPath.section == 3){
-        isExpandable = !isExpandable;
-    }
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
-  /*  BOOL currentlyExpanded;
-    NSMutableArray *tmpArray;
-    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-   
-    
-    if (!indexPath.row)
-    {
-        // only first row toggles exapand/collapse
-        [tableView deselectRowAtIndexPath:indexPath animated:YES];
-        
-        NSInteger section = indexPath.section;
-        currentlyExpanded = [expandedSections containsIndex:section];
-        NSInteger rows;
-        
-        tmpArray = [NSMutableArray array];
-        
-        if (currentlyExpanded)
-        {
-            rows = [self tableView:tableView numberOfRowsInSection:section];
-            [expandedSections removeIndex:section];
-        }
-        else
-        {
-            [expandedSections addIndex:section];
-            rows = [self tableView:tableView numberOfRowsInSection:section];
-        }
-        
-        for (int i=1; i<rows; i++)
-        {
-            NSIndexPath *tmpIndexPath = [NSIndexPath indexPathForRow:i inSection:section];
-            [tmpArray addObject:tmpIndexPath];
-        }
-        
-        
-        
-        if (currentlyExpanded)
-        {
-            [tableView deleteRowsAtIndexPaths:tmpArray withRowAnimation:UITableViewRowAnimationTop];
-            cell.accessoryView = [DTCustomColoredAccessory accessoryWithColor:[UIColor whiteColor] type:DTCustomColoredAccessoryTypeDown];
-        }
-        else
-        {
-            [tableView insertRowsAtIndexPaths:tmpArray withRowAnimation:UITableViewRowAnimationTop];
-            cell.accessoryView =  [DTCustomColoredAccessory accessoryWithColor:[UIColor whiteColor] type:DTCustomColoredAccessoryTypeUp];
-        }
-    }
-    if(indexPath.section != 0){
-        [delegate.defaults setObject:@"Section" forKey:@"drawerRoute"];
-        [delegate.defaults synchronize];
-        [self.CCKFNavDrawerDelegate CCKFNavDrawerSelection:[indexPath section]];
-        [expandedSections removeAllIndexes];
-        [tableView reloadData];
-        [self closeNavigationDrawer];
-    }
-    else if(indexPath.row != 0){
-        [delegate.defaults setObject:@"Row" forKey:@"drawerRoute"];
-        [delegate.defaults synchronize];
-        [self.CCKFNavDrawerDelegate CCKFNavDrawerSelection:[indexPath row]];
-        [expandedSections removeAllIndexes];
-        [tableView reloadData];
-        [self closeNavigationDrawer];
-    }*/
     [delegate.defaults setObject:@"Section" forKey:@"drawerRoute"];
     [delegate.defaults synchronize];
-    [self.CCKFNavDrawerDelegate CCKFNavDrawerSelection:[indexPath section]];
+    NSInteger row = indexPath.row - 1;
+    [self.CCKFNavDrawerDelegate CCKFNavDrawerSelection:indexPath.section selectedRow: row];
     [expandedSections removeAllIndexes];
     [tableView reloadData];
     [self closeNavigationDrawer];

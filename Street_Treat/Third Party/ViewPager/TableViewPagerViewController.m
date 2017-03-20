@@ -96,7 +96,7 @@
     self.pageController.dataSource = self;
     self.pageController.delegate=self;
     [[self.pageController view] setFrame:CGRectMake(x,y,width,height)];
-    [self.pageController setViewControllers:@[[self.tableViewControllers objectAtIndex:0]] direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
+    [self.pageController setViewControllers:@[[self.tableViewControllers objectAtIndex:0]] direction:UIPageViewControllerNavigationDirectionForward animated:YES completion:nil];
     [self addChildViewController:self.pageController];
     [[self view] addSubview:[self.pageController view]];
     [self.pageController didMoveToParentViewController:self];
@@ -239,7 +239,7 @@
         {
             if (next)
             {
-                [self moveToViewController:next direction:(UIPageViewControllerNavigationDirectionForward)animated:NO];
+                [self moveToViewController:next direction:(UIPageViewControllerNavigationDirectionForward)animated:YES];
                 
                 //kill scrolling so that more than 2 views can't be seen
                 // [self killScroll:scrollView];
@@ -249,7 +249,7 @@
         {
             if (previous)
             {
-                [self moveToViewController:previous direction:(UIPageViewControllerNavigationDirectionReverse) animated:NO];
+                [self moveToViewController:previous direction:(UIPageViewControllerNavigationDirectionReverse) animated:YES];
                 
                 //kill scrolling so that more than 2 views can't be seen
                 // [self killScroll:scrollView];

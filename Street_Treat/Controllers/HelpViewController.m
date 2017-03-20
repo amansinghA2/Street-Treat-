@@ -22,14 +22,22 @@
     [super viewDidLoad];
     [delegate.defaults setObject:@"HelpViewController" forKey:@"internetdisconnect"];
     constant = [[Common alloc]init];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(fromProfileTapped)
+                                                 name:@"fromProfile"
+                                               object:nil];
     if([[NSUserDefaults standardUserDefaults] boolForKey:@"firstLaunch"]==NO)
     {
        // skipBtn.hidden = TRUE;
+       
         [self.view bringSubviewToFront:skipBtn];
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"firstLaunch"];
         [[NSUserDefaults standardUserDefaults] synchronize];
+        isNavigationBarHidden = true;
     }else{
         // skipBtn.hidden = TRUE;
+        isNavigationBarHidden = false;
         [constant addNavigationBar:self.view];
     }
     UIButton *backBtn = (UIButton *)[self.view viewWithTag:1111];
@@ -74,15 +82,27 @@
 //    [self dismissViewControllerAnimated:YES completion:nil];
 //}
 
+
+- (void)fromProfileTapped{
+    // [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+    [self.navigationController popViewControllerAnimated:true];
+}
+
 -(void)viewWillAppear:(BOOL)animated{
-    if([[NSUserDefaults standardUserDefaults] boolForKey:@"navigatefromprofiletohelp"]==YES)
-    {
-        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"navigatefromprofiletohelp"];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-        [self dismissViewControllerAnimated:YES completion:nil];
-    }else{
-        
-    }
+    
+// self.navigationController.navigationBarHidden = true;
+//    if([[NSUserDefaults standardUserDefaults] boolForKey:@"navigatefromprofiletohelp"]==YES)
+//    {
+//        
+//    }else{
+//        
+//    }
+    
+}
+
+-(void) viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    //self.navigationController.navigationBarHidden = false;
 }
 
 -(void)backTapped{
@@ -110,14 +130,14 @@
 
 - (IBAction)skipTapped:(id)sender {
     
- // ProfileViewController* mcvc = (ProfileViewController*)self.presentingViewController;
-     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"navigatefromhelp"];
-     //  [self.delegate1 HelpViewControllerDidTapButton:self];
-   // [self dismissViewControllerAnimated:NO completion:^{
+    if (isNavigationBarHidden) {
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"navigatefromhelp"];
         ProfileViewController * profile = [self.storyboard instantiateViewControllerWithIdentifier:@"ProfileViewController"];
-        [self presentViewController:profile animated:YES completion:nil];
-       // self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
-    //  }];
+        [self.navigationController pushViewController:profile animated:true];
+    } else {
+        [self.navigationController popViewControllerAnimated:true];
+    }
+    
     
 }
 

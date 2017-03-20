@@ -8,10 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import "Common.h"
+#import "UPStackMenu.h"
 @import GoogleMaps;
 
 
-@interface ContactViewController : UIViewController{
+@interface ContactViewController : UIViewController<UPStackMenuDelegate>{
     Common * commonclass;
      NSMutableData *contactData;
     NSString *post;
@@ -20,6 +21,7 @@
     NSMutableURLRequest *request;
     NSURLConnection *theConnection;
     AppDelegate *delegate;
+    UIView * flyoutView;
 }
 
 @property (strong, nonatomic) UIActivityIndicatorView *indicator;

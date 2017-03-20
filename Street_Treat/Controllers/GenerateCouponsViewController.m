@@ -301,6 +301,7 @@
     // [commonclass addNavigationBar:self.view];
     
     checkinsData = [[NSMutableData alloc]init];
+    dataDetails = [[NSMutableArray alloc]init];
     
     generateData = [[NSMutableData alloc]init];
     
@@ -372,8 +373,6 @@
     
     current_Loc.hidden = TRUE;
     
-    
-    
     DtlcheckInBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     
     DtlcheckInBtn.frame = CGRectMake(self.view.frame.size.width - 115, self.view.frame.size.height - 100, 130, 35);
@@ -408,7 +407,7 @@
     
     
     
-    DetailScroll.contentSize = CGSizeMake(self.view.frame.size.width,reviewView.frame.origin.y+5);
+    DetailScroll.contentSize = CGSizeMake(self.view.frame.size.width,reviewView.frame.origin.y + 1);
     
     [self.view makeToast:@"Checked In to the store"];
     
@@ -940,7 +939,54 @@
     });
 }
 
+- (UIView *)createDemoView:(NSString *)sender senderTag:(int)tag tapGesture:(UITapGestureRecognizer *)sender1
+{
+    UIScrollView *scroll;
+    scroll = [[UIScrollView alloc] initWithFrame:CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height - 50)];
+    demoView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height)];
+    UIButton *closeButton1 = [UIButton buttonWithType:UIButtonTypeCustom];
+    
+    [closeButton1 setFrame:CGRectMake(demoView.frame.origin.x,self.view.frame.size.height - 50 , demoView.frame.size.width, 50)];
+    [closeButton1 setTitle:@"Close" forState:UIControlStateNormal];
+    [closeButton1 setBackgroundColor:[UIColor redColor]];
+    [closeButton1 addTarget:self action:@selector(closeTapped:) forControlEvents:UIControlEventTouchUpInside];
+    scroll.contentSize = CGSizeMake(scroll.frame.size.width * (imgcnt), scroll.frame.size.height - 50);
+    for (tag = 0 ; tag < imgcnt ;tag++){
+        CGRect frame;
+        frame.origin.x = scroll.frame.size.width * (tag);
+        frame.origin.y = 0;
+        frame.size = scroll.frame.size;
+        UIImageView* imageView = [[UIImageView alloc] init];
+        imageView.frame = frame;
+        //    UIButton *closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        //        UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(demoView.frame.origin.x,        demoView.frame.origin.y, demoView.frame.size.width, demoView.frame.size.height - 50)];
+        NSString * imglink = [NSString stringWithFormat:@"%@/%@",commonclass.siteURL,[dataDetails valueForKey:@"images"][tag]];
+        [imageView setImageWithURL:[NSURL URLWithString:imglink] placeholderImage:[UIImage imageNamed:@""] usingActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+        //    [imageView setImage:[UIImage imageNamed:@"demo"]];
+        //    [demoView addSubview:imageView];
+        //    [demoView addSubview:closeButton];
+        [scroll addSubview:imageView];
+        //        [scroll addSubview:closeButton1];
+        //        [scroll bringSubviewToFront:closeButton1];
+        [demoView addSubview:scroll];
+    }
+    [demoView addSubview:closeButton1];
+    [demoView bringSubviewToFront:closeButton1];
+    return demoView;
+    
+}
 
+
+-(void)closeTapped:(UIButton *)sender{
+    [demoView removeFromSuperview];
+}
+
+-(void)selectImage:(UITapGestureRecognizer *)sender{
+    
+    NSString * imglink = [NSString stringWithFormat:@"%@/%@",commonclass.siteURL,[dataDetails valueForKey:@"images"][sender.view.tag]];
+    
+    [self.view addSubview:[self createDemoView:imglink senderTag:sender.view.tag tapGesture:sender]];
+}
 
 -(void)Setdata:(NSMutableArray *)details{
     
@@ -949,9 +995,9 @@
     
     
     if([details valueForKey:@"images"] != [NSNull null]){
-        
+        dataDetails = details;
         imgcnt = [[details valueForKey:@"images"] count];
-        
+        Promoscroll.backgroundColor = [UIColor whiteColor];
         Promoscroll.contentSize = CGSizeMake(Promoscroll.frame.size.width * imgcnt, Promoscroll.frame.size.height);
         
         //    PromoArr = [[NSMutableArray alloc]initWithObjects:[UIImage imageNamed:@"Promo1.png"],[UIImage imageNamed:@"Promo2.png"],[UIImage imageNamed:@"Promo3.png"],[UIImage imageNamed:@"Promo4.png"],nil];
@@ -976,7 +1022,14 @@
             
             imgView.frame = frame;
             
-            [imgView setImageWithURL:[NSURL URLWithString:imglink] placeholderImage:[UIImage imageNamed:@"splash_iPhone.png"] usingActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+            UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(selectImage:)];
+            tapRecognizer.delegate = self;
+            imgView.tag = j;
+            [imgView addGestureRecognizer:tapRecognizer];
+            imgView.userInteractionEnabled = YES;
+            [imgView setContentMode:UIViewContentModeScaleAspectFit];
+            imgView.clipsToBounds = YES;
+            [imgView setImageWithURL:[NSURL URLWithString:imglink] placeholderImage:[UIImage imageNamed:@""] usingActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
             
             [Promoscroll addSubview:imgView];
             
@@ -1170,6 +1223,19 @@
 
 - (void)scrollViewDidScroll:(UIScrollView *)sender {
     
+//  float scrollOffset = sender.contentOffset.y;
+    
+//    if (scrollOffset <= 0 )
+//    {
+//        DtlcheckInBtn.hidden = false;
+//        //checkInBtn.hidden = false;
+//        
+//    }else{
+//        DtlcheckInBtn.hidden = true;
+//        //        checkInBtn.layer.backgroundColor = [[UIColor whiteColor] CGColor];
+//        //        [checkInBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+//    }
+    
     if (!pageControlBeingUsed) {
         
         CGFloat pageWidth = Promoscroll.frame.size.width;
@@ -1182,21 +1248,24 @@
     
 }
 
+
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
-    
+   // DtlcheckInBtn.hidden = true;
     pageControlBeingUsed = NO;
-    
 }
 
 
+-(void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate{
+   // DtlcheckInBtn.hidden = false;
+}
 
+-(void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView{
+   // DtlcheckInBtn.hidden = true;
+}
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    
+   // DtlcheckInBtn.hidden = false;
     pageControlBeingUsed = NO;
-    
 }
-
-
 
 -(void)backTapped{
     
@@ -1228,10 +1297,9 @@
     
     [self shareStore];
     
-    NSString *textToShare = @"Street Treat";
+    NSString *textToShare = [NSString stringWithFormat:@"Check out this %@ store on Street Treat App here",[delegate.defaults valueForKey:@"Store_Name"]];
     
     NSURL *myWebsite = [NSURL URLWithString:@"http://www.streettreat.in"];
-    
     
     
     NSArray *objectsToShare = @[textToShare, myWebsite];

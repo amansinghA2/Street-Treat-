@@ -63,7 +63,7 @@
                     [commonclass logoutFunction];
                 }else{
                     self.storeCountLbl.text = [NSString stringWithFormat:@"0 Stores"];
-                    [self.view makeToast:@"No Stores added yet"];
+                    [self.view makeToast:@"We could not find any stores for your result"];
                 }
                 [resultTable reloadData];
             }
@@ -226,9 +226,6 @@
 -(void)phoneTapped:(UIButton*)sender{
     
 }
-
-
-
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

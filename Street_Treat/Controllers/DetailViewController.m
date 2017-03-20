@@ -38,7 +38,6 @@
 @synthesize TimingsView,MondayTimeLbl,TuesdayTimeLbl,WednesdayTimeLbl,ThursdayTimeLbl,FridayTimeLbl,saturdayTimeLbl,sundayTimeLbl;
 
 -(void)viewWillAppear:(BOOL)animated{
-    
     if ([[delegate.defaults valueForKey:@"navigateFromReport"] isEqualToString:@"fromDetail"]){
         [self.view makeToast:@"Report Submitted Successfully"];
     }
@@ -57,6 +56,7 @@
     
     currentLatitude = [[delegate.defaults valueForKey:@"user_latitude"] floatValue];
     currentLongitude = [[delegate.defaults valueForKey:@"user_longitude"] floatValue];
+    [commonclass setNavigationController:self.navigationController tabBarController:self.tabBarController];
     
     [self getStoreDetails];
     
@@ -312,6 +312,7 @@
     detailData = [[NSMutableData alloc]init];
     dealsData = [[NSMutableData alloc]init];
     amenitiesData = [[NSMutableData alloc]init];
+    dataDetails = [[NSMutableArray alloc]init];
     miscdata = [[NSMutableData alloc]init];
     dealsArr = [[NSMutableArray alloc]init];
     amenitiesArr = [[NSMutableArray alloc]init];
@@ -385,161 +386,10 @@
     [self.rootNav drawerToggle];
 }
 
--(void)CCKFNavDrawerSelection:(NSInteger)selectionIndex{
-    [self DrawerTapped:selectionIndex];
+
+-(void)CCKFNavDrawerSelection:(NSInteger)selectedSession selectedRow: (NSInteger) row {
+    [commonclass DrawerTapped:selectedSession selectedRow: row];
 }
-
--(void)showResults{
-    [delegate.defaults setObject:@"Category" forKey:@"resultType"];
-    [delegate.defaults synchronize];
-    ResultsViewController * result = [self.storyboard instantiateViewControllerWithIdentifier:@"ResultsViewController"];
-    [self.navigationController pushViewController:result animated:YES];
-    self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
-}
-
-#pragma mark - photoShotSavedDelegate
-- (void)DrawerTapped:(NSInteger)selectionIndex{
-    if([[delegate.defaults valueForKey:@"drawerRoute"] isEqualToString:@"Section"]){
-        NSLog(@"index.. %ld",(long)selectionIndex);
-        switch (selectionIndex) {
-            case 0:
-            {
-                SearchStoreViewController * searchStore = [self.storyboard instantiateViewControllerWithIdentifier:@"SearchStoreViewController"];
-                // [self.navigationController pushViewController:searchStore animated:NO];
-                //MyModalViewController *modalViewController = [[MyModalViewController alloc] init];
-                [searchStore setReferencedNavigation:self.navigationController];
-                searchStore.modalPresentationStyle = UIModalPresentationOverCurrentContext;
-                [self.tabBarController presentViewController:searchStore animated:YES completion:nil];
-            }
-                break;
-            case 1:
-            {
-                NSString * catID = [delegate.defaults valueForKey:@"MensCategory"];
-                [delegate.defaults setValue:catID forKey:@"category"];
-                [delegate.defaults setValue:@"Store" forKey:@"route"];
-                [delegate.defaults synchronize];
-                [self showResults];
-            }
-                break;
-            case 2:
-            {
-                NSString * catID = [delegate.defaults valueForKey:@"WomensCategory"];
-                [delegate.defaults setValue:catID forKey:@"category"];
-                [delegate.defaults setValue:@"Store" forKey:@"route"];
-                [delegate.defaults synchronize];
-                [self showResults];
-            }
-                break;
-            case 3:
-            {
-                NSString * catID = [delegate.defaults valueForKey:@"ChildrenCategory"];
-                [delegate.defaults setValue:catID forKey:@"category"];
-                [delegate.defaults setValue:@"Store" forKey:@"route"];
-                [delegate.defaults synchronize];
-                [self showResults];
-            }
-                break;
-            case 4:
-                setType = @"about-us";
-                [self StaticContent];
-                break;
-            case 5:
-                setType = @"News-Events";
-                [self StaticContent];
-                break;
-            case 6:
-                setType = @"Terms And Conditions";
-                [self StaticContent];
-                break;
-            case 7:
-                setType = @"faqs";
-                [self StaticContent];
-                break;
-            case 8:
-                setType = @"privacy";
-                [self StaticContent];
-                break;
-            case 9:{
-                [commonclass Redirect:self.navigationController Identifier:@"ContactViewController"];
-                //                ContactViewController * contact = [self.storyboard instantiateViewControllerWithIdentifier:@"ContactViewController"];
-                //                [self.navigationController pushViewController:contact animated:YES];
-            }
-                break;
-            case 10:{
-                ProfileViewController * profile = [self.storyboard instantiateViewControllerWithIdentifier:@"ProfileViewController"];
-                [self.navigationController pushViewController:profile animated:YES];
-                self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
-            }
-                break;
-            case 11:{
-                HelpViewController * help = [self.storyboard instantiateViewControllerWithIdentifier:@"HelpViewController"];
-                [self.navigationController pushViewController:help animated:YES];
-                self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
-                
-            }
-                break;
-            case 12:{
-                //                ChangePasswordViewController * password = [self.storyboard instantiateViewControllerWithIdentifier:@"ChangePasswordViewController"];
-                //                [self.navigationController pushViewController:password animated:YES];
-                //                self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
-            }
-                break;
-            case 13:{
-                NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
-                //      [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
-                //  [delegate.defaults setValue:@"19.1183" forKey:@"latitude"];
-                // [delegate.defaults setValue:@"73.0276" forKey:@"longitude"];
-                //[delegate.defaults setValue:@"Mahape" forKey:@"loc_name"];
-                [delegate.defaults setValue:@"3" forKey:@"radius"];
-                ViewController * splash = [self.storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
-                UINavigationController *passcodeNavigationController = [[UINavigationController alloc] initWithRootViewController:splash];
-                [self presentViewController:passcodeNavigationController animated:YES completion:nil];
-            }
-                break;
-                
-            default:
-                break;
-        }
-    }
-    else{
-        if(selectionIndex == 1){
-            
-        }
-        if(selectionIndex == 2){
-            
-            
-        }
-        if(selectionIndex == 3){
-            
-        }
-        if(selectionIndex == 4){
-            
-        }
-    }
-}
-
-
--(void)StaticContent{
-    //NSLog(@"type StaticContent .. %@",setType);
-    [delegate.defaults setObject:setType forKey:@"staticType"];
-    [delegate.defaults synchronize];
-    StaticDataViewController * info = [self.storyboard instantiateViewControllerWithIdentifier:@"StaticDataViewController"];
-    [self.navigationController pushViewController:info animated:YES];
-    self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
-}
-
-- (UIView *)createDemoView
-{
-    UIView *demoView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width - 10, self.view.frame.size.height - 20)];
-    
-    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.frame.origin.x + 10 , self.view.frame.origin.y + 10 , self.view.frame.size.width - 10, self.view.frame.size.height - 30)];
-    [imageView setImageWithURL:[NSURL URLWithString:imgLink1] placeholderImage:[UIImage imageNamed:@"splash_iPhone.png"] usingActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    // [imageView setImage:[UIImage imageNamed:@"demo"]];
-    [demoView addSubview:imageView];
-    
-    return demoView;
-}
-
 
 - (void)customIOS7dialogButtonTouchUpInside: (CustomIOSAlertView *)alertView clickedButtonAtIndex: (NSInteger)buttonIndex
 {
@@ -547,43 +397,70 @@
     [alertView close];
 }
 
--(void)selectImage:(id)sender{
-//    ImageViewController * searchStore = [self.storyboard instantiateViewControllerWithIdentifier:@"ImageViewController"];
-//    searchStore.imagesList = imagesList;
-//    [self.navigationController pushViewController:searchStore animated:YES];
+
+- (UIView *)createDemoView:(NSString *)sender senderTag:(int)tag tapGesture:(UITapGestureRecognizer *)sender1
+{
+    UIScrollView *scroll;
+    scroll = [[UIScrollView alloc] initWithFrame:CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height - 50)];
+    demoView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height)];
+    demoView.backgroundColor = [UIColor whiteColor];
+    UIButton *closeButton1 = [UIButton buttonWithType:UIButtonTypeCustom];
     
-    CustomIOSAlertView *alertView = [[CustomIOSAlertView alloc] init];
+    [closeButton1 setFrame:CGRectMake(demoView.frame.origin.x,self.view.frame.size.height - 50 , demoView.frame.size.width, 50)];
+    [closeButton1 setTitle:@"Close" forState:UIControlStateNormal];
+    [closeButton1 setBackgroundColor:[UIColor redColor]];
+    [closeButton1 addTarget:self action:@selector(closeTapped:) forControlEvents:UIControlEventTouchUpInside];
+    scroll.contentSize = CGSizeMake(scroll.frame.size.width * (imgcnt), scroll.frame.size.height - 50);
+     for (tag = 0 ; tag < imgcnt ;tag++){
+        CGRect frame;
+        frame.origin.x = scroll.frame.size.width * (tag);
+        frame.origin.y = 0;
+        frame.size = scroll.frame.size;
+        UIImageView* imageView = [[UIImageView alloc] init];
+        imageView.frame = frame;
+        //    UIButton *closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        //        UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(demoView.frame.origin.x,        demoView.frame.origin.y, demoView.frame.size.width, demoView.frame.size.height - 50)];
+         NSString * imglink = [NSString stringWithFormat:@"%@/%@",commonclass.siteURL,[dataDetails valueForKey:@"images"][tag]];
+         [imageView setContentMode:UIViewContentModeScaleAspectFit];
+         imageView.clipsToBounds = YES;
+        [imageView setImageWithURL:[NSURL URLWithString:imglink] placeholderImage:[UIImage imageNamed:@""] usingActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+        //    [imageView setImage:[UIImage imageNamed:@"demo"]];
+        //    [demoView addSubview:imageView];
+        //    [demoView addSubview:closeButton];
+        [scroll addSubview:imageView];
+        //        [scroll addSubview:closeButton1];
+        //        [scroll bringSubviewToFront:closeButton1];
+    [demoView addSubview:scroll];
+    }
+    [demoView addSubview:closeButton1];
+    [demoView bringSubviewToFront:closeButton1];
+    return demoView;
     
-    // Add some custom content to the alert view
-    [alertView setContainerView:[self createDemoView]];
+}
+
+
+-(void)closeTapped:(UIButton *)sender{
+    [demoView removeFromSuperview];
+}
+
+-(void)selectImage:(UITapGestureRecognizer *)sender{
     
-    // Modify the parameters
-    [alertView setButtonTitles:[NSMutableArray arrayWithObjects:@"Close", nil]];
-    [alertView setDelegate:self];
+   NSString * imglink = [NSString stringWithFormat:@"%@/%@",commonclass.siteURL,[dataDetails valueForKey:@"images"][sender.view.tag]];
     
-    // You may use a Block, rather than a delegate.
-    [alertView setOnButtonTouchUpInside:^(CustomIOSAlertView *alertView, int buttonIndex) {
-        NSLog(@"Block: Button at position %d is clicked on alertView %d.", buttonIndex, (int)[alertView tag]);
-        [alertView close];
-    }];
-    
-    [alertView setUseMotionEffects:true];
-    
-    // And launch the dialog
-    [alertView show];
-    
+   [self.view addSubview:[self createDemoView:imglink senderTag:sender.view.tag tapGesture:sender]];
 }
 
 -(void)Setdata:(NSMutableArray*)details{
     NSLog(@"details.. %@",details);
+ 
    if([details valueForKey:@"images"] != [NSNull null]){
+    dataDetails = details;
    imgcnt = [[details valueForKey:@"images"] count];
    Promoscroll.contentSize = CGSizeMake(Promoscroll.frame.size.width * imgcnt, Promoscroll.frame.size.height);
     
     for (int j = 0; j < imgcnt; j++) {
-        
+        Promoscroll.backgroundColor = [UIColor whiteColor];
         NSString * imglink = [NSString stringWithFormat:@"%@/%@",commonclass.siteURL,[details valueForKey:@"images"][j]];
-        
         [imagesList addObject:imglink];
         imgLink1 = imglink;
         CGRect frame;
@@ -597,8 +474,12 @@
         imgView.tag = j;
         [imgView addGestureRecognizer:tapRecognizer];
         imgView.userInteractionEnabled = YES;
-        [imgView setImageWithURL:[NSURL URLWithString:imglink] placeholderImage:[UIImage imageNamed:@"splash_iPhone.png"] usingActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+        [imgView setContentMode:UIViewContentModeScaleAspectFit];
+        imgView.clipsToBounds = YES;
+        [imgView setImageWithURL:[NSURL URLWithString:imglink] placeholderImage:[UIImage imageNamed:@""] usingActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
         [Promoscroll addSubview:imgView];
+        Promoscroll.tag = 1;
+        DetailScroll.tag = 2;
     }
     
     Promopagecontol.currentPage = 0;
@@ -607,7 +488,7 @@
     [Promoscroll bringSubviewToFront:backBtn];
    }
     
-    DetailScroll.contentSize = CGSizeMake(self.view.frame.size.width,TimingsView.frame.origin.y);
+    DetailScroll.contentSize = CGSizeMake(self.view.frame.size.width,reviewView.frame.origin.y);
     
     _storeName.text = [details valueForKey:@"store_name"];
     [delegate.defaults setValue:[details valueForKey:@"store_name"] forKey:@"Store_Name"];
@@ -745,6 +626,7 @@
     }else{
         sundayTimeLbl.text = [NSString stringWithFormat:@"%@ To %@",SunstartTime,SunendTime];
     }
+    
     
     if([[details valueForKey:@"checked_in"] intValue] == 1 && [[details valueForKey:@"can_review"] intValue] == 1){
         DtlcheckInBtn.backgroundColor = [UIColor Tabbar_Color];
@@ -1026,15 +908,18 @@
                 NSLog(@"data.. %@",data);
                 if([[data valueForKey:@"status"]intValue] == 1){
                     dealsArr = [data valueForKey:@"items"];
-                   // [self getAllStoreAmenities];
+                  //[self getAllStoreAmenities];
                     [storeOffersTbl reloadData];
-                    DetailScroll.contentSize = CGSizeMake(DetailScroll.frame.size.width, (TimingsView.frame.origin.y + TimingsView.frame.size.height) + 5);
+              
+                     DetailScroll.contentSize = CGSizeMake(DetailScroll.frame.size.width, (reviewView.frame.origin.y + reviewView.frame.size.height) + 5);
+        
+                    
                 }else if([[data valueForKey:@"status"]intValue] == -1){
                     [commonclass logoutFunction];
                 }else{
                     CGRect newFrame = _StoreOffersView.frame;
                     newFrame.size.width = _StoreOffersView.frame.size.width;
-                    newFrame.size.height = 30;
+                    newFrame.size.height = 60;
                     [_StoreOffersView setFrame:newFrame];
                     storeOffersTbl.hidden = TRUE;
                     offersLine1Lbl.hidden = TRUE;
@@ -1045,7 +930,9 @@
                     [commonclass changeFrameWRT:budgetMetersView ofview:AmenitiesView];
                     [commonclass changeFrameWRT:AmenitiesView ofview:DescriptionView];
                     [commonclass changeFrameWRT:DescriptionView ofview:TimingsView];
-                    DetailScroll.contentSize = CGSizeMake(DetailScroll.frame.size.width, (TimingsView.frame.origin.y + TimingsView.frame.size.height) + 5);
+                    [commonclass changeFrameWRT:TimingsView ofview:reviewView];
+                   // [DetailScroll bringSubviewToFront:reviewView];
+                    DetailScroll.contentSize = CGSizeMake(DetailScroll.frame.size.width, (reviewView.frame.origin.y + reviewView.frame.size.height) + 5);
                 }
             }else if([responseType isEqualToString:@"getallAmenities"]){
                 if([[data valueForKey:@"status"]intValue] == 1){
@@ -1144,6 +1031,24 @@
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)sender {
+    
+    float scrollViewHeight = sender.frame.size.height;
+    float scrollContentSizeHeight = sender.contentSize.height;
+    float scrollOffset = sender.contentOffset.y;
+    
+    if (sender.tag == 2){
+        if (scrollOffset <= 0)
+        {
+            DtlcheckInBtn.hidden = false;
+            //checkInBtn.hidden = false;
+            
+        }else{
+            DtlcheckInBtn.hidden = true;
+            //        checkInBtn.layer.backgroundColor = [[UIColor whiteColor] CGColor];
+            //        [checkInBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        }
+    }
+    
     if (!pageControlBeingUsed) {
         // Switch the indicator when more than 50% of the previous/next page is visible
         CGFloat pageWidth = Promoscroll.frame.size.width;
@@ -1153,16 +1058,26 @@
 }
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+  
     pageControlBeingUsed = NO;
 }
 
+
+-(void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate{
+    DtlcheckInBtn.hidden = false;
+}
+
+-(void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView{
+    DtlcheckInBtn.hidden = true;
+}
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    DtlcheckInBtn.hidden = false;
     pageControlBeingUsed = NO;
 }
 
 - (IBAction)shareTapped:(id)sender {
     [self shareStore];
-    NSString *textToShare = @"Street Treat";
+    NSString *textToShare = [NSString stringWithFormat:@"Check out this %@ store on Street Treat App here",[delegate.defaults valueForKey:@"Store_Name"]];
     NSURL *myWebsite = [NSURL URLWithString:@"http://www.streettreat.in"];
     
     
@@ -1227,11 +1142,16 @@
 
 - (IBAction)AddReviewTapped:(id)sender {
     
-    [delegate.defaults setInteger:store_ID forKey:@"Store_ID"];
-    [delegate.defaults synchronize];
+    if([[deatilsArr valueForKey:@"can_review"] intValue] == 1){
+        [delegate.defaults setInteger:store_ID forKey:@"Store_ID"];
+        [delegate.defaults synchronize];
+        
+        SubmitReviewViewController * addReview = [self.storyboard instantiateViewControllerWithIdentifier:@"SubmitReviewViewController"];
+        [self.navigationController pushViewController:addReview animated:YES];
+    }else{
+        [self.view makeToast:@"You need to check in to review the store"];
+    }
     
-    SubmitReviewViewController * addReview = [self.storyboard instantiateViewControllerWithIdentifier:@"SubmitReviewViewController"];
-    [self.navigationController pushViewController:addReview animated:YES];
 }
 
 - (IBAction)checkInTapped:(id)sender {

@@ -213,6 +213,13 @@
 -(void)ExpandTapped:(UIButton*)sender{
     selectedIndex = (long)sender.tag;
     isexpand = !isexpand;
+    
+    if (isexpand == true){
+      [sender setTitle:@"-" forState:UIControlStateNormal];
+    }else{
+      [sender setTitle:@"+" forState:UIControlStateNormal];
+    }
+    
     NSLog(@"sender.tag..%ld",(long)sender.tag);
     path = [NSIndexPath indexPathWithIndex:sender.tag];
     [self tableView:couponsTable heightForRowAtIndexPath:path];

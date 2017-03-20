@@ -14,16 +14,18 @@
 @protocol CCKFNavDrawerDelegate <NSObject>
 @required
 - (void)CCKFNavDrawerSelection:(NSInteger)selectionIndex;
+-(void)CCKFNavDrawerSelection:(NSInteger)selectedSession selectedRow: (NSInteger) row;
 - (void)Drawer_Logout;
 @end
 
 @interface CCKFNavDrawer : UINavigationController<UIGestureRecognizerDelegate, UITableViewDataSource, UITableViewDelegate>{
     CGRect temp;
     BOOL isExpandable;
-    int selectedIndex;
+    NSIndexPath *selectedIndex;
      //Common * commonclass;
     NSMutableIndexSet *expandedSections;
     NSArray * menuNamesArray;
+    NSMutableArray *subMenuArray;
      NSArray * menuImagesArray;
     UIStoryboard * storyboard;
     CGFloat screenHeight,screenWidth;

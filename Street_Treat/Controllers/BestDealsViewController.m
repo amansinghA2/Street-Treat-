@@ -49,7 +49,7 @@
     }else{
         _pageTitle.text = @"NEARBY DEALS";
     }
-    
+    [commonclass setNavigationController:self.navigationController tabBarController:self.tabBarController];
     currentLatitude = [[delegate.defaults valueForKey:@"latitude"] floatValue];
     currentLongitude = [[delegate.defaults valueForKey:@"longitude"] floatValue];
     userRadius = [[delegate.defaults valueForKey:@"radius"] floatValue];
@@ -160,9 +160,19 @@
     
     dealsdata = [[NSMutableData alloc]init];
     dealsArr = [[NSMutableArray alloc]init];
-    
+    smalldealsArr = [[NSMutableArray alloc]init];
     isexpand = false;
     indexpathArr = [[NSMutableArray alloc]init];
+    
+    
+    if ([delegate.defaults valueForKey:@"user_latitude"] == nil){
+        currentLatitude = [[delegate.defaults valueForKey:@"latitude"] floatValue];
+        currentLongitude = [[delegate.defaults valueForKey:@"longitude"] floatValue];
+    }else{
+        currentLatitude = [[delegate.defaults valueForKey:@"user_latitude"] floatValue];
+        currentLongitude = [[delegate.defaults valueForKey:@"user_longitude"] floatValue];
+        
+    }
     
     UIButton *back = (UIButton *)[self.view viewWithTag:1111];
     [back addTarget:self action:@selector(backTapped) forControlEvents:UIControlEventTouchUpInside];
@@ -188,136 +198,8 @@
     [self.rootNav drawerToggle];
 }
 
--(void)CCKFNavDrawerSelection:(NSInteger)selectionIndex{
-    [self DrawerTapped:selectionIndex];
-}
-
-#pragma mark - photoShotSavedDelegate
-- (void)DrawerTapped:(NSInteger)selectionIndex{
-    if([[delegate.defaults valueForKey:@"drawerRoute"] isEqualToString:@"Section"]){
-        NSLog(@"index.. %ld",(long)selectionIndex);
-        switch (selectionIndex) {
-            case 0:
-            {
-                SearchStoreViewController * searchStore = [self.storyboard instantiateViewControllerWithIdentifier:@"SearchStoreViewController"];
-                // [self.navigationController pushViewController:searchStore animated:NO];
-                //MyModalViewController *modalViewController = [[MyModalViewController alloc] init];
-                [searchStore setReferencedNavigation:self.navigationController];
-                searchStore.modalPresentationStyle = UIModalPresentationOverCurrentContext;
-                [self.tabBarController presentViewController:searchStore animated:YES completion:nil];
-            }
-                break;
-            case 1:
-            {
-                NSString * catID = [delegate.defaults valueForKey:@"MensCategory"];
-                [delegate.defaults setValue:catID forKey:@"category"];
-                [delegate.defaults setValue:@"Store" forKey:@"route"];
-                [delegate.defaults synchronize];
-                [self showResults];
-            }
-                break;
-            case 2:
-            {
-                NSString * catID = [delegate.defaults valueForKey:@"WomensCategory"];
-                [delegate.defaults setValue:catID forKey:@"category"];
-                [delegate.defaults setValue:@"Store" forKey:@"route"];
-                [delegate.defaults synchronize];
-                [self showResults];
-            }
-                break;
-            case 3:
-            {
-                NSString * catID = [delegate.defaults valueForKey:@"ChildrenCategory"];
-                [delegate.defaults setValue:catID forKey:@"category"];
-                [delegate.defaults setValue:@"Store" forKey:@"route"];
-                [delegate.defaults synchronize];
-                [self showResults];
-            }
-                break;
-            case 4:
-                setType = @"about-us";
-                [self StaticContent];
-                break;
-            case 5:
-                setType = @"News-Events";
-                [self StaticContent];
-                break;
-            case 6:
-                setType = @"Terms And Conditions";
-                [self StaticContent];
-                break;
-            case 7:
-                setType = @"faqs";
-                [self StaticContent];
-                break;
-            case 8:
-                setType = @"privacy";
-                [self StaticContent];
-                break;
-            case 9:{
-                [commonclass Redirect:self.navigationController Identifier:@"ContactViewController"];
-                //                ContactViewController * contact = [self.storyboard instantiateViewControllerWithIdentifier:@"ContactViewController"];
-                //                [self.navigationController pushViewController:contact animated:YES];
-            }
-                break;
-            case 10:{
-                ProfileViewController * profile = [self.storyboard instantiateViewControllerWithIdentifier:@"ProfileViewController"];
-                [self.navigationController pushViewController:profile animated:YES];
-                self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
-            }
-                break;
-            case 11:{
-                HelpViewController * help = [self.storyboard instantiateViewControllerWithIdentifier:@"HelpViewController"];
-                [self.navigationController pushViewController:help animated:YES];
-                self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
-              
-            }
-                break;
-            case 12:{
-                //                ChangePasswordViewController * password = [self.storyboard instantiateViewControllerWithIdentifier:@"ChangePasswordViewController"];
-                //                [self.navigationController pushViewController:password animated:YES];
-                //                self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
-            }
-                break;
-            case 13:{
-                NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
-                //      [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
-                //  [delegate.defaults setValue:@"19.1183" forKey:@"latitude"];
-                // [delegate.defaults setValue:@"73.0276" forKey:@"longitude"];
-                //[delegate.defaults setValue:@"Mahape" forKey:@"loc_name"];
-                [delegate.defaults setValue:@"3" forKey:@"radius"];
-                ViewController * splash = [self.storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
-                UINavigationController *passcodeNavigationController = [[UINavigationController alloc] initWithRootViewController:splash];
-                [self presentViewController:passcodeNavigationController animated:YES completion:nil];
-            }
-                break;
-                
-            default:
-                break;
-        }
-    }
-    else{
-        if(selectionIndex == 1){
-            
-        }
-        if(selectionIndex == 2){
-            
-        }
-        if(selectionIndex == 3){
-            
-        }
-        if(selectionIndex == 4){
-            
-        }
-    }
-}
-
--(void)showResults{
-    [delegate.defaults setObject:@"Category" forKey:@"resultType"];
-    [delegate.defaults synchronize];
-    ResultsViewController * result = [self.storyboard instantiateViewControllerWithIdentifier:@"ResultsViewController"];
-    [self.navigationController pushViewController:result animated:YES];
-    self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
+-(void)CCKFNavDrawerSelection:(NSInteger)selectedSession selectedRow: (NSInteger) row {
+    [commonclass DrawerTapped:selectedSession selectedRow: row];
 }
 
 -(void)showExhibitions{
@@ -327,20 +209,11 @@
     //    self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
 }
 
--(void)StaticContent{
-    //NSLog(@"type StaticContent .. %@",setType);
-    [delegate.defaults setObject:setType forKey:@"staticType"];
-    [delegate.defaults synchronize];
-    StaticDataViewController * info = [self.storyboard instantiateViewControllerWithIdentifier:@"StaticDataViewController"];
-    [self.navigationController pushViewController:info animated:YES];
-    self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
-}
-
 -(void)getNearbyDeals{
    // log_id,store_id,latitude,longitude,radius
    // requestType = @"GetDeals";
      if([commonclass isActiveInternet] == YES){
-    NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%@&longitude=%@&radius=%@&current_latitude=%f&current_longitude=%f&order_by=a.exclusive_discount&order_dir=DESC",[delegate.defaults valueForKey:@"logid"],[delegate.defaults valueForKey:@"latitude"],[delegate.defaults valueForKey:@"longitude"],[delegate.defaults valueForKey:@"radius"],currentLatitude,currentLongitude];
+    NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&radius=%@&current_latitude=%@&current_longitude=%@&order_by=a.exclusive_discount&order_dir=DESC",[delegate.defaults valueForKey:@"logid"],currentLatitude,currentLongitude,[delegate.defaults valueForKey:@"radius"],[delegate.defaults valueForKey:@"latitude"],[delegate.defaults valueForKey:@"longitude"]];
     NSLog(@"messageBody.. %@",messageBody);
     NSLog(@"constant.searchListURL.. %@",commonclass.searchListURL);
     [commonclass sendRequest:self.view mutableDta:dealsdata url:commonclass.searchListURL msgBody:messageBody];
@@ -356,7 +229,12 @@
     dispatch_sync(dispatch_get_main_queue(), ^{
         if([[data valueForKey:@"status"]intValue] == 1){
             dealsArr = [data valueForKey:@"items"];
-            offerCntLbl.text =[NSString stringWithFormat:@"%lu Offers",(unsigned long)[dealsArr count]];
+            if (dealsArr.count > 10){
+            smalldealsArr = [dealsArr subarrayWithRange:NSMakeRange(0, 10)];
+            }else{
+                smalldealsArr = dealsArr;
+            }
+            offerCntLbl.text =[NSString stringWithFormat:@"%lu Offers",(unsigned long)[smalldealsArr count]];
          [OffersTable reloadData];
         }else if([[data valueForKey:@"status"]intValue] == -1){
             [commonclass logoutFunction];
@@ -371,7 +249,7 @@
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
-    return [dealsArr count];
+    return [smalldealsArr count];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
@@ -400,10 +278,10 @@
     if (cell == nil) {
         cell = [[BestDealsCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
-    cell.shortDealTitleLbl.text = [NSString stringWithFormat:@"%@%% Street treat Offer",[dealsArr[indexPath.section] valueForKey:@"exclusive_discount"]];
-    cell.storeNameLbl.text = [NSString stringWithFormat:@"Store : %@",[dealsArr[indexPath.section] valueForKey:@"store_name"]];
-    cell.storeCatLbl.text = [NSString stringWithFormat:@"Categories : (%@)",[dealsArr[indexPath.section] valueForKey:@"categories"]];
-    cell.longDealTitleLbl.text = [NSString stringWithFormat:@"Address : %@, %@",[dealsArr[indexPath.section] valueForKey:@"address_1"],[dealsArr[indexPath.section] valueForKey:@"address_2"]];
+    cell.shortDealTitleLbl.text = [NSString stringWithFormat:@"%@%% Street treat Offer",[smalldealsArr[indexPath.section] valueForKey:@"exclusive_discount"]];
+    cell.storeNameLbl.text = [NSString stringWithFormat:@"Store : %@",[smalldealsArr[indexPath.section] valueForKey:@"store_name"]];
+    cell.storeCatLbl.text = [NSString stringWithFormat:@"Categories : (%@)",[smalldealsArr[indexPath.section] valueForKey:@"categories"]];
+    cell.longDealTitleLbl.text = [NSString stringWithFormat:@"Address : %@, %@",[smalldealsArr[indexPath.section] valueForKey:@"address_1"],[dealsArr[indexPath.section] valueForKey:@"address_2"]];
     [cell.ExpandBtn addTarget:self action:@selector(ExpandTapped:) forControlEvents:UIControlEventTouchUpInside];
     cell.ExpandBtn.tag = indexPath.section;
     //cell.longDealTitleLbl.text = [NSString stringWithFormat:@" %@",[dealsArr[indexPath.section] valueForKey:@"long_name"]];

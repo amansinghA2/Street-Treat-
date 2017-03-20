@@ -83,7 +83,7 @@ const static NSTimeInterval             kStackMenuDefaultCloseAnimationDurationO
         return;
     
     [item setDelegate:self];
-    [item reduceAnimated:NO withDuration:0];
+    [item reduceAnimated:YES withDuration:0];
     [_items addObject:item];
     
 //    [item setAlpha:0.];

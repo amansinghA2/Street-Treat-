@@ -15,7 +15,7 @@
 #import "SubmitReviewViewController.h"
 #import "UPStackMenu.h"
 
-@interface GenerateCouponsViewController : UIViewController<commonProtocol,UIScrollViewDelegate,CZPickerViewDataSource, CZPickerViewDelegate,UITextFieldDelegate,UPStackMenuDelegate>{
+@interface GenerateCouponsViewController : UIViewController<commonProtocol,UIScrollViewDelegate,CZPickerViewDataSource, CZPickerViewDelegate,UITextFieldDelegate,UPStackMenuDelegate , UIGestureRecognizerDelegate>{
     Common * commonclass;
     AppDelegate * delegate;
     BOOL pageControlBeingUsed;
@@ -33,6 +33,8 @@
     UIButton * DtlcheckInBtn;
     NSString *exclusiveCoupon;
     long int imgcnt;
+    UIView *demoView;
+    NSMutableArray *dataDetails;
 
 }
 @property (weak, nonatomic) IBOutlet UILabel *rightSideLabel;

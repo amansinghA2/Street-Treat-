@@ -20,7 +20,7 @@
     [self SetTimer];
 }
 
--(void) updateCountdown{
+-(void)updateCountdown{
     resendBtn.enabled = YES;
     if(secLeft > 0 ){
         secLeft -- ;

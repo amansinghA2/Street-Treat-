@@ -15,7 +15,7 @@
 
 @implementation Common
 @synthesize delegate;
-@synthesize shoppingReviewUrl,rootNav,siteURL,generateOTPURL,updateDeviceToken,LoginURL,RegisterURL,uniqueFldURL,forgotpasswordURL,staticDataURL,contactURL,getProfileURL,dashboardURL,searchListURL,feedbackURL,reportErrorURL,viewFeedbacksURL,exhibition_listURL,verticalsURL,storeDetailURL,bucketsListURL,otpURL,exhibition_detailURL,loginFBURL,newsEventsURL,termsconditionsURL,generatenewotpURL,verifyOTPURL,changePasswordURL,FAQsURL,privacypolicyURL,CheckinsURL,getOffersURL,generateCouponsURL,AddfavouritesURL,shareStoreURL,bucketsDeatilURL,callStoreURL,changePassfromProfileURL,getParentCategoriesURL,getMastersURL,addReviewsforStoreURL,getstoreDetailsURL,setProfileURL,myCouponsURL,updateMobileURL,userProfImageURL;
+@synthesize shoppingReviewUrl,rootNav,siteURL,generateOTPURL,updateDeviceToken,LoginURL,RegisterURL,uniqueFldURL,forgotpasswordURL,staticDataURL,contactURL,getProfileURL,dashboardURL,searchListURL,feedbackURL,reportErrorURL,viewFeedbacksURL,exhibition_listURL,verticalsURL,storeDetailURL,bucketsListURL,otpURL,exhibition_detailURL,loginFBURL,newsEventsURL,termsconditionsURL,generatenewotpURL,verifyOTPURL,changePasswordURL,FAQsURL,privacypolicyURL,CheckinsURL,getOffersURL,generateCouponsURL,AddfavouritesURL,shareStoreURL,bucketsDeatilURL,callStoreURL,changePassfromProfileURL,getParentCategoriesURL,getMastersURL,addReviewsforStoreURL,getstoreDetailsURL,setProfileURL,myCouponsURL,updateMobileURL,userProfImageURL,promotionalBannerUrl;
 
 @synthesize Fbicon,gPlusicon,forgotIcon,telIcon,faxIcon,mailIcon,menIcon,womenIcon,childrenIcon,highStreetIcon,brandedIcon,designerIcon,shareIcon,editIcon,coloreditIcon,locationbaloonIcon,filtersIcon,starIcon,radiofilledIcon,radioemptyIcon,twostarIcon,threestarIcon,fourstarIcon,fivestarIcon,checkboxemptyIcon,checkboxfilledIcon,allreviewsIcon,positivereviewsIcon,negativereviewsIcon,backIcon,notificationIcon,menuIcon,indicatorBlankIcon,indicatorFilledIcon,homeIcon,collectionIcon,nearmeIcon,storeawayIcon,storephoneIcon,addtofavouritesIcon,cameraIcon,amenitiesACIcon,amenitiesLiftIcon,amenitiesCarParkingIcon,amenitiesCreditCardIcon,emptystarIcon,addedtofavouritesIcon;
 
@@ -25,12 +25,12 @@
 - (id)init {
     self = [super init];
     if (self) {
-        self.rootNav = (CCKFNavDrawer *)self.navigationController;
+        self.rootNav = (CCKFNavDrawer *)navigationController;
         [self.rootNav setCCKFNavDrawerDelegate:self];
         maindelegate = (AppDelegate *)[[UIApplication sharedApplication]delegate];
-        
+        storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         //common icons
-        
+//        rootVC = [UIApplication sharedApplication].keyWindow.rootViewController;
         //header icons
         backIcon = @"\ue059";
         notificationIcon = @"\ue062";
@@ -138,10 +138,9 @@
         //Previous
        // NSString * masterUrl = @"http://services.streettreat.in/index.php?option=com_konnect&task=";
         
-       //Test
+        //Test
 //       siteURL = @"http://www.webtest.streettreat.in";
 //       NSString * masterUrl = @"http://www.webtest.streettreat.in/index.php?option=com_konnect&task=";
-        
         
        // LIVE
         siteURL = @"http://www.web.streettreat.in";
@@ -202,6 +201,7 @@
         generateOTPURL = [NSString stringWithFormat:@"%@customer.generateOTP",masterUrl];
         loginFBURL = [NSString stringWithFormat:@"%@socialLogin",masterUrl];
         shoppingReviewUrl = [NSString stringWithFormat:@"%@customer.addShoppingReview",masterUrl];
+        promotionalBannerUrl = [NSString stringWithFormat:@"%@getPromotionalBanners",masterUrl];
         
 
         ht = 0;
@@ -389,7 +389,7 @@
 }
 
 -(void)notificationsTapped{
-    NotificationsViewController * notifications = [self.storyboard instantiateViewControllerWithIdentifier:@"NotificationsViewController"];
+    NotificationsViewController * notifications = [storyboard instantiateViewControllerWithIdentifier:@"NotificationsViewController"];
     [self presentViewController:notifications animated:YES completion:nil];
 }
 
@@ -402,13 +402,13 @@
 #pragma mark - Connection Methods
 -(void)sendRequest:(UIView *)MainView mutableDta:(NSMutableData *)mutableDta url:(NSString *)url msgBody:(NSString *)msgBody{
     [MainView endEditing:YES];
-    if(!indicator){
+   // if(!indicator){
     indicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
         indicator.transform = CGAffineTransformMakeScale(1.5, 1.5);
         indicator.color=[UIColor blackColor];
     indicator.center=self.view.center;
     [MainView addSubview:indicator];
-     }
+   //  }
     
    
 //    if ([[maindelegate.defaults valueForKey:@"parentcategories"] isEqualToString:@"fromparent"]){
@@ -694,12 +694,189 @@
 //   // [maindelegate.defaults setValue:@"73.0276" forKey:@"longitude"];
 //    //[delegate.defaults setValue:@"Mahape" forKey:@"loc_name"];
     [maindelegate.defaults setValue:@"3" forKey:@"radius"];
-    LoginViewController *splash = [self.storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
+    LoginViewController *splash = [storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
     UINavigationController *passcodeNavigationController = [[UINavigationController alloc] initWithRootViewController:splash];
     [self presentViewController:passcodeNavigationController animated:YES completion:nil];
 }
 
+- (void)setCategoryData: (NSString *) menCatID selectedRow: (NSInteger) row {
+    
+    NSMutableArray * itemsArray = maindelegate.itemsArray;
+    NSMutableArray * mensParentID = [[NSMutableArray alloc]init];
+    for (int count = 0 ; count < itemsArray.count ; count++) {
+        if ([[itemsArray valueForKey:@"parent_id"][count]isEqualToString:menCatID]) {
+            [mensParentID addObject:[ itemsArray valueForKey:@"id"][count]];
+        }
+    }
+    
+    NSString * catID = menCatID;
+    if (row >= 0){
+       catID = mensParentID[row];
+    }
+    [maindelegate.defaults setValue:catID forKey:@"category"];
+    [maindelegate.defaults setValue:@"Store" forKey:@"route"];
+    [maindelegate.defaults synchronize];
+}
 
+
+
+- (void)DrawerTapped:(NSInteger)selectionIndex selectedRow: (NSInteger)row {
+    if([[maindelegate.defaults valueForKey:@"drawerRoute"] isEqualToString:@"Section"]){
+        NSLog(@"index.. %ld",(long)selectionIndex);
+        switch (selectionIndex) {
+            case 0:
+            {
+                SearchStoreViewController * searchStore = [storyboard instantiateViewControllerWithIdentifier:@"SearchStoreViewController"];
+                // [navigationController pushViewController:searchStore animated:NO];
+                //MyModalViewController *modalViewController = [[MyModalViewController alloc] init];
+                [searchStore setReferencedNavigation:navigationController];
+                searchStore.modalPresentationStyle = UIModalPresentationOverCurrentContext;
+                [tabBarController presentViewController:searchStore animated:YES completion:nil];
+            }
+                break;
+            case 1:
+            {
+                NSString * menCatID = [maindelegate.defaults valueForKey:@"MensCategory"];
+                [self setCategoryData:menCatID selectedRow:row];
+                [self showResults];
+            }
+                break;
+            case 2:
+            {
+                NSString * womensCatID = [maindelegate.defaults valueForKey:@"WomensCategory"];
+                [self setCategoryData: womensCatID selectedRow:row];
+                [self showResults];
+            }
+                break;
+            case 3:
+            {
+                NSString * catID = [maindelegate.defaults valueForKey:@"ChildrenCategory"];
+                [self setCategoryData: catID selectedRow:row];
+                [self showResults];
+            }
+                break;
+            case 4:
+                self.setType = @"about-us";
+                [self StaticContent];
+                break;
+            case 5:
+                self.setType = @"News-Events";
+                [self StaticContent];
+                break;
+            case 6:
+                self.setType = @"Terms And Conditions";
+                [self StaticContent];
+                break;
+            case 7:
+                self.setType = @"faqs";
+                [self StaticContent];
+                break;
+            case 8:
+                self.setType = @"privacy";
+                [self StaticContent];
+                break;
+            case 9:{
+                [self Redirect: navigationController Identifier:@"ContactViewController"];
+                //                ContactViewController * contact = [storyboard instantiateViewControllerWithIdentifier:@"ContactViewController"];
+                //                [navigationController pushViewController:contact animated:YES];
+            }
+                break;
+            case 10:{
+                ProfileViewController * profile = [storyboard instantiateViewControllerWithIdentifier:@"ProfileViewController"];
+                [navigationController pushViewController:profile animated:YES];
+                tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
+            }
+                break;
+            case 11:{
+                HelpViewController * help = [storyboard instantiateViewControllerWithIdentifier:@"HelpViewController"];
+                [navigationController pushViewController:help animated:YES];
+                tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
+                
+            }
+                break;
+            case 12:{
+                //                ChangePasswordViewController * password = [storyboard instantiateViewControllerWithIdentifier:@"ChangePasswordViewController"];
+                //                [navigationController pushViewController:password animated:YES];
+                //                tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
+            }
+                break;
+            case 13:{
+                NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
+                [maindelegate.defaults removeObjectForKey:@"logid"];
+                [maindelegate.defaults setValue:@"3" forKey:@"radius"];
+                [maindelegate.defaults synchronize];
+                LoginViewController * splash = [storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
+                UINavigationController *passcodeNavigationController = [[UINavigationController alloc] initWithRootViewController:splash];
+//
+                [navigationController popToRootViewControllerAnimated:true];
+                
+               // [passcodeNavigationController popToViewController:[passcodeNavigationController.viewControllers objectAtIndex:0] animated:YES];
+                //[navigationController pushViewController:splash animated:YES];
+                [maindelegate.rootVC presentViewController:passcodeNavigationController animated:YES completion:^{
+
+                }];
+
+                
+                
+                
+                //[rootVC presentViewController:[UIViewController new] animated:YES completion:nil];
+            }
+                break;
+                
+            default:
+                break;
+        }
+    }
+    else{
+        if(selectionIndex == 1){
+            
+        }
+        if(selectionIndex == 2){
+            
+        }
+        if(selectionIndex == 3){
+            
+        }
+        if(selectionIndex == 4){
+            
+        }
+    }
+}
+
+-(void)StaticContent{
+   
+    [maindelegate.defaults setObject:self.setType forKey:@"staticType"];
+    [maindelegate.defaults synchronize];
+    StaticDataViewController * info = [storyboard instantiateViewControllerWithIdentifier:@"StaticDataViewController"];
+    [navigationController pushViewController:info animated:YES];
+    tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
+}
+
+-(void)setNavigationController: (UINavigationController *)Navigation tabBarController: (UITabBarController *)tabBarVC {
+    navigationController = Navigation;
+    tabBarController = tabBarVC;
+}
+
+-(void)setNavigationController: (UINavigationController *)Navigation tabBarController: (UITabBarController *)tabBarVC viewController:(UIViewController *)viewController {
+    navigationController = Navigation;
+    tabBarController = tabBarVC;
+    maindelegate.rootVC = viewController;
+}
+
+-(void)showResults{
+    
+    [maindelegate.defaults setObject:@"Category" forKey:@"resultType"];
+    [maindelegate.defaults synchronize];
+    if([self isActiveInternet] == YES){
+        
+        ResultsViewController * result = [storyboard instantiateViewControllerWithIdentifier:@"ResultsViewController"];
+        [navigationController pushViewController:result animated:YES];
+        tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
+    }else{
+        [self Redirect:navigationController Identifier:@"InternetDisconnectViewController"];
+        //[self.view makeToast:@"Check your internet connection"];
+    }
+}
 
 
 @end

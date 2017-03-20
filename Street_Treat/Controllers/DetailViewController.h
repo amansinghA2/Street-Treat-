@@ -26,7 +26,7 @@
 
 @end
 
-@interface DetailViewController : UIViewController<UIScrollViewDelegate,UITabBarControllerDelegate,UITabBarDelegate,commonProtocol,CCKFNavDrawerDelegate,UPStackMenuDelegate,CLLocationManagerDelegate>{
+@interface DetailViewController : UIViewController<UIScrollViewDelegate,UITabBarControllerDelegate,UITabBarDelegate,commonProtocol,CCKFNavDrawerDelegate,UPStackMenuDelegate,CLLocationManagerDelegate , UIGestureRecognizerDelegate>{
     BOOL pageControlBeingUsed;
     Common * commonclass;
     AppDelegate * delegate;
@@ -57,6 +57,8 @@
     CLLocation *currentLocation;
     NSString * locality;
     long int imgcnt;
+    UIView *demoView;
+    NSMutableArray *dataDetails;
     
     UIButton * DtlcheckInBtn;
     
