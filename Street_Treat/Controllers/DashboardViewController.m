@@ -194,6 +194,7 @@ int btnwt,btnht;
 
 
 - (void)sendResponse:(Common *)response data:(NSMutableArray*)data indicator:(UIActivityIndicatorView *)indicator{
+    NSLog(@"%@",data);
     dispatch_sync(dispatch_get_main_queue(), ^{
         if([requestType isEqualToString:@"GetBanners"]){
             if([[data valueForKey:@"status"]intValue] == 1){
@@ -709,6 +710,7 @@ int btnwt,btnht;
 }
 
 -(void)collectionTapped:(UIButton *)sender{
+    [delegate.defaults setObject:@"High Street" forKey:@"verticalsCategory"];
     long int bucketID = [[bucketsArr[sender.tag] valueForKey:@"id"] intValue];
     NSString * title = [[bucketsArr[sender.tag] valueForKey:@"title"] uppercaseString];
     [delegate.defaults setInteger:bucketID forKey:@"bucketID"];
@@ -1249,10 +1251,9 @@ int btnwt,btnht;
 
 - (IBAction)checkInTapped:(id)sender {
     [delegate.defaults setObject:@"High Street" forKey:@"verticalsCategory"];
-    [delegate.defaults setObject:@"High Street" forKey:@"verticalsCategory"];
     [delegate.defaults setValue:@"CheckIn" forKey:@"resultType"];
+    [delegate.defaults setValue:@"Store" forKey:@"route"];
     [delegate .defaults synchronize];
-    
     ResultsViewController * result = [self.storyboard instantiateViewControllerWithIdentifier:@"ResultsViewController"];
     [self.navigationController pushViewController:result animated:YES];
     self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];

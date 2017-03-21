@@ -48,6 +48,7 @@
     NSMutableArray * premiumdistAwayArr;
     NSMutableArray * premiumphoneno_StoreIDArr;
     NSMutableArray * premiumphonenoArr;
+    NSMutableArray *arrayforpremium;
     NSMutableArray * timeArray;
     NSMutableArray * promoArr;
     UISearchBar * search;

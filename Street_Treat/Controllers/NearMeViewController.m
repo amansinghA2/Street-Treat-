@@ -27,9 +27,60 @@
     [commonclass setNavigationController:self.navigationController tabBarController:self.tabBarController];
 }
 
--(void)viewDidAppear:(BOOL)animated{
-    [self setUpstackMenu];
+
+-(void)showLocName{
     
+    //    if ([[delegate.defaults valueForKey:@"myloc"] isEqualToString:@"locupdatefrom"]){
+    //        txfSearchField.text = [delegate.defaults valueForKey:@"myloc_name"];
+    //                txfSearchField.textColor = [UIColor whiteColor];
+    //                [self getNearbyDealsWithLatitude:currentLatitude longitude:currentLongitude radius:userRadius];
+    //                [timer invalidate];
+    //    }else{
+    //        txfSearchField.text = [delegate.defaults valueForKey:@"loc_name"];
+    //            NSString * loc = [delegate.defaults valueForKey:@"loc_name"];
+    //            if(loc.length == 0){
+    //                txfSearchField.text = [delegate.defaults valueForKey:@"myloc_name"];
+    //            }
+    //                txfSearchField.textColor = [UIColor whiteColor];
+    //                [self getNearbyDealsWithLatitude:currentLatitude longitude:currentLongitude radius:userRadius];
+    //                [timer invalidate];
+    //        }
+    
+    //    if ([[delegate.defaults valueForKey:@"myloc"] isEqualToString:@"locupdatefrom"]){
+    //        searchField.text = [delegate.defaults valueForKey:@"myloc_name"];
+    //    }else{
+    //        searchField.text = [delegate.defaults valueForKey:@"loc_name"];
+    //    }
+    
+    NSString * loc = [delegate.defaults valueForKey:@"loc_name"];
+    if(loc.length == 0){
+        searchField.text = [delegate.defaults valueForKey:@"myloc_name"];
+        searchField.textColor = [UIColor whiteColor];
+        //        [self getNearbyDealsWithLatitude:currentLatitude longitude:currentLongitude radius:userRadius];
+        //        [timer invalidate];
+    }else{
+        searchField.text = [delegate.defaults valueForKey:@"loc_name"];
+        searchField.textColor = [UIColor whiteColor];
+        //        [self getNearbyDealsWithLatitude:currentLatitude longitude:currentLongitude radius:userRadius];
+        //        [timer invalidate];
+    }
+    //NSLog(@"loc.. %@",loc);
+}
+
+
+-(void)viewDidAppear:(BOOL)animated{
+    
+    [self showLocName];
+   
+    userLatitude = [[delegate.defaults valueForKey:@"latitude"] floatValue];
+    userLongitude = [[delegate.defaults valueForKey:@"longitude"] floatValue];
+    currentLatitude = [[delegate.defaults valueForKey:@"user_latitude"] floatValue];
+    currentLongitude = [[delegate.defaults valueForKey:@"user_longitude"] floatValue];
+    userRadius = [[delegate.defaults valueForKey:@"radius"] floatValue];
+    mapView.delegate = self;
+    
+    [self setCircleOverlaywithlatitude:currentLatitude longitude:currentLongitude];
+    [self setUpstackMenu];
 }
 
 -(void)setUpstackMenu{
@@ -135,30 +186,24 @@
     
     UIButton *current_Loc = (UIButton *)[self.view viewWithTag:444];
     [current_Loc addTarget:self action:@selector(FindCurrentTapped) forControlEvents:UIControlEventTouchUpInside];
-    
+
     search = (UISearchBar *)[self.view viewWithTag:11111];
     searchField = [search valueForKey:@"_searchField"];
-    searchField.text = [delegate.defaults valueForKey:@"loc_name"];
-    searchField.textColor = [UIColor whiteColor];
     
-    userLatitude = [[delegate.defaults valueForKey:@"latitude"] floatValue];
-    userLongitude = [[delegate.defaults valueForKey:@"longitude"] floatValue];
-    currentLatitude = [[delegate.defaults valueForKey:@"user_latitude"] floatValue];
-    currentLongitude = [[delegate.defaults valueForKey:@"user_longitude"] floatValue];
-    userRadius = [[delegate.defaults valueForKey:@"radius"] floatValue];
-
-    mapView.delegate = self;
-   
-    [self setCircleOverlaywithlatitude:currentLatitude longitude:currentLongitude];
-
 }
 
 -(void)FindCurrentTapped{
     [delegate.defaults setValue:@"myloc" forKey:@"locupdatefrom"];
     searchField.text = [delegate.defaults valueForKey:@"myloc_name"];
-    
+    [delegate.defaults setValue:searchField.text forKey:@"loc_name"];
     currentLatitude = [[delegate.defaults valueForKey:@"latitude"]floatValue];
     currentLongitude = [[delegate.defaults valueForKey:@"longitude"]floatValue];
+    
+    [delegate.defaults setValue:[delegate.defaults valueForKey:@"latitude"] forKey:@"user_latitude"];
+    [delegate.defaults setValue:[delegate.defaults valueForKey:@"longitude"] forKey:@"user_longitude"];
+    [delegate.defaults synchronize];
+    
+    
     
    [self setCircleOverlaywithlatitude:currentLatitude longitude:currentLongitude];
 }
@@ -218,13 +263,14 @@
             nearMeArr = [data valueForKey:@"items"];
             [self addAnnotations:nearMeArr];
         }else if([[data valueForKey:@"status"]intValue] == -1){
+          
             [commonclass logoutFunction];
         }else{
             [self.view makeToast:@"No Offer added yet for the location" duration:4.0 position:CSToastPositionBottom];
         }
-        [indicator stopAnimating];
-        [[UIApplication sharedApplication] endIgnoringInteractionEvents];
     });
+    [indicator stopAnimating];
+    [[UIApplication sharedApplication] endIgnoringInteractionEvents];
 }
 
 -(void)addAnnotations:(NSMutableArray *)markers{
@@ -436,9 +482,21 @@
 
 - (void)viewController:(GMSAutocompleteViewController *)viewController
 didAutocompleteWithPlace:(GMSPlace *)place {
-    [self dismissViewControllerAnimated:YES completion:nil];
-    search.text = place.name;
+    
+    currentLatitude = place.coordinate.latitude;
+    currentLongitude = place.coordinate.longitude;
+    
+    NSString *userLatitude1 = [NSString stringWithFormat:@"%f",place.coordinate.latitude];
+    NSString *userLongitude1 = [NSString stringWithFormat:@"%f",place.coordinate.longitude];
+    
+    [delegate.defaults setValue:userLatitude1 forKey:@"user_latitude"];
+    [delegate.defaults setValue:userLongitude1 forKey:@"user_longitude"];
+    [delegate.defaults setValue:place.name forKey:@"loc_name"];
+    searchField.text = place.name;
+    searchField.textColor = [UIColor whiteColor];
     [self setCircleOverlaywithlatitude:place.coordinate.latitude longitude:place.coordinate.longitude];
+    
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)viewController:(GMSAutocompleteViewController *)viewController
@@ -449,6 +507,7 @@ didFailAutocompleteWithError:(NSError *)error {
 }
 
 - (void)wasCancelled:(GMSAutocompleteViewController *)viewController {
+    
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 

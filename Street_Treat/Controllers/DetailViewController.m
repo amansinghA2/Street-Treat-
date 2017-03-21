@@ -333,7 +333,10 @@
     
     [self.view addSubview:backBtn];
     
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                                          action:@selector(dismissKeyboard)];
     
+    [self.view addGestureRecognizer:tap];
     UIButton *back = (UIButton *)[self.view viewWithTag:1111];
     [back addTarget:self action:@selector(backTapped) forControlEvents:UIControlEventTouchUpInside];
     UIButton *notifications = (UIButton *)[self.view viewWithTag:222];
@@ -386,6 +389,10 @@
     [self.rootNav drawerToggle];
 }
 
+-(void)dismissKeyboard {
+    [self.view endEditing:true];
+    // [aTextField resignFirstResponder];
+}
 
 -(void)CCKFNavDrawerSelection:(NSInteger)selectedSession selectedRow: (NSInteger) row {
     [commonclass DrawerTapped:selectedSession selectedRow: row];
@@ -401,7 +408,8 @@
 - (UIView *)createDemoView:(NSString *)sender senderTag:(int)tag tapGesture:(UITapGestureRecognizer *)sender1
 {
     UIScrollView *scroll;
-    scroll = [[UIScrollView alloc] initWithFrame:CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height - 50)];
+   
+     scroll = [[UIScrollView alloc] initWithFrame:CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height - 50)];
     demoView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height)];
     demoView.backgroundColor = [UIColor whiteColor];
     UIButton *closeButton1 = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -411,6 +419,7 @@
     [closeButton1 setBackgroundColor:[UIColor redColor]];
     [closeButton1 addTarget:self action:@selector(closeTapped:) forControlEvents:UIControlEventTouchUpInside];
     scroll.contentSize = CGSizeMake(scroll.frame.size.width * (imgcnt), scroll.frame.size.height - 50);
+   
      for (tag = 0 ; tag < imgcnt ;tag++){
         CGRect frame;
         frame.origin.x = scroll.frame.size.width * (tag);
@@ -418,12 +427,13 @@
         frame.size = scroll.frame.size;
         UIImageView* imageView = [[UIImageView alloc] init];
         imageView.frame = frame;
+        [scroll setContentOffset:CGPointMake(imageView.frame.size.width * Promopagecontol.currentPage,self.view.frame.origin.y) animated:NO];
         //    UIButton *closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
         //        UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(demoView.frame.origin.x,        demoView.frame.origin.y, demoView.frame.size.width, demoView.frame.size.height - 50)];
          NSString * imglink = [NSString stringWithFormat:@"%@/%@",commonclass.siteURL,[dataDetails valueForKey:@"images"][tag]];
          [imageView setContentMode:UIViewContentModeScaleAspectFit];
          imageView.clipsToBounds = YES;
-        [imageView setImageWithURL:[NSURL URLWithString:imglink] placeholderImage:[UIImage imageNamed:@""] usingActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+         [imageView setImageWithURL:[NSURL URLWithString:imglink] placeholderImage:[UIImage imageNamed:@""] usingActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
         //    [imageView setImage:[UIImage imageNamed:@"demo"]];
         //    [demoView addSubview:imageView];
         //    [demoView addSubview:closeButton];
@@ -537,6 +547,9 @@
     storeValidCouponsCount.text = [details valueForKey:@"valid_coupon"];
     storeChecksCount.text = [details valueForKey:@"checkins"];
     _storeStreetOffersLbl.text = [NSString stringWithFormat:@"%@ %% Street Treat Offers",[details valueForKey:@"exclusive_discount"]];
+    _storeStreetOffersLbl.font = [UIFont fontWithName:@"fontello" size:14.0];
+    _storeStreetOffersLbl.textAlignment = NSTextAlignmentCenter;
+    _storeStreetOffersLbl.textColor = [UIColor redColor];
     if([details valueForKey:@"rating"] == [NSNull null]){
         _storeRatingLbl.text = @"0";
         _storeStarsLbl.text = commonclass.emptystarIcon;
@@ -878,6 +891,7 @@
 }
 
 - (void)sendResponse:(Common *)response data:(NSMutableArray*)data indicator:(UIActivityIndicatorView *)indicator{
+    NSLog(@"%@",data);
     dispatch_sync(dispatch_get_main_queue(), ^{
         if(data != NULL){
             
@@ -903,6 +917,8 @@
                 }else if([[data valueForKey:@"status"]intValue] == -1){
                     [commonclass logoutFunction];
                 }
+            }else if([responseType isEqualToString:@"resendOtp"]){
+                [self.view makeToast:[data valueForKey:@"message"]];
             }
             else if([responseType isEqualToString:@"Deals"]){
                 NSLog(@"data.. %@",data);
@@ -919,12 +935,12 @@
                 }else{
                     CGRect newFrame = _StoreOffersView.frame;
                     newFrame.size.width = _StoreOffersView.frame.size.width;
-                    newFrame.size.height = 60;
+                    newFrame.size.height = 50;
                     [_StoreOffersView setFrame:newFrame];
-                    storeOffersTbl.hidden = TRUE;
-                    offersLine1Lbl.hidden = TRUE;
-                    offersLine2Lbl.hidden = TRUE;
-                    offersAddLbl.hidden = TRUE;
+//                    storeOffersTbl.hidden = TRUE;
+//                    offersLine1Lbl.hidden = TRUE;
+//                    offersLine2Lbl.hidden = TRUE;
+//                    offersAddLbl.hidden = TRUE;
                     
                     [commonclass changeFrameWRT:_StoreOffersView ofview:budgetMetersView];
                     [commonclass changeFrameWRT:budgetMetersView ofview:AmenitiesView];
@@ -983,7 +999,9 @@
             else if([responseType isEqualToString:@"UpdateOTP"]){
                 if([[data valueForKey:@"status"]intValue] == 1){
                     Popupmainview.hidden = true;
+                    [delegate.defaults setBool:true forKey:@"otp_verified"];
                     [self.view makeToast:[data valueForKey:@"message"]];
+                    [self userCheckedin];
                 }else if([[data valueForKey:@"status"]intValue] == -1){
                     [commonclass logoutFunction];
                 }else{
@@ -1156,7 +1174,7 @@
 
 - (IBAction)checkInTapped:(id)sender {
     if ([time isEqualToString:@"Closed"]){
-        [self.view makeToast:@"Store is closed"];
+        [self.view makeToast:@"Seems store is closed, please visit later"];
     }else{
         // NSLog(@"dista arr is...%@",distAwayArr);
         NSString * mobilenumber = [delegate.defaults valueForKey:@"mobile"];
@@ -1179,7 +1197,6 @@
             //    if(mobilenumber.length == 0){
             //    }else{
             if([awayDist doubleValue]<0.25){
-                    responseType = @"CheckedIn";
                     [self userCheckedin];
             }else{
                 [self.view makeToast:@"You have to be in 250 meters radius to CHECK IN into the store"];
@@ -1211,7 +1228,7 @@
 -(void)userCheckedin{
     
     if([commonclass isActiveInternet] == YES){
-        
+        responseType = @"CheckedIn";
         NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%@&longitude=%@&store_id=%ld",[delegate.defaults valueForKey:@"logid"],[delegate.defaults valueForKey:@"latitude"],[delegate.defaults valueForKey:@"longitude"],store_ID];
         
         NSLog(@"body.. %@",messageBody);
@@ -1386,10 +1403,17 @@
 }
 
 -(void)resendOTPTapped{
-    [self updateMobile];
+    [self resendOTP];
+}
+
+-(void)resendOTP {
+    responseType = @"resendOtp";
+    NSString *messageBody = [NSString stringWithFormat:@"mobile=%@",[delegate.defaults valueForKey:@"mobile"]];
+    [commonclass sendRequest:self.view mutableDta:dealsData url:commonclass.generateOTPURL msgBody:messageBody];
 }
 
 -(void)cancelSubscribeTapped{
+    [self.view endEditing:YES];
     Popupmainview.hidden = true;
 }
 
@@ -1423,8 +1447,8 @@
 
 
 -(void)SubscribeTapped{
-    NSString * mobilenumber = [delegate.defaults valueForKey:@"mobile"];
-    if(mobilenumber.length == 0){
+    [self.view endEditing:YES];
+    if([[delegate.defaults valueForKey:@"updateMobile"]boolValue] == false){
         [self updateMobile];
     }else{
         [self GetOTP];

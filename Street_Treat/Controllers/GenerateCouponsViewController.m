@@ -282,7 +282,7 @@
     
     // [delegate.defaults setValue:@"myloc" forKey:@"locupdatefrom"];
     
-    cameraBtn.hidden = true;
+  //  cameraBtn.hidden = true;
     
     // [delegate.defaults setValue:@"b" forKey:@"navigateFromReport"];
     
@@ -820,12 +820,13 @@
                 offersArr = [data valueForKey:@"items"];
                 
                     [_selectofferTappedButton setTitle:@"Select More Offers" forState:UIControlStateNormal];
+                    _borderLabel.hidden = true;
                     _leftSideLabel.hidden = false;
                     
                     _rightSideLabel.hidden = false;
                     
                     _plusLabel.hidden = false;
-                    
+                
 //                }else{
 //                    
 //                    [_selectofferTappedButton setTitle:@"Generate" forState:UIControlStateNormal];
@@ -856,6 +857,7 @@
                 [_selectofferTappedButton setBackgroundColor:[UIColor redColor]];
                 [_selectofferTappedButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
                 _selectofferTappedButton.layer.cornerRadius = 5.0;
+                _borderLabel.hidden = false;
                 _leftSideLabel.hidden = true;
                 
                 _rightSideLabel.hidden = true;
@@ -1152,7 +1154,7 @@
     storeChecksCount.text = [details valueForKey:@"no_of_checkins"];
     
     streetOffersLbl.text = [NSString stringWithFormat:@"%@ %% Street Treat Offers",[details valueForKey:@"exclusive_discount"]];
-    
+    streetOffersLbl.font = [UIFont fontWithName:@"fontello" size:14.0];
     exclusiveCoupon = [NSString stringWithFormat:@"%@",[details valueForKey:@"exclusive_coupon_id"]];
     
     if([details valueForKey:@"rating"] != [NSNull null]){
@@ -1277,9 +1279,80 @@
 
 - (IBAction)cameraTapped:(id)sender {
     
-    [self.view makeToast:@"In Progress"];
+    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+    picker.delegate = self;
+    picker.allowsEditing = YES;
+    picker.sourceType = UIImagePickerControllerSourceTypeCamera;
+    [self presentViewController:picker animated:YES completion:NULL];
+    
+   // [self.view makeToast:@"In Progress"];
     
 }
+
+
+# pragma mark - Image picker controller delegate methods
+
+- (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    UIImage *chosenImage = info[UIImagePickerControllerEditedImage];
+    
+    [self dismissViewControllerAnimated:true completion:^{
+        NSString *textToShare = [NSString stringWithFormat:@"Check out this %@ store on Street Treat App here",[delegate.defaults valueForKey:@"Store_Name"]];
+        
+        NSURL *myWebsite = [NSURL URLWithString:@"http://www.streettreat.in"];
+        
+        UIImage *image = chosenImage;
+        
+        NSMutableArray *objectsToShare= [NSMutableArray arrayWithObjects:image, nil];
+          UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:objectsToShare applicationActivities:nil];
+        
+        NSArray *excludeActivities = @[
+                                       
+                                       UIActivityTypePrint,
+                                       
+                                       UIActivityTypeSaveToCameraRoll,
+                                       
+                                       UIActivityTypeAssignToContact,
+                                       
+                                       UIActivityTypeAddToReadingList,
+                                       
+                                       UIActivityTypePostToFlickr,
+                                       
+                                       UIActivityTypePostToVimeo,
+                                       
+                                       UIActivityTypeAirDrop,
+                                       
+                                       UIActivityTypeCopyToPasteboard
+                                       
+                                       ];
+        
+        activityVC.excludedActivityTypes = excludeActivities;
+        
+        [activityVC setValue:@"Check out this Awesome app" forKey:@"subject"];
+        
+        activityVC.completionWithItemsHandler = ^(NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
+            
+        };
+        
+        
+        [self presentViewController:activityVC animated:YES completion:^{
+            
+        }];
+        
+        
+        
+        
+        UIPopoverPresentationController *presentationController =
+        
+        [activityVC popoverPresentationController];
+        
+        
+        
+        presentationController.sourceView = self.view;
+    }];
+
+}
+
+
 
 
 

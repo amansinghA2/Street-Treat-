@@ -128,8 +128,6 @@
         positivereviewsIcon = @"\ue048";
         negativereviewsIcon = @"\ue032";
         
-        
-        
         //to be removed
         indicatorBlankIcon = @"\ue800";
         indicatorFilledIcon = @"\ue80f";
@@ -138,11 +136,11 @@
         //Previous
        // NSString * masterUrl = @"http://services.streettreat.in/index.php?option=com_konnect&task=";
         
-        //Test
+//       Test
 //       siteURL = @"http://www.webtest.streettreat.in";
 //       NSString * masterUrl = @"http://www.webtest.streettreat.in/index.php?option=com_konnect&task=";
         
-       // LIVE
+        // LIVE
         siteURL = @"http://www.web.streettreat.in";
         NSString * masterUrl = @"http://www.web.streettreat.in/index.php?option=com_konnect&task=";
         
