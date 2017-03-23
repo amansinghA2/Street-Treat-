@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0704028E1E82C54000E37324 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0704028D1E82C54000E37324 /* AVFoundation.framework */; };
 		070DDBDA1E5FF6CE000BB4CE /* nointernet.png in Resources */ = {isa = PBXBuildFile; fileRef = 070DDBD91E5FF6CE000BB4CE /* nointernet.png */; };
 		070DDBDD1E5FF8A9000BB4CE /* InternetDisconnectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 070DDBDC1E5FF8A9000BB4CE /* InternetDisconnectViewController.m */; };
 		070E72A51E5C71050038D29A /* checkmark_icon.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 070E72A41E5C71050038D29A /* checkmark_icon.jpg */; };
@@ -162,6 +163,7 @@
 
 /* Begin PBXFileReference section */
 		041EBCC0F864C901018C115F /* Pods-Street_TreatTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Street_TreatTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Street_TreatTests/Pods-Street_TreatTests.release.xcconfig"; sourceTree = "<group>"; };
+		0704028D1E82C54000E37324 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		070DDBD91E5FF6CE000BB4CE /* nointernet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = nointernet.png; path = ../../../../../Downloads/nointernet.png; sourceTree = "<group>"; };
 		070DDBDB1E5FF8A9000BB4CE /* InternetDisconnectViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InternetDisconnectViewController.h; sourceTree = "<group>"; };
 		070DDBDC1E5FF8A9000BB4CE /* InternetDisconnectViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InternetDisconnectViewController.m; sourceTree = "<group>"; };
@@ -406,6 +408,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0704028E1E82C54000E37324 /* AVFoundation.framework in Frameworks */,
 				0738CEA61E65A8E5003637F9 /* FBSDKCoreKit.framework in Frameworks */,
 				2AB3CC1E1D5849DA0027CF02 /* CoreLocation.framework in Frameworks */,
 				0738CEA21E65A63A003637F9 /* FBSDKLoginKit.framework in Frameworks */,
@@ -428,6 +431,7 @@
 		1A06C0BD969C5385295B1078 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0704028D1E82C54000E37324 /* AVFoundation.framework */,
 				2AB3CC1D1D5849DA0027CF02 /* CoreLocation.framework */,
 				07828C39158BD7AEAB5DD306 /* Pods_Street_Treat.framework */,
 				AA062A7C7B21B618ED16B4C2 /* Pods_Street_TreatTests.framework */,
@@ -1446,8 +1450,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Street_Treat/Street_Treat.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Sahil Nagpal (TA5H22SB2P)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Sahil Nagpal (TA5H22SB2P)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Sahil Nagpal (2Z5B84Z5QC)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Sahil Nagpal (2Z5B84Z5QC)";
 				DEVELOPMENT_TEAM = 2Z5B84Z5QC;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1460,8 +1464,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Digillence.Street-Treat";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "66573753-ca70-4626-a5ca-7e18711e4101";
-				PROVISIONING_PROFILE_SPECIFIER = "ApnsTest-Development";
+				PROVISIONING_PROFILE = "e41a6c77-80fa-4080-99bd-b8ba9bbd4baa";
+				PROVISIONING_PROFILE_SPECIFIER = Street_Consumer_Distribution;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -1472,8 +1476,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Street_Treat/Street_Treat.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Sahil Nagpal (TA5H22SB2P)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Sahil Nagpal (TA5H22SB2P)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Sahil Nagpal (2Z5B84Z5QC)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Sahil Nagpal (2Z5B84Z5QC)";
 				DEVELOPMENT_TEAM = 2Z5B84Z5QC;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1486,8 +1490,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Digillence.Street-Treat";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "66573753-ca70-4626-a5ca-7e18711e4101";
-				PROVISIONING_PROFILE_SPECIFIER = "ApnsTest-Development";
+				PROVISIONING_PROFILE = "e41a6c77-80fa-4080-99bd-b8ba9bbd4baa";
+				PROVISIONING_PROFILE_SPECIFIER = Street_Consumer_Distribution;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;

@@ -22,7 +22,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *storeNameLbl;
 @property (weak, nonatomic) IBOutlet UILabel *storeCatLbl;
 
-
 @end
 
 @interface BestDealsViewController : UIViewController<commonProtocol,UITableViewDelegate,UITableViewDataSource,CCKFNavDrawerDelegate>{

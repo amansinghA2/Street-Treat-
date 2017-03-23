@@ -23,7 +23,10 @@
 
 @end
 
-@interface ReportErrorViewController ()
+@interface ReportErrorViewController (){
+    UIView *contentView;
+    UPStackMenu *stack;
+}
 
 @end
 
@@ -46,6 +49,7 @@
     
     _errortypesArr = [[NSArray alloc]initWithObjects:@"Contact Issue",@"Address Issue",@"Store Closed",@"Amenities",@"Wrong Timings",@"Discount Issue", nil];
 }
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.navigationItem.hidesBackButton = YES;
@@ -91,6 +95,18 @@
     
     _storeNameLbl.text = [delegate.defaults valueForKey:@"Store_Name"];
 }
+
+-(void)viewDidAppear:(BOOL)animated{
+    
+    [self setUpstackMenu];
+}
+
+-(void)viewDidDisappear:(BOOL)animated{
+    [contentView removeFromSuperview];
+    [stack removeFromSuperview];
+    [flyoutView removeFromSuperview];
+}
+
 
 -(void)selectImage:(UIGestureRecognizer *)gesture{
     [self checkboxTapped:CheckboxBtns[gesture.view.tag]];
@@ -138,6 +154,7 @@
 
 
 -(void)backTapped{
+    [delegate.defaults setValue:@"" forKey:@"navigateFromReport"];
     [self.navigationController popViewControllerAnimated:YES];
 }
 
@@ -210,4 +227,98 @@
         [[UIApplication sharedApplication] endIgnoringInteractionEvents];
     });
 }
+
+-(void)setUpstackMenu{
+    contentView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width - 60, self.view.frame.size.height + 5, 35, 35)];
+    [contentView setBackgroundColor:[UIColor redColor]];
+    [contentView.layer setCornerRadius:18.0f];
+    UIImageView *icon = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"plus"]];
+    [icon setContentMode:UIViewContentModeScaleAspectFit];
+    [icon setFrame:CGRectMake(contentView.frame.size.width/6, contentView.frame.size.height/6, 25, 25)];
+    [contentView addSubview:icon];
+    
+    if(stack)
+        [stack removeFromSuperview];
+    
+    stack = [[UPStackMenu alloc] initWithContentView:contentView];
+    //[stack setCenter:CGPointMake(self.view.frame.size.width/2, self.view.frame.size.height/2 + 20)];
+    [stack setDelegate:self];
+    
+    UPStackMenuItem *squareItem = [[UPStackMenuItem alloc] initWithImage:[UIImage imageNamed:@"Download_Excel"] highlightedImage:[UIImage imageNamed:@"Download_Excel"] title:@"View Favourites"];
+    UPStackMenuItem *circleItem = [[UPStackMenuItem alloc] initWithImage:[UIImage imageNamed:@"Email_Excel"] highlightedImage:[UIImage imageNamed:@"Download_Excel"] title:@"Update Profile"];
+    UPStackMenuItem *viewItem = [[UPStackMenuItem alloc] initWithImage:[UIImage imageNamed:@"Email_Excel"] highlightedImage:[UIImage imageNamed:@"Download_Excel"] title:@"Add Reviews"];
+    
+    NSMutableArray *items = [[NSMutableArray alloc] initWithObjects:squareItem, circleItem, nil];
+    [items enumerateObjectsUsingBlock:^(UPStackMenuItem *item, NSUInteger idx, BOOL *stop) {
+        [item setTitleColor:[UIColor redColor]];
+        //item.backgroundColor = [UIColor darkGrayColor];
+    }];
+    
+    [stack setAnimationType:UPStackMenuAnimationType_progressive];
+    [stack setStackPosition:UPStackMenuStackPosition_up];
+    [stack setOpenAnimationDuration:.4];
+    [stack setCloseAnimationDuration:.4];
+    [items enumerateObjectsUsingBlock:^(UPStackMenuItem *item, NSUInteger idx, BOOL *stop) {
+        [item setLabelPosition:UPStackMenuItemLabelPosition_left];
+        [item setLabelPosition:UPStackMenuItemLabelPosition_left];
+    }];
+    
+    [stack addItems:items];
+    
+    [self.tabBarController.view addSubview:stack];
+    
+    [self setStackIconClosed:YES];
+}
+
+-(void)notificationsTapped{
+    NotificationsViewController * notifications = [self.storyboard instantiateViewControllerWithIdentifier:@"NotificationsViewController"];
+    [self presentViewController:notifications animated:YES completion:nil];
+}
+
+
+-(void)CCKFNavDrawerSelection:(NSInteger)selectedSession selectedRow: (NSInteger) row {
+    [constant DrawerTapped:selectedSession selectedRow: row];
+}
+
+#pragma mark - UPStackMenuDelegate
+- (void)setStackIconClosed:(BOOL)closed{
+    UIImageView *icon = [[contentView subviews] objectAtIndex:0];
+    float angle = closed ? 0 : (M_PI * (135) / 180.0);
+    [UIView animateWithDuration:0.3 animations:^{
+        [icon.layer setAffineTransform:CGAffineTransformRotate(CGAffineTransformIdentity, angle)];
+    }];
+}
+
+- (void)stackMenuWillOpen:(UPStackMenu *)menu{
+    flyoutView = [[UIView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height/1.2, self.view.frame.size.width, self.view.frame.size.height/4)];
+    flyoutView.backgroundColor = [UIColor lightTextColor];
+    [self.view addSubview:flyoutView];
+    if([[contentView subviews] count] == 0)
+        return;
+    [self setStackIconClosed:NO];
+}
+
+- (void)stackMenuWillClose:(UPStackMenu *)menu{
+    [flyoutView removeFromSuperview];
+    if([[contentView subviews] count] == 0)
+        return;
+    [self setStackIconClosed:YES];
+}
+
+- (void)stackMenu:(UPStackMenu *)menu didTouchItem:(UPStackMenuItem *)item atIndex:(NSUInteger)index{
+    NSString *message = [NSString stringWithFormat:@"Item touched : %@", item.title];
+    NSLog(@"index.. %lu",(unsigned long)index);
+    if(index == 0){
+        [delegate.defaults setValue:@"Favourites" forKey:@"route"];
+        [constant Redirect:self.navigationController Identifier:@"ResultsViewController"];
+    }else if(index == 1){
+        [constant Redirect:self.navigationController Identifier:@"ProfileViewController"];
+    }else if (index == 2){
+        
+    }
+    [stack closeStack];
+    //    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:message message:nil delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+    //    [alert show];
+}
+
 @end

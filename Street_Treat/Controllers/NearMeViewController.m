@@ -71,11 +71,19 @@
 -(void)viewDidAppear:(BOOL)animated{
     
     [self showLocName];
-   
-    userLatitude = [[delegate.defaults valueForKey:@"latitude"] floatValue];
-    userLongitude = [[delegate.defaults valueForKey:@"longitude"] floatValue];
-    currentLatitude = [[delegate.defaults valueForKey:@"user_latitude"] floatValue];
-    currentLongitude = [[delegate.defaults valueForKey:@"user_longitude"] floatValue];
+    if ([delegate.defaults valueForKey:@"user_latitude"] == nil){
+        currentLatitude = [[delegate.defaults valueForKey:@"latitude"] floatValue];
+        currentLongitude = [[delegate.defaults valueForKey:@"longitude"] floatValue];
+    }else{
+        currentLatitude = [[delegate.defaults valueForKey:@"user_latitude"] floatValue];
+        currentLongitude = [[delegate.defaults valueForKey:@"user_longitude"] floatValue];
+        
+    }
+    
+//    userLatitude = [[delegate.defaults valueForKey:@"latitude"] floatValue];
+//    userLongitude = [[delegate.defaults valueForKey:@"longitude"] floatValue];
+//    currentLatitude = [[delegate.defaults valueForKey:@"user_latitude"] floatValue];
+//    currentLongitude = [[delegate.defaults valueForKey:@"user_longitude"] floatValue];
     userRadius = [[delegate.defaults valueForKey:@"radius"] floatValue];
     mapView.delegate = self;
     
@@ -268,9 +276,10 @@
         }else{
             [self.view makeToast:@"No Offer added yet for the location" duration:4.0 position:CSToastPositionBottom];
         }
+        [indicator stopAnimating];
+        [[UIApplication sharedApplication] endIgnoringInteractionEvents];
     });
-    [indicator stopAnimating];
-    [[UIApplication sharedApplication] endIgnoringInteractionEvents];
+
 }
 
 -(void)addAnnotations:(NSMutableArray *)markers{
@@ -494,7 +503,7 @@ didAutocompleteWithPlace:(GMSPlace *)place {
     [delegate.defaults setValue:place.name forKey:@"loc_name"];
     searchField.text = place.name;
     searchField.textColor = [UIColor whiteColor];
-    [self setCircleOverlaywithlatitude:place.coordinate.latitude longitude:place.coordinate.longitude];
+//    [self setCircleOverlaywithlatitude:place.coordinate.latitude longitude:place.coordinate.longitude];
     
     [self dismissViewControllerAnimated:YES completion:nil];
 }
@@ -521,7 +530,8 @@ didFailAutocompleteWithError:(NSError *)error {
 
 -(void)viewDidDisappear:(BOOL)animated{
     [contentView removeFromSuperview];
-    //[stack removeFromSuperview];
+    [stack removeFromSuperview];
+    [flyoutView removeFromSuperview];
 }
 
 - (void)didReceiveMemoryWarning {

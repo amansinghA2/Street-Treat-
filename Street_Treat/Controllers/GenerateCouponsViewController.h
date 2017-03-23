@@ -14,13 +14,24 @@
 #import "CZPickerView.h"
 #import "SubmitReviewViewController.h"
 #import "UPStackMenu.h"
+#import "DetailViewController.h"
 
-@interface GenerateCouponsViewController : UIViewController<commonProtocol,UIScrollViewDelegate,CZPickerViewDataSource, CZPickerViewDelegate,UITextFieldDelegate,UPStackMenuDelegate , UIGestureRecognizerDelegate , UIImagePickerControllerDelegate>{
+@interface CheckInDealCell : UITableViewCell
+@property (weak, nonatomic) IBOutlet UILabel *shortDealTitleLbl;
+@property (weak, nonatomic) IBOutlet UILabel *longDealTitleLbl;
+@property (weak, nonatomic) IBOutlet UIButton *ExpandBtn;
+@end
+
+@interface GenerateCouponsViewController : UIViewController<commonProtocol,UIScrollViewDelegate,CZPickerViewDataSource, CZPickerViewDelegate,UITextFieldDelegate,UPStackMenuDelegate , UIGestureRecognizerDelegate , UIImagePickerControllerDelegate , UITableViewDelegate , UITableViewDataSource, UIAlertViewDelegate >{
     Common * commonclass;
     AppDelegate * delegate;
     BOOL pageControlBeingUsed;
     BOOL isDataLoadingCompleted;
+    BOOL isexpand, isselecttapped , isSelected , isOtherSelected;
+    long selectedIndex;
     BOOL isFavTapped;
+    NSIndexPath * path;
+    int count;
     NSMutableData *  checkinsData,* generateData,* detailsData;
     NSArray * offersArr;
     NSString * responseType;
@@ -35,12 +46,16 @@
     long int imgcnt;
     UIView *demoView;
     NSMutableArray *dataDetails;
+    CheckInDealCell * cell;
 
 }
+
+@property (weak, nonatomic) IBOutlet UITableView *generateTableView;
 @property (weak, nonatomic) IBOutlet UILabel *borderLabel;
 @property (weak, nonatomic) IBOutlet UILabel *rightSideLabel;
 @property (weak, nonatomic) IBOutlet UILabel *leftSideLabel;
 @property (weak, nonatomic) IBOutlet UILabel *plusLabel;
+@property (weak, nonatomic) IBOutlet UIView *generateCouponsView;
 
 @property (weak, nonatomic) IBOutlet UIButton *selectofferTappedButton;
 

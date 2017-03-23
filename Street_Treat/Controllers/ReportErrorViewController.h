@@ -10,12 +10,15 @@
 #import "AppDelegate.h"
 #import "Common.h"
 #import "UIView+Toast.h"
+#import "NotificationsViewController.h"
 
 @interface ReportErrorViewController : UIViewController<commonProtocol,UITextViewDelegate,UIGestureRecognizerDelegate>{
     Common * constant;
     AppDelegate * delegate;
     NSMutableData * reportData;
     NSMutableArray * selectedErrors;
+    UIView *flyoutView;
+
 }
 
 @property (weak, nonatomic) IBOutlet UIScrollView *reportScroll;

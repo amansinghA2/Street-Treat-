@@ -38,8 +38,14 @@
 @synthesize TimingsView,MondayTimeLbl,TuesdayTimeLbl,WednesdayTimeLbl,ThursdayTimeLbl,FridayTimeLbl,saturdayTimeLbl,sundayTimeLbl;
 
 -(void)viewWillAppear:(BOOL)animated{
+    [delegate.defaults setValue:@"Store" forKey:@"route"];
     if ([[delegate.defaults valueForKey:@"navigateFromReport"] isEqualToString:@"fromDetail"]){
         [self.view makeToast:@"Report Submitted Successfully"];
+    }
+    
+    
+    if ([[delegate.defaults valueForKey:@"navigateFromSubmitReview"] isEqualToString:@"fromDetail"]){
+        [self.view makeToast:@"Review Submitted Successfully"];
     }
     
     [delegate.defaults setObject:@"DetailViewController" forKey:@"internetdisconnect"];
@@ -80,93 +86,6 @@
     [self setUpstackMenu];
 }
 
--(void)setUpstackMenu{
-    contentView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width - 60, self.view.frame.size.height +5, 35, 35)];
-    [contentView setBackgroundColor:[UIColor redColor]];
-    [contentView.layer setCornerRadius:18.0f];
-    UIImageView *icon = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"plus"]];
-    [icon setContentMode:UIViewContentModeScaleAspectFit];
-    [icon setFrame:CGRectMake(contentView.frame.size.width/6, contentView.frame.size.height/6, 25, 25)];
-    [contentView addSubview:icon];
-    
-    if(stack)
-        [stack removeFromSuperview];
-    
-    stack = [[UPStackMenu alloc] initWithContentView:contentView];
-    //[stack setCenter:CGPointMake(self.view.frame.size.width/2, self.view.frame.size.height/2 + 20)];
-    [stack setDelegate:self];
-     UPStackMenuItem *shareItem = [[UPStackMenuItem alloc] initWithImage:[UIImage imageNamed:@"Download_Excel"] highlightedImage:[UIImage imageNamed:@"Download_Excel"] title:@"Add To Favourites"];
-     UPStackMenuItem *addFavouritesItem = [[UPStackMenuItem alloc] initWithImage:[UIImage imageNamed:@"Download_Excel"] highlightedImage:[UIImage imageNamed:@"Download_Excel"] title:@"Share Store"];
-    UPStackMenuItem *squareItem = [[UPStackMenuItem alloc] initWithImage:[UIImage imageNamed:@"Download_Excel"] highlightedImage:[UIImage imageNamed:@"Download_Excel"] title:@"View Favourites"];
-    UPStackMenuItem *circleItem = [[UPStackMenuItem alloc] initWithImage:[UIImage imageNamed:@"Email_Excel"] highlightedImage:[UIImage imageNamed:@"Download_Excel"] title:@"Update Profile"];
-    UPStackMenuItem *viewItem = [[UPStackMenuItem alloc] initWithImage:[UIImage imageNamed:@"Email_Excel"] highlightedImage:[UIImage imageNamed:@"Download_Excel"] title:@"Add Reviews"];
-    
-    NSMutableArray *items = [[NSMutableArray alloc] initWithObjects:shareItem,addFavouritesItem,squareItem, circleItem,viewItem, nil];
-    [items enumerateObjectsUsingBlock:^(UPStackMenuItem *item, NSUInteger idx, BOOL *stop) {
-        [item setTitleColor:[UIColor redColor]];
-        //item.backgroundColor = [UIColor darkGrayColor];
-    }];
-    
-    [stack setAnimationType:UPStackMenuAnimationType_progressive];
-    [stack setStackPosition:UPStackMenuStackPosition_up];
-    [stack setOpenAnimationDuration:.4];
-    [stack setCloseAnimationDuration:.4];
-    [items enumerateObjectsUsingBlock:^(UPStackMenuItem *item, NSUInteger idx, BOOL *stop) {
-        [item setLabelPosition:UPStackMenuItemLabelPosition_left];
-        [item setLabelPosition:UPStackMenuItemLabelPosition_left];
-    }];
-    
-    [stack addItems:items];
-    
-    [self.tabBarController.view addSubview:stack];
-    
-    [self setStackIconClosed:YES];
-}
-
-#pragma mark - UPStackMenuDelegate
-- (void)setStackIconClosed:(BOOL)closed{
-    UIImageView *icon = [[contentView subviews] objectAtIndex:0];
-    float angle = closed ? 0 : (M_PI * (135) / 180.0);
-    [UIView animateWithDuration:0.3 animations:^{
-        [icon.layer setAffineTransform:CGAffineTransformRotate(CGAffineTransformIdentity, angle)];
-    }];
-}
-
-- (void)stackMenuWillOpen:(UPStackMenu *)menu{
-    flyoutView = [[UIView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height/1.5, self.view.frame.size.width, self.view.frame.size.height/3)];
-    flyoutView.backgroundColor = [UIColor whiteColor];
-    [self.view addSubview:flyoutView];
-    if([[contentView subviews] count] == 0)
-        return;
-    [self setStackIconClosed:NO];
-}
-
-- (void)stackMenuWillClose:(UPStackMenu *)menu{
-    [flyoutView removeFromSuperview];
-    if([[contentView subviews] count] == 0)
-        return;
-    [self setStackIconClosed:YES];
-}
-
-- (void)stackMenu:(UPStackMenu *)menu didTouchItem:(UPStackMenuItem *)item atIndex:(NSUInteger)index{
-    if(index == 0){
-        [self favouritesTapped:nil];
-        //[self stackMenuWillClose:stack];
-    }else  if(index == 1){
-        [self shareTapped:nil];
-    }else if(index == 2){
-        [delegate.defaults setValue:@"Favourites" forKey:@"route"];
-        [commonclass Redirect:self.navigationController Identifier:@"ResultsViewController"];
-        
-    }else if(index == 3){
-        [commonclass Redirect:self.navigationController Identifier:@"ProfileViewController"];
-    }else if (index == 4){
-        
-    }
-    
-    [stack closeStack];
-   // [self setStackIconClosed:YES];
-}
 
 -(void)backTapped{
     [self.navigationController popViewControllerAnimated:YES];
@@ -310,6 +229,7 @@
     delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     //[commonclass addNavigationBar:self.view];
     detailData = [[NSMutableData alloc]init];
+    arrForImage = [[NSMutableArray alloc]init];
     dealsData = [[NSMutableData alloc]init];
     amenitiesData = [[NSMutableData alloc]init];
     dataDetails = [[NSMutableArray alloc]init];
@@ -462,9 +382,8 @@
 
 -(void)Setdata:(NSMutableArray*)details{
     NSLog(@"details.. %@",details);
- 
-   if([details valueForKey:@"images"] != [NSNull null]){
     dataDetails = details;
+   if([details valueForKey:@"images"] != [NSNull null]){
    imgcnt = [[details valueForKey:@"images"] count];
    Promoscroll.contentSize = CGSizeMake(Promoscroll.frame.size.width * imgcnt, Promoscroll.frame.size.height);
     
@@ -498,7 +417,7 @@
     [Promoscroll bringSubviewToFront:backBtn];
    }
     
-    DetailScroll.contentSize = CGSizeMake(self.view.frame.size.width,reviewView.frame.origin.y);
+    DetailScroll.contentSize = CGSizeMake(self.view.frame.size.width,reviewView.frame.origin.y + reviewView.frame.size.height);
     
     _storeName.text = [details valueForKey:@"store_name"];
     [delegate.defaults setValue:[details valueForKey:@"store_name"] forKey:@"Store_Name"];
@@ -654,6 +573,9 @@
         DtlcheckInBtn.backgroundColor = [UIColor redColor];
         [DtlcheckInBtn setTitle:@"CHECK IN" forState:UIControlStateNormal];
     }
+    
+    
+    [self getDealsatStore];
 }
 
 -(void)MoveToTimeTapped:(UIGestureRecognizer *)recognizer{
@@ -898,10 +820,10 @@
             if([responseType isEqualToString:@"CheckedIn"]){
                 
                 if([[data valueForKey:@"status"]intValue] == 1){
+                    [delegate.defaults setValue:@"checkedInForStore" forKey:@"ischeckin"];
                     [commonclass Redirect:self.navigationController Identifier:@"GenerateCouponsViewController"];
                 }else if([[data valueForKey:@"status"]intValue] == -1){
                     [commonclass logoutFunction];
-                    
                 }else{
                     [self.view makeToast:[data valueForKey:@"message"]];
                 }
@@ -913,7 +835,6 @@
                     deatilsArr = [data valueForKey:@"items"];
                     NSLog(@"data.. %@",deatilsArr);
                     [self Setdata:deatilsArr];
-                    [self getDealsatStore];
                 }else if([[data valueForKey:@"status"]intValue] == -1){
                     [commonclass logoutFunction];
                 }
@@ -925,6 +846,7 @@
                 if([[data valueForKey:@"status"]intValue] == 1){
                     dealsArr = [data valueForKey:@"items"];
                   //[self getAllStoreAmenities];
+                    storeOffersTbl.hidden = false;
                     [storeOffersTbl reloadData];
               
                      DetailScroll.contentSize = CGSizeMake(DetailScroll.frame.size.width, (reviewView.frame.origin.y + reviewView.frame.size.height) + 5);
@@ -933,21 +855,30 @@
                 }else if([[data valueForKey:@"status"]intValue] == -1){
                     [commonclass logoutFunction];
                 }else{
+                    storeOffersTbl.hidden = true;
                     CGRect newFrame = _StoreOffersView.frame;
                     newFrame.size.width = _StoreOffersView.frame.size.width;
-                    newFrame.size.height = 50;
+                    newFrame.size.height = 70;
                     [_StoreOffersView setFrame:newFrame];
-//                    storeOffersTbl.hidden = TRUE;
-//                    offersLine1Lbl.hidden = TRUE;
-//                    offersLine2Lbl.hidden = TRUE;
-//                    offersAddLbl.hidden = TRUE;
+//                    UILabel * verificationHdr = [[UILabel alloc]initWithFrame:CGRectMake(_StoreOffersView.frame.origin.x, 62, _StoreOffersView.frame.size.width - 5, 4)];
+//                    verificationHdr.backgroundColor = [UIColor lightGrayColor];
+//                    [_StoreOffersView addSubview:verificationHdr];
                     
+                    UILabel * verificationHdr1 = [[UILabel alloc]initWithFrame:CGRectMake(self.view.frame.origin.x + 50, 55 , self.view.frame.size.width - 105, 4)];
+                    verificationHdr1.backgroundColor = [UIColor lightGrayColor];
+                    //[UIColor colorWithRed:239/255.0 green:239/255.0 blue:244/255.0 alpha:1];
+                    [_StoreOffersView addSubview:verificationHdr1];
+                    
+//                    UILabel * verificationHdr2 = [[UILabel alloc]initWithFrame:CGRectMake(self.view.frame.origin.x, 110 , self.view.frame.size.width, 4)];
+//                    verificationHdr2.backgroundColor = [UIColor colorWithRed:239/255.0 green:239/255.0 blue:244/255.0 alpha:1];
+//                    [_StoreOffersView addSubview:verificationHdr2];
+       
                     [commonclass changeFrameWRT:_StoreOffersView ofview:budgetMetersView];
                     [commonclass changeFrameWRT:budgetMetersView ofview:AmenitiesView];
                     [commonclass changeFrameWRT:AmenitiesView ofview:DescriptionView];
                     [commonclass changeFrameWRT:DescriptionView ofview:TimingsView];
                     [commonclass changeFrameWRT:TimingsView ofview:reviewView];
-                   // [DetailScroll bringSubviewToFront:reviewView];
+                 // [DetailScroll bringSubviewToFront:reviewView];
                     DetailScroll.contentSize = CGSizeMake(DetailScroll.frame.size.width, (reviewView.frame.origin.y + reviewView.frame.size.height) + 5);
                 }
             }else if([responseType isEqualToString:@"getallAmenities"]){
@@ -1148,6 +1079,7 @@
 }
 
 - (IBAction)viewReviewsTapped:(id)sender {
+    [delegate.defaults setValue:@"fromDetail" forKey:@"navigateFromSubmitReview"];
     ViewReviewsViewController * viewReviews = [self.storyboard instantiateViewControllerWithIdentifier:@"ViewReviewsViewController"];
     [self.navigationController pushViewController:viewReviews animated:YES];
 }
@@ -1173,7 +1105,8 @@
 }
 
 - (IBAction)checkInTapped:(id)sender {
-    if ([time isEqualToString:@"Closed"]){
+    
+    if([dataDetails valueForKey:@"start_time"] == [NSNull null] && [dataDetails valueForKey:@"end_time"] == [NSNull null]){
         [self.view makeToast:@"Seems store is closed, please visit later"];
     }else{
         // NSLog(@"dista arr is...%@",distAwayArr);
@@ -1197,7 +1130,12 @@
             //    if(mobilenumber.length == 0){
             //    }else{
             if([awayDist doubleValue]<0.25){
+                
+                if ([[dataDetails valueForKey:@"checked_in"]boolValue] == true){
+                    [commonclass Redirect:self.navigationController Identifier:@"GenerateCouponsViewController"];
+                }else{
                     [self userCheckedin];
+                }
             }else{
                 [self.view makeToast:@"You have to be in 250 meters radius to CHECK IN into the store"];
             }
@@ -1465,6 +1403,90 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+-(void)setUpstackMenu{
+    contentView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width - 60, self.view.frame.size.height + 5, 35, 35)];
+    [contentView setBackgroundColor:[UIColor redColor]];
+    [contentView.layer setCornerRadius:18.0f];
+    UIImageView *icon = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"plus"]];
+    [icon setContentMode:UIViewContentModeScaleAspectFit];
+    [icon setFrame:CGRectMake(contentView.frame.size.width/6, contentView.frame.size.height/6, 25, 25)];
+    [contentView addSubview:icon];
+    
+    if(stack)
+        [stack removeFromSuperview];
+    
+    stack = [[UPStackMenu alloc] initWithContentView:contentView];
+    //[stack setCenter:CGPointMake(self.view.frame.size.width/2, self.view.frame.size.height/2 + 20)];
+    [stack setDelegate:self];
+    
+    UPStackMenuItem *squareItem = [[UPStackMenuItem alloc] initWithImage:[UIImage imageNamed:@"Download_Excel"] highlightedImage:[UIImage imageNamed:@"Download_Excel"] title:@"View Favourites"];
+    UPStackMenuItem *circleItem = [[UPStackMenuItem alloc] initWithImage:[UIImage imageNamed:@"Email_Excel"] highlightedImage:[UIImage imageNamed:@"Download_Excel"] title:@"Update Profile"];
+    UPStackMenuItem *viewItem = [[UPStackMenuItem alloc] initWithImage:[UIImage imageNamed:@"Email_Excel"] highlightedImage:[UIImage imageNamed:@"Download_Excel"] title:@"Add Reviews"];
+    
+    NSMutableArray *items = [[NSMutableArray alloc] initWithObjects:squareItem, circleItem, nil];
+    [items enumerateObjectsUsingBlock:^(UPStackMenuItem *item, NSUInteger idx, BOOL *stop) {
+        [item setTitleColor:[UIColor redColor]];
+        //item.backgroundColor = [UIColor darkGrayColor];
+    }];
+    
+    [stack setAnimationType:UPStackMenuAnimationType_progressive];
+    [stack setStackPosition:UPStackMenuStackPosition_up];
+    [stack setOpenAnimationDuration:.4];
+    [stack setCloseAnimationDuration:.4];
+    [items enumerateObjectsUsingBlock:^(UPStackMenuItem *item, NSUInteger idx, BOOL *stop) {
+        [item setLabelPosition:UPStackMenuItemLabelPosition_left];
+        [item setLabelPosition:UPStackMenuItemLabelPosition_left];
+    }];
+    
+    [stack addItems:items];
+    
+    [self.tabBarController.view addSubview:stack];
+    
+    [self setStackIconClosed:YES];
+}
+
+
+#pragma mark - UPStackMenuDelegate
+- (void)setStackIconClosed:(BOOL)closed{
+    UIImageView *icon = [[contentView subviews] objectAtIndex:0];
+    float angle = closed ? 0 : (M_PI * (135) / 180.0);
+    [UIView animateWithDuration:0.3 animations:^{
+        [icon.layer setAffineTransform:CGAffineTransformRotate(CGAffineTransformIdentity, angle)];
+    }];
+}
+
+- (void)stackMenuWillOpen:(UPStackMenu *)menu{
+    flyoutView = [[UIView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height/1.2, self.view.frame.size.width, self.view.frame.size.height/4)];
+    flyoutView.backgroundColor = [UIColor lightTextColor];
+    [self.view addSubview:flyoutView];
+    if([[contentView subviews] count] == 0)
+        return;
+    [self setStackIconClosed:NO];
+}
+
+- (void)stackMenuWillClose:(UPStackMenu *)menu{
+    [flyoutView removeFromSuperview];
+    if([[contentView subviews] count] == 0)
+        return;
+    [self setStackIconClosed:YES];
+}
+
+- (void)stackMenu:(UPStackMenu *)menu didTouchItem:(UPStackMenuItem *)item atIndex:(NSUInteger)index{
+    NSString *message = [NSString stringWithFormat:@"Item touched : %@", item.title];
+    NSLog(@"index.. %lu",(unsigned long)index);
+    if(index == 0){
+        [delegate.defaults setValue:@"Favourites" forKey:@"route"];
+        [commonclass Redirect:self.navigationController Identifier:@"ResultsViewController"];
+    }else if(index == 1){
+        [commonclass Redirect:self.navigationController Identifier:@"ProfileViewController"];
+    }else if (index == 2){
+        
+    }
+    [stack closeStack];
+    //    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:message message:nil delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+    //    [alert show];
 }
 
 

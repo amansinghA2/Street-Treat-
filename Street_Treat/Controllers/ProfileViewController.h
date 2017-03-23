@@ -15,8 +15,11 @@
 #import "CZPickerView.h"
 #import "MyCouponsViewController.h"
 #import "HelpViewController.h"
+#import <MediaPlayer/MediaPlayer.h>
+#import <AVFoundation/AVFoundation.h>
 
-@interface ProfileViewController : UIViewController<UITabBarControllerDelegate,commonProtocol,UITextFieldDelegate,CCKFNavDrawerDelegate,CZPickerViewDelegate,CZPickerViewDataSource,CLLocationManagerDelegate,UIGestureRecognizerDelegate,UIImagePickerControllerDelegate, UINavigationControllerDelegate >{
+
+@interface ProfileViewController : UIViewController<UITabBarControllerDelegate,commonProtocol,UITextFieldDelegate,CCKFNavDrawerDelegate,CZPickerViewDelegate,CZPickerViewDataSource,CLLocationManagerDelegate,UIGestureRecognizerDelegate,UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIAlertViewDelegate >{
     Common * constant;
      AppDelegate * delegate;
      NSMutableData *getProfileData;
@@ -60,6 +63,7 @@
     NSString *age;
     NSString *lastname;
     NSString *birthdate;
+    UIView *flyoutView;
 }
 
 

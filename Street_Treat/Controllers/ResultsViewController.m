@@ -48,11 +48,6 @@
 -(void)viewWillAppear:(BOOL)animated{
    // j = 0;
     [self CurrentLocationIdentifier];
-    distanceval = 3.0;
-    segTapString = [delegate.defaults valueForKey:@"checkedinfrom"];
-    [self getDatawithStoreCategory:segTapString latitude:currentLatitude longitude:currentLongitude radius:userRadius];
-     [delegate.defaults setValue:@"" forKey:@"navigateFromReport"];
-    [delegate.defaults setObject:@"ResultsViewController" forKey:@"internetdisconnect"];
     [self setupMobileVerificationPopup];
     Popupmainview.hidden = true;
     self.rootNav = (CCKFNavDrawer *)self.navigationController;
@@ -60,13 +55,7 @@
     [commonclass setNavigationController:self.navigationController tabBarController:self.tabBarController];
     self.tabBarController.tabBar.tintColor = [UIColor lightGrayColor];
     searchField = [search valueForKey:@"_searchField"];
-    userLatitude = [[delegate.defaults valueForKey:@"latitude"] floatValue];
-    userLongitude = [[delegate.defaults valueForKey:@"longitude"] floatValue];
-    [self showLocName];
-    ratingsMaxLbl.text = [NSString stringWithFormat:@"0/5"];
-    distanceMaxLbl.text = [NSString stringWithFormat:@"0.0/5.0 Km"];
-    discountMaxLbl.text = [NSString stringWithFormat:@"1/100 %%"];
-    counter = 0;
+    
 }
 
 -(void)showLocName{
@@ -110,8 +99,21 @@
 
 
 -(void)viewDidAppear:(BOOL)animated{
+    [self CurrentLocationIdentifier];
+    Popupmainview.hidden = true;
     [self setUpstackMenu];
     temppremiumCnt = 0;
+    segTapString = [delegate.defaults valueForKey:@"checkedinfrom"];
+    distanceval = 3.0;
+    if ([delegate.defaults valueForKey:@"user_latitude"] == nil){
+        currentLatitude = [[delegate.defaults valueForKey:@"latitude"] floatValue];
+        currentLongitude = [[delegate.defaults valueForKey:@"longitude"] floatValue];
+    }else{
+        currentLatitude = [[delegate.defaults valueForKey:@"user_latitude"] floatValue];
+        currentLongitude = [[delegate.defaults valueForKey:@"user_longitude"] floatValue];
+        
+    }
+    
         if([[delegate.defaults valueForKey:@"verticalsCategory"] isEqualToString:@"High Street"]){
             [commonclass addlistingSlideAnimation:indicatorLine button1:highstreetBtn];
         }else if([[delegate.defaults valueForKey:@"verticalsCategory"] isEqualToString:@"Brands"]){
@@ -119,6 +121,21 @@
         }else if([[delegate.defaults valueForKey:@"verticalsCategory"] isEqualToString:@"Designers"]){
              [commonclass addlistingSlideAnimation:indicatorLine button1:designersBtn];
         }
+    
+
+    [self getDatawithStoreCategory:segTapString latitude:currentLatitude longitude:currentLongitude radius:userRadius];
+    [delegate.defaults setValue:@"" forKey:@"navigateFromReport"];
+    [delegate.defaults setValue:@"" forKey:@"navigateFromSubmitReview"];
+    [delegate.defaults setObject:@"ResultsViewController" forKey:@"internetdisconnect"];
+    
+    userLatitude = [[delegate.defaults valueForKey:@"latitude"] floatValue];
+    userLongitude = [[delegate.defaults valueForKey:@"longitude"] floatValue];
+    [self showLocName];
+    ratingsMaxLbl.text = [NSString stringWithFormat:@"0/5"];
+    distanceMaxLbl.text = [NSString stringWithFormat:@"0.0/5.0 Km"];
+    discountMaxLbl.text = [NSString stringWithFormat:@"1/100 %%"];
+    counter = 0;
+    
 }
 
 -(void)setUpstackMenu{
@@ -285,14 +302,6 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidShow:) name:UIKeyboardDidShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidHide:) name:UIKeyboardDidHideNotification object:nil];
 //  promoArr = [[NSMutableArray alloc]initWithObjects:[UIImage imageNamed:@"Promo1.png"],[UIImage imageNamed:@"Promo2.png"],[UIImage imageNamed:@"Promo3.png"],[UIImage imageNamed:@"Promo4.png"],nil];
-    if ([delegate.defaults valueForKey:@"user_latitude"] == nil){
-        currentLatitude = [[delegate.defaults valueForKey:@"latitude"] floatValue];
-        currentLongitude = [[delegate.defaults valueForKey:@"longitude"] floatValue];
-    }else{
-        currentLatitude = [[delegate.defaults valueForKey:@"user_latitude"] floatValue];
-        currentLongitude = [[delegate.defaults valueForKey:@"user_longitude"] floatValue];
-        
-    }
    
     userLatitude = [[delegate.defaults valueForKey:@"user_latitude"] floatValue];
     userLongitude = [[delegate.defaults valueForKey:@"user_longitude"] floatValue];
@@ -475,7 +484,8 @@
                    // NSLog(@"highstreetArr..%lu",(unsigned long)[highstreetArr count]);
                     storeCountLbl.text = [NSString stringWithFormat:@"%lu Stores",(unsigned long)[[favouritesArr valueForKey:@"items"] count]];
                 }else{
-                    storeCountLbl.text = [NSString stringWithFormat:@"0 Stores"];
+               #0	0x000000010018895c in -[GenerateCouponsViewController Setdata:] at /Users/aman/Documents/Office/Digi Projects/StreetTreat@14Feb2017 2/Street_Treat/Controllers/GenerateCouponsViewController.m:1024
+     storeCountLbl.text = [NSString stringWithFormat:@"0 Stores"];
                     [self.view makeToast:@"No Stores added yet"];
                 }
                 [resultTable reloadData];
@@ -483,6 +493,7 @@
            else*/
             if([seg_string isEqualToString:@"CheckedIn"]){
                 if([[data valueForKey:@"status"]intValue] == 1){
+                    [delegate.defaults setValue:@"checkedInForStore" forKey:@"ischeckin"];
                     seg_string = segTapString;
                    [commonclass Redirect:self.navigationController Identifier:@"GenerateCouponsViewController"];
                     //                if ([segTapString isEqualToString:@"High Street"]){
@@ -1141,7 +1152,7 @@
             PremiumCheckinBtn.layer.borderWidth = 1.0f;
             PremiumCheckinBtn.layer.borderColor = [[UIColor whiteColor] CGColor];
             PremiumCheckinBtn.layer.cornerRadius = 18.0f;
-            [PremiumCheckinBtn setTitle:@"CHECKIN" forState:UIControlStateNormal];
+            [PremiumCheckinBtn setTitle:@"CHECK IN" forState:UIControlStateNormal];
             [PremiumCheckinBtn.titleLabel setFont:[UIFont fontWithName:@"Roboto" size:16]];
             [PremiumCheckinBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
             PremiumCheckinBtn.tag = j;
@@ -1177,7 +1188,6 @@
         }
     }
     
-
 }
 
 -(void)PremiumCheckinTapped:(UIButton *)sender{
@@ -1210,7 +1220,11 @@
             //    if(mobilenumber.length == 0){
             //    }else{
             if([premiumdistAwayArr[sender.tag] doubleValue]<0.25){
-                [commonclass Redirect:self.navigationController Identifier:@"GenerateCouponsViewController"];
+                if ([[arrayforpremium[sender.tag] valueForKey:@"checked_in"]boolValue] == true){
+                    [commonclass Redirect:self.navigationController Identifier:@"GenerateCouponsViewController"];
+                }else{
+                    [self userCheckedin];
+                }
             }else{
                 [self.view makeToast:@"You have to be in 250 meters radius to CHECK IN into the store"];
             }
@@ -1713,12 +1727,12 @@
 }
 
 -(void)userCheckedin{
+       seg_string = @"CheckedIn";
     if([commonclass isActiveInternet] == YES){
-        NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&store_id=%@&latitude=%f&longitude=%f&current_latitude=%@&current_longitude=%@",[delegate.defaults valueForKey:@"logid"],[delegate.defaults valueForKey:@"store_ID"],currentLatitude,currentLongitude,[delegate.defaults valueForKey:@"latitude"],[delegate.defaults valueForKey:@"longitude"]];
+        NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&store_id=%@&latitude=%@&longitude=%@",[delegate.defaults valueForKey:@"logid"],[delegate.defaults valueForKey:@"store_ID"],[delegate.defaults valueForKey:@"latitude"],[delegate.defaults valueForKey:@"longitude"]];
         //    NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%@&longitude=%@&store_id=%ld",[delegate.defaults valueForKey:@"logid"],[delegate.defaults valueForKey:@"latitude"],[delegate.defaults valueForKey:@"longitude"],store_ID];
         NSLog(@"body.. %@",messageBody);
         NSLog(@"commonclass.searchListURL.. %@",commonclass.CheckinsURL);
-        seg_string = @"CheckedIn";
         [commonclass sendRequest:self.view mutableDta:checkinsData url:commonclass.CheckinsURL msgBody:messageBody];
     }else{
         [commonclass Redirect:self.navigationController Identifier:@"InternetDisconnectViewController"];
@@ -1788,7 +1802,12 @@
             //    if(mobilenumber.length == 0){
             //    }else{
             if([distAwayArr[sender.tag] doubleValue]<0.25){
-                [self userCheckedin];
+                if ([[arrForImage[sender.tag] valueForKey:@"checked_in"]boolValue] == true){
+                   [commonclass Redirect:self.navigationController Identifier:@"GenerateCouponsViewController"];
+                }else{
+                   [self userCheckedin];
+                }
+                
             }else{
                 [self.view makeToast:@"You have to be in 250 meters radius to CHECK IN into the store"];
             }
@@ -2101,7 +2120,6 @@
 didAutocompleteWithPlace:(GMSPlace *)place {
     [distAwayArr removeAllObjects];
     [premiumdistAwayArr removeAllObjects];
-    [self dismissViewControllerAnimated:YES completion:nil];
     search.text = place.name;
     currentLatitude = place.coordinate.latitude;
     currentLongitude = place.coordinate.longitude;
@@ -2122,7 +2140,8 @@ didAutocompleteWithPlace:(GMSPlace *)place {
     searchField.textColor = [UIColor whiteColor];
     [delegate.defaults synchronize];
    // if([[delegate.defaults valueForKey:@"resultType"] isEqualToString:@"Category"]){
-    [self getDatawithStoreCategory:seg_string latitude:currentLatitude longitude:currentLongitude radius:userRadius];
+//    [self getDatawithStoreCategory:seg_string latitude:currentLatitude longitude:currentLongitude radius:userRadius];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)viewController:(GMSAutocompleteViewController *)viewController
@@ -2373,11 +2392,18 @@ didFailAutocompleteWithError:(NSError *)error {
   //seg_string = @"High Street";
     seg_string = segTapString;
     couponDetMainView.hidden = TRUE;
+    NSString *bucketOrCat;
+    if ([[delegate.defaults valueForKey:@"isFromBucket"] isEqualToString:@"fromBucket"]){
+        bucketOrCat = @"bucket_id";
+    }else{
+        bucketOrCat = @"category_id";
+    }
+    
     NSString *messageBody;
     if(filterCategoriesIDs.length == 0){
-        messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%@&current_longitude=%@&radius=%f&category_id=%@&type=%@&rating_min=%f&discount_min=%f",[delegate.defaults valueForKey:@"logid"],currentLatitude,currentLongitude,[delegate.defaults valueForKey:@"latitude"],[delegate.defaults valueForKey:@"longitude"],distanceval,[delegate.defaults valueForKey:@"category"],segTapString,ratingsVal,discountval];
+        messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%@&current_longitude=%@&radius=%f&%@=%@&type=%@&rating_min=%f&discount_min=%f",[delegate.defaults valueForKey:@"logid"],currentLatitude,currentLongitude,[delegate.defaults valueForKey:@"latitude"],[delegate.defaults valueForKey:@"longitude"],distanceval,bucketOrCat,[delegate.defaults valueForKey:@"category"],segTapString,ratingsVal,discountval];
     }else{
-        messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%@&current_longitude=%@&radius=%f&category_id=%@&type=%@&rating_min=%f&discount_min=%f",[delegate.defaults valueForKey:@"logid"],currentLatitude,currentLongitude,[delegate.defaults valueForKey:@"latitude"],[delegate.defaults valueForKey:@"longitude"],distanceval,filterCategoriesIDs,segTapString,ratingsVal,discountval];
+        messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%f&longitude=%f&current_latitude=%@&current_longitude=%@&radius=%f&%@=%@&type=%@&rating_min=%f&discount_min=%f",[delegate.defaults valueForKey:@"logid"],currentLatitude,currentLongitude,[delegate.defaults valueForKey:@"latitude"],[delegate.defaults valueForKey:@"longitude"],distanceval,bucketOrCat,filterCategoriesIDs,segTapString,ratingsVal,discountval];
     }
     if([commonclass isActiveInternet] == YES){
     NSLog(@"body.. %@",messageBody);

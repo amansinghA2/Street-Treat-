@@ -283,8 +283,11 @@
     cell = [tableView cellForRowAtIndexPath:indexPath];
     //cell.bucketSelectView.backgroundColor = [UIColor Tabbar_Color];
     long int bucketID = [[bucketsListArr[indexPath.section] valueForKey:@"id"] intValue];
+    NSString *bucketId1 = [bucketsListArr[indexPath.section] valueForKey:@"id"];
     NSString * title = [[bucketsListArr[indexPath.section] valueForKey:@"title"] uppercaseString];
     [delegate.defaults setInteger:bucketID forKey:@"bucketID"];
+    [delegate.defaults setValue:bucketId1 forKey:@"category"];
+    [delegate.defaults setObject:@"fromBucket" forKey:@"isFromBucket"];
     [delegate.defaults setValue:title forKey:@"bucketName"];
     [delegate.defaults setValue:@"Buckets" forKey:@"route"];
     [delegate.defaults synchronize];
@@ -298,7 +301,8 @@
 
 -(void)viewDidDisappear:(BOOL)animated{
     [contentView removeFromSuperview];
-    //[stack removeFromSuperview];
+    [stack removeFromSuperview];
+    [flyoutView removeFromSuperview];
 }
 
 

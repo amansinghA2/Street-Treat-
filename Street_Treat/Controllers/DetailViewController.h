@@ -61,7 +61,7 @@
     NSMutableArray *dataDetails;
     
     UIButton * DtlcheckInBtn;
-    
+    NSMutableArray *arrForImage;
     //UIButton * checkinBtn;
 }
 

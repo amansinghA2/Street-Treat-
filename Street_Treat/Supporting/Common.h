@@ -19,7 +19,7 @@
 #import "UIImageView+UIActivityIndicatorForSDWebImage.h"
 #import <QuartzCore/QuartzCore.h>
 #import "Reachability.h"
-
+#import "UPStackMenu.h"
 //#import "ViewController.h"
 
 @class Common;
@@ -32,7 +32,7 @@
 
 @end
 
-@interface Common : UIViewController<UISearchBarDelegate,CCKFNavDrawerDelegate,UISearchBarDelegate>{
+@interface Common : UIViewController<UISearchBarDelegate,CCKFNavDrawerDelegate,UISearchBarDelegate , UPStackMenuDelegate>{
     UITextField *txfSearchField;
     int ht;
     UIActivityIndicatorView * indicator;
@@ -41,7 +41,8 @@
     UIStoryboard *storyboard;
     UITabBarController *tabBarController;
     UINavigationController *navigationController;
-    
+    UIView *contentView , *flyOutView;
+    UPStackMenu *stack;
 }
 
 #define TextColor_TxtFld colorWithRed:(217/255.0) green:(6/255.0) blue:(43/255.0) alpha:1.0
@@ -250,7 +251,7 @@
 -(void)setNavigationController: (UINavigationController *)Navigation tabBarController: (UITabBarController *)tabBarVC;
 
 -(void)setNavigationController: (UINavigationController *)Navigation tabBarController: (UITabBarController *)tabBarVC viewController: (UIViewController *)viewController;;
-
+-(void)setUpstackMenu:(UIView *)flyOutView1 stackMenu:(UPStackMenu *)stack1  contentView:(UIView *)contentView1 navigationController:(UINavigationController *)navigationController1;
 
 -(void)showResults;
 @end

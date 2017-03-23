@@ -145,7 +145,6 @@
         NSString * masterUrl = @"http://www.web.streettreat.in/index.php?option=com_konnect&task=";
         
         getMastersURL = [NSString stringWithFormat:@"%@getMasterData",masterUrl];
-        
         LoginURL = [NSString stringWithFormat:@"%@loginUser",masterUrl];
         getParentCategoriesURL = [NSString stringWithFormat:@"%@getPCategoriesy",masterUrl];
         
@@ -300,7 +299,7 @@
     myview.layer.borderWidth = 0.5f;
     myview.layer.borderColor = [[UIColor blackColor] CGColor];
     UIButton * backbtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    backbtn.frame = CGRectMake(myview.frame.origin.x+5, myview.frame.origin.y+2, 35, 35);
+    backbtn.frame = CGRectMake(myview.frame.origin.x+5, myview.frame.origin.y, 35, 35);
     backbtn.tag = 1111;
     [backbtn setTitle:backIcon forState:UIControlStateNormal];
     [backbtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
@@ -311,7 +310,7 @@
     //search.backgroundColor = [UIColor yellowColor];
     search.delegate = self;
     search.tag = 11111;
-    search.placeholder = @"Find your Location";
+    search.placeholder = @"";
     [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[UIColor whiteColor]];
     // Change the search bar placeholder text color
     //[searchField setValue:[UIColor whiteColor] forKeyPath:@"_placeholderLabel.textColor"];
@@ -646,6 +645,9 @@
     float h = 0;
     float fh = (mainView.frame.origin.y + mainView.frame.size.height)+5;
     h = MAX(fh, h);
+//    UILabel * verificationHdr1 = [[UILabel alloc]initWithFrame:CGRectMake(self.view.frame.origin.x, toview.frame.origin.y - 4 , self.view.frame.size.width, 4)];
+//    verificationHdr1.backgroundColor = [UIColor colorWithRed:239/255.0 green:239/255.0 blue:244/255.0 alpha:1];
+//    [mainView addSubview:toview];
     [toview setFrame:CGRectMake(toview.frame.origin.x, h, toview.frame.size.width, toview.frame.size.height)];
 }
 
@@ -842,7 +844,6 @@
 }
 
 -(void)StaticContent{
-   
     [maindelegate.defaults setObject:self.setType forKey:@"staticType"];
     [maindelegate.defaults synchronize];
     StaticDataViewController * info = [storyboard instantiateViewControllerWithIdentifier:@"StaticDataViewController"];
@@ -875,6 +876,107 @@
         //[self.view makeToast:@"Check your internet connection"];
     }
 }
+
+-(void)setUpstackMenu:(UIView *)flyOutView1 stackMenu:(UPStackMenu *)stack1  contentView:(UIView *)contentView1 navigationController:(UINavigationController *)navigationController1{
+    navigationController = navigationController1;
+    contentView = contentView1;
+    flyOutView = flyOutView1;
+    stack = stack1;
+    contentView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width - 60, self.view.frame.size.height +5, 35, 35)];
+    [contentView setBackgroundColor:[UIColor redColor]];
+    [contentView.layer setCornerRadius:18.0f];
+    UIImageView *icon = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"plus"]];
+    [icon setContentMode:UIViewContentModeScaleAspectFit];
+    [icon setFrame:CGRectMake(contentView.frame.size.width/6, contentView.frame.size.height/6, 25, 25)];
+    [contentView addSubview:icon];
+    
+    if(stack)
+        [stack removeFromSuperview];
+    
+    stack = [[UPStackMenu alloc] initWithContentView:contentView];
+    //[stack setCenter:CGPointMake(self.view.frame.size.width/2, self.view.frame.size.height/2 + 20)];
+    [stack setDelegate:self];
+    UPStackMenuItem *shareItem = [[UPStackMenuItem alloc] initWithImage:[UIImage imageNamed:@"Download_Excel"] highlightedImage:[UIImage imageNamed:@"Download_Excel"] title:@"Add To Favourites"];
+    UPStackMenuItem *addFavouritesItem = [[UPStackMenuItem alloc] initWithImage:[UIImage imageNamed:@"Download_Excel"] highlightedImage:[UIImage imageNamed:@"Download_Excel"] title:@"Share Store"];
+    UPStackMenuItem *squareItem = [[UPStackMenuItem alloc] initWithImage:[UIImage imageNamed:@"Download_Excel"] highlightedImage:[UIImage imageNamed:@"Download_Excel"] title:@"View Favourites"];
+    UPStackMenuItem *circleItem = [[UPStackMenuItem alloc] initWithImage:[UIImage imageNamed:@"Email_Excel"] highlightedImage:[UIImage imageNamed:@"Download_Excel"] title:@"Update Profile"];
+    UPStackMenuItem *viewItem = [[UPStackMenuItem alloc] initWithImage:[UIImage imageNamed:@"Email_Excel"] highlightedImage:[UIImage imageNamed:@"Download_Excel"] title:@"Add Reviews"];
+    
+    NSMutableArray *items = [[NSMutableArray alloc] initWithObjects:shareItem,addFavouritesItem,squareItem, circleItem,viewItem, nil];
+    [items enumerateObjectsUsingBlock:^(UPStackMenuItem *item, NSUInteger idx, BOOL *stop) {
+        [item setTitleColor:[UIColor redColor]];
+        //item.backgroundColor = [UIColor darkGrayColor];
+    }];
+    
+    [stack setAnimationType:UPStackMenuAnimationType_progressive];
+    [stack setStackPosition:UPStackMenuStackPosition_up];
+    [stack setOpenAnimationDuration:.4];
+    [stack setCloseAnimationDuration:.4];
+    [items enumerateObjectsUsingBlock:^(UPStackMenuItem *item, NSUInteger idx, BOOL *stop) {
+        [item setLabelPosition:UPStackMenuItemLabelPosition_left];
+        [item setLabelPosition:UPStackMenuItemLabelPosition_left];
+    }];
+    
+    [stack addItems:items];
+    
+    [self.tabBarController.view addSubview:stack];
+    
+    [self setStackIconClosed:YES];
+}
+
+#pragma mark - UPStackMenuDelegate
+- (void)setStackIconClosed:(BOOL)closed{
+    UIImageView *icon = [[contentView subviews] objectAtIndex:0];
+    float angle = closed ? 0 : (M_PI * (135) / 180.0);
+    [UIView animateWithDuration:0.3 animations:^{
+        [icon.layer setAffineTransform:CGAffineTransformRotate(CGAffineTransformIdentity, angle)];
+    }];
+}
+
+- (void)stackMenuWillOpen:(UPStackMenu *)menu{
+    flyOutView = [[UIView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height/1.5, self.view.frame.size.width, self.view.frame.size.height/3)];
+    flyOutView.backgroundColor = [UIColor whiteColor];
+    [self.view addSubview:flyOutView];
+    if([[contentView subviews] count] == 0)
+        return;
+    [self setStackIconClosed:NO];
+}
+
+- (void)stackMenuWillClose:(UPStackMenu *)menu{
+    [flyOutView removeFromSuperview];
+    if([[contentView subviews] count] == 0)
+        return;
+    [self setStackIconClosed:YES];
+}
+
+- (void)stackMenu:(UPStackMenu *)menu didTouchItem:(UPStackMenuItem *)item atIndex:(NSUInteger)index{
+    if(index == 0){
+       // [self favouritesTapped:nil];
+        //[self stackMenuWillClose:stack];
+    }else  if(index == 1){
+       // [self shareTapped:nil];
+    }else if(index == 2){
+        
+        ResultsViewController * result = [storyboard instantiateViewControllerWithIdentifier:@"ResultsViewController"];
+        [navigationController pushViewController:result animated:YES];
+        
+        [maindelegate.defaults setValue:@"Favourites" forKey:@"route"];
+//        [commonclass Redirect:self.navigationController Identifier:@"ResultsViewController"];
+        
+    }else if(index == 3){
+        
+        ProfileViewController * result = [storyboard instantiateViewControllerWithIdentifier:@"ProfileViewController"];
+        [navigationController pushViewController:result animated:YES];
+        
+//        [commonclass Redirect:self.navigationController Identifier:@"ProfileViewController"];
+    }else if (index == 4){
+        
+    }
+    
+    [stack closeStack];
+    // [self setStackIconClosed:YES];
+}
+
 
 
 @end

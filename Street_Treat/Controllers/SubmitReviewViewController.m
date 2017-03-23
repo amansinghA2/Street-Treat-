@@ -8,7 +8,10 @@
 
 #import "SubmitReviewViewController.h"
 
-@interface SubmitReviewViewController ()
+@interface SubmitReviewViewController (){
+    UIView *contentView;
+    UPStackMenu *stack;
+}
 
 @end
 
@@ -38,6 +41,12 @@
     
     _storeNameLbl.text = [delegate.defaults valueForKey:@"Store_Name"];
     
+}
+
+-(void)viewDidDisappear:(BOOL)animated{
+    [contentView removeFromSuperview];
+    [stack removeFromSuperview];
+    [flyoutView removeFromSuperview];
 }
 
 -(void)selectImage:(UIGestureRecognizer *)gesture{
@@ -83,6 +92,12 @@
     _notRecommendedStarsLbl.text = commonclass.starIcon;
 }
 
+
+-(void)viewDidAppear:(BOOL)animated{
+    
+    [self setUpstackMenu];
+}
+
 -(void)cancelKeyboard{
     [feedbackTxtView resignFirstResponder];
 }
@@ -101,6 +116,7 @@
 
 
 -(void)backTapped{
+    [delegate.defaults setValue:@"" forKey:@"navigateFromSubmitReview"];
     [self.navigationController popViewControllerAnimated:YES];
 }
 
@@ -148,7 +164,6 @@
         [commonclass Redirect:self.navigationController Identifier:@"InternetDisconnectViewController"];
         //[self.view makeToast:@"Check your internet connection"];
     }
-    
 }
 
 - (void)sendResponse:(Common *)response data:(NSMutableArray*)data indicator:(UIActivityIndicatorView *)indicator{
@@ -156,7 +171,8 @@
     dispatch_sync(dispatch_get_main_queue(), ^{
         if(data != NULL){
             if([[data valueForKey:@"status"]intValue] == 1){
-                [self.view makeToast:@"Review has been added successfully"];
+                [self.navigationController popViewControllerAnimated:YES];
+                [self dismissViewControllerAnimated:YES completion:nil];
                 feedbackTxtView.text = nil;
             }else if([[data valueForKey:@"status"]intValue] == -1){
                 [commonclass logoutFunction];
@@ -166,6 +182,101 @@
         [[UIApplication sharedApplication] endIgnoringInteractionEvents];
     });
 }
+
+-(void)setUpstackMenu{
+    contentView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width - 60, self.view.frame.size.height + 5, 35, 35)];
+    [contentView setBackgroundColor:[UIColor redColor]];
+    [contentView.layer setCornerRadius:18.0f];
+    UIImageView *icon = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"plus"]];
+    [icon setContentMode:UIViewContentModeScaleAspectFit];
+    [icon setFrame:CGRectMake(contentView.frame.size.width/6, contentView.frame.size.height/6, 25, 25)];
+    [contentView addSubview:icon];
+    
+    if(stack)
+        [stack removeFromSuperview];
+    
+    stack = [[UPStackMenu alloc] initWithContentView:contentView];
+    //[stack setCenter:CGPointMake(self.view.frame.size.width/2, self.view.frame.size.height/2 + 20)];
+    [stack setDelegate:self];
+    
+    UPStackMenuItem *squareItem = [[UPStackMenuItem alloc] initWithImage:[UIImage imageNamed:@"Download_Excel"] highlightedImage:[UIImage imageNamed:@"Download_Excel"] title:@"View Favourites"];
+    UPStackMenuItem *circleItem = [[UPStackMenuItem alloc] initWithImage:[UIImage imageNamed:@"Email_Excel"] highlightedImage:[UIImage imageNamed:@"Download_Excel"] title:@"Update Profile"];
+    UPStackMenuItem *viewItem = [[UPStackMenuItem alloc] initWithImage:[UIImage imageNamed:@"Email_Excel"] highlightedImage:[UIImage imageNamed:@"Download_Excel"] title:@"Add Reviews"];
+    
+    NSMutableArray *items = [[NSMutableArray alloc] initWithObjects:squareItem, circleItem, nil];
+    [items enumerateObjectsUsingBlock:^(UPStackMenuItem *item, NSUInteger idx, BOOL *stop) {
+        [item setTitleColor:[UIColor redColor]];
+        //item.backgroundColor = [UIColor darkGrayColor];
+    }];
+    
+    [stack setAnimationType:UPStackMenuAnimationType_progressive];
+    [stack setStackPosition:UPStackMenuStackPosition_up];
+    [stack setOpenAnimationDuration:.4];
+    [stack setCloseAnimationDuration:.4];
+    [items enumerateObjectsUsingBlock:^(UPStackMenuItem *item, NSUInteger idx, BOOL *stop) {
+        [item setLabelPosition:UPStackMenuItemLabelPosition_left];
+        [item setLabelPosition:UPStackMenuItemLabelPosition_left];
+    }];
+    
+    [stack addItems:items];
+    
+    [self.tabBarController.view addSubview:stack];
+    
+    [self setStackIconClosed:YES];
+}
+
+-(void)notificationsTapped{
+    NotificationsViewController * notifications = [self.storyboard instantiateViewControllerWithIdentifier:@"NotificationsViewController"];
+    [self presentViewController:notifications animated:YES completion:nil];
+}
+
+
+//-(void)CCKFNavDrawerSelection:(NSInteger)selectedSession selectedRow: (NSInteger) row {
+//    [constant DrawerTapped:selectedSession selectedRow: row];
+//}
+
+#pragma mark - UPStackMenuDelegate
+- (void)setStackIconClosed:(BOOL)closed{
+    UIImageView *icon = [[contentView subviews] objectAtIndex:0];
+    float angle = closed ? 0 : (M_PI * (135) / 180.0);
+    [UIView animateWithDuration:0.3 animations:^{
+        [icon.layer setAffineTransform:CGAffineTransformRotate(CGAffineTransformIdentity, angle)];
+    }];
+}
+
+- (void)stackMenuWillOpen:(UPStackMenu *)menu{
+    flyoutView = [[UIView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height/1.2, self.view.frame.size.width, self.view.frame.size.height/4)];
+    flyoutView.backgroundColor = [UIColor lightTextColor];
+    [self.view addSubview:flyoutView];
+    if([[contentView subviews] count] == 0)
+        return;
+    [self setStackIconClosed:NO];
+}
+
+- (void)stackMenuWillClose:(UPStackMenu *)menu{
+    [flyoutView removeFromSuperview];
+    if([[contentView subviews] count] == 0)
+        return;
+    [self setStackIconClosed:YES];
+}
+
+- (void)stackMenu:(UPStackMenu *)menu didTouchItem:(UPStackMenuItem *)item atIndex:(NSUInteger)index{
+    NSString *message = [NSString stringWithFormat:@"Item touched : %@", item.title];
+    NSLog(@"index.. %lu",(unsigned long)index);
+    if(index == 0){
+        [delegate.defaults setValue:@"Favourites" forKey:@"route"];
+        [commonclass Redirect:self.navigationController Identifier:@"ResultsViewController"];
+    }else if(index == 1){
+        [commonclass Redirect:self.navigationController Identifier:@"ProfileViewController"];
+    }else if (index == 2){
+        
+    }
+    [stack closeStack];
+    //    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:message message:nil delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+    //    [alert show];
+}
+
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

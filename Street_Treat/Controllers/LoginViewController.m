@@ -41,7 +41,6 @@
     [locationManager requestWhenInUseAuthorization];
     [locationManager startMonitoringSignificantLocationChanges];
     [locationManager startUpdatingLocation];
-
     [delegate.defaults setObject:@"DashboardViewController" forKey:@"internetdisconnect"];
     [delegate.defaults synchronize];
     //self.tabBarController.tabBar.hidden = YES;

@@ -21,6 +21,23 @@
 
 
 
+@implementation CheckInDealCell
+@synthesize shortDealTitleLbl;
+//@synthesize bucketListLbl,bucketListImg,bucketSelectView;
+
+- (void)awakeFromNib {
+    [super awakeFromNib];
+    // Initialization code
+}
+
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+    
+    // Configure the view for the selected state
+}
+
+@end
+
 @interface GenerateCouponsViewController (){
     
     UIView *contentView;
@@ -42,12 +59,19 @@
 @synthesize storeName,storeAddress,storeShopForLbl,storeTimeLbl,storeAwayIconLbl,storeAwayLbl,shareButton,addTofavouritesBtn,votesCount,storeStarsLbl,storeRatingLbl,storeChecksCount,storeValidCouponsCount,streetOffersLbl,mobileFld,otpFld,reviewView;
 
 
-
 -(void)viewWillAppear:(BOOL)animated{
+    [delegate.defaults setValue:@"Store" forKey:@"route"];
+    _borderLabel.hidden = true;
     selectedOffersArr = [[NSMutableArray alloc]init];
+    count = -1 ;
+    isSelected = false;
     if ([[delegate.defaults valueForKey:@"navigateFromReport"] isEqualToString:@"fromCouponsPage"]){
         [self.view makeToast:@"Report Submitted Successfully"];
         
+    }
+    
+    if ([[delegate.defaults valueForKey:@"navigateFromSubmitReview"] isEqualToString:@"fromCouponsPage"]){
+        [self.view makeToast:@"Review Submitted Successfully"];
     }
     
     [delegate.defaults setObject:@"GenerateCouponsViewController" forKey:@"internetdisconnect"];
@@ -67,7 +91,11 @@
     [self getStoreDetails];
 }
 
-
+-(void)viewDidDisappear:(BOOL)animated{
+    [contentView removeFromSuperview];
+    [stack removeFromSuperview];
+    [flyoutView removeFromSuperview];
+}
 
 -(void)viewDidAppear:(BOOL)animated{
     
@@ -126,8 +154,6 @@
         //item.backgroundColor = [UIColor darkGrayColor];
         
     }];
-    
-    
     
     [stack setAnimationType:UPStackMenuAnimationType_progressive];
     
@@ -282,7 +308,7 @@
     
     // [delegate.defaults setValue:@"myloc" forKey:@"locupdatefrom"];
     
-  //  cameraBtn.hidden = true;
+    // cameraBtn.hidden = true;
     
     // [delegate.defaults setValue:@"b" forKey:@"navigateFromReport"];
     
@@ -311,7 +337,11 @@
     
     detailsArr = [[NSMutableArray alloc]init];
     
-    
+    if ([[delegate.defaults valueForKey:@"ischeckin"] isEqualToString:@"checkedInForStore"]){
+        
+        [self.view makeToast:@"Checked In to the store"];
+        [delegate.defaults setValue:@"" forKey:@"ischeckin"];
+    }
     
     //    NSData *data = [delegate.defaults valueForKey:@"StoreCheckedIn"];
     
@@ -390,15 +420,7 @@
     [DtlcheckInBtn addTarget:self action:@selector(checkInTapped:) forControlEvents:UIControlEventTouchUpInside];
     
     [self.view addSubview:DtlcheckInBtn];
-    
-    
-    
     [self.view bringSubviewToFront:DtlcheckInBtn];
-    
-    
-    
-    
-    
     [self setupMobileVerificationPopup];
     
     Popupmainview.hidden = true;
@@ -408,8 +430,6 @@
     
     
     DetailScroll.contentSize = CGSizeMake(self.view.frame.size.width,reviewView.frame.origin.y + 1);
-    
-    [self.view makeToast:@"Checked In to the store"];
     
 }
 
@@ -777,123 +797,30 @@
     
     dispatch_async(dispatch_get_main_queue(), ^{
         if(data != NULL){
-//        if([responseType isEqualToString:@"CheckedIn"]){
-//            
-//            if([[data valueForKey:@"status"]intValue] == 1){
-//            }else if([[data valueForKey:@"status"]intValue] == -1){
-//                
-//                [commonclass logoutFunction];
-//                
-//            }else{
-// 
-//            }
-//          }else
-         if([responseType isEqualToString:@"StoreDetails"]){
-            
-            [detailsArr removeAllObjects];
-            
-            if([[data valueForKey:@"status"]intValue] == 1){
+            //        if([responseType isEqualToString:@"CheckedIn"]){
+            //
+            //            if([[data valueForKey:@"status"]intValue] == 1){
+            //            }else if([[data valueForKey:@"status"]intValue] == -1){
+            //
+            //                [commonclass logoutFunction];
+            //
+            //            }else{
+            //
+            //            }
+            //          }else
+            if([responseType isEqualToString:@"StoreDetails"]){
                 
-                detailsArr = [data valueForKey:@"items"];
+                [detailsArr removeAllObjects];
                 
-                NSLog(@"data.. %@",detailsArr);
-                
-                [self Setdata:detailsArr];
-                
-                [self getStoreCoupons];
-                
-            }else if([[data valueForKey:@"status"]intValue] == -1){
-                
-                [commonclass logoutFunction];
-                
-            }else{
-                
-            
-            }
-            
-        }
-        else if([responseType isEqualToString:@"StoreCoupons"]){
-            
-            // [offersArr rem ]
-            if([[data valueForKey:@"status"]intValue] == 1){
-                
-                offersArr = [data valueForKey:@"items"];
-                
-                    [_selectofferTappedButton setTitle:@"Select More Offers" forState:UIControlStateNormal];
-                    _borderLabel.hidden = true;
-                    _leftSideLabel.hidden = false;
+                if([[data valueForKey:@"status"]intValue] == 1){
                     
-                    _rightSideLabel.hidden = false;
+                    detailsArr = [data valueForKey:@"items"];
                     
-                    _plusLabel.hidden = false;
-                
-//                }else{
-//                    
-//                    [_selectofferTappedButton setTitle:@"Generate" forState:UIControlStateNormal];
-//                    
-//                    [_selectofferTappedButton setBackgroundColor:[UIColor redColor]];
-//                    
-//                    _leftSideLabel.hidden = true;
-//                    
-//                    _rightSideLabel.hidden = true;
-//                    
-//                    _plusLabel.hidden = true;
-//                }
-                
-                //
-                
-                NSLog(@"data.. %@",offersArr);
-                
-                //    backBtn.enabled = true;
-                
-            }else if([[data valueForKey:@"status"]intValue] == -1){
-                
-                [commonclass logoutFunction];
-                
-            }else{
-                
-                [_selectofferTappedButton setTitle:@"Generate Offer" forState:UIControlStateNormal];
-                
-                [_selectofferTappedButton setBackgroundColor:[UIColor redColor]];
-                [_selectofferTappedButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-                _selectofferTappedButton.layer.cornerRadius = 5.0;
-                _borderLabel.hidden = false;
-                _leftSideLabel.hidden = true;
-                
-                _rightSideLabel.hidden = true;
-                
-                _plusLabel.hidden = true;
-                
-            }
-        }else if([responseType isEqualToString:@"GenerateOffers"]){
-            
-            if([[data valueForKey:@"status"]intValue] == 1){
-                
-                [self.view makeToast:@"Congratulations, your coupon has been generated successfully" duration:4.0 position:CSToastPositionBottom];
-                
-                [commonclass Redirect:self.navigationController Identifier:@"MyCouponsViewController"];
-                
-                //                backBtn.enabled = true;
-                
-            }else if([[data valueForKey:@"status"]intValue] == -1){
-                
-                [commonclass logoutFunction];
-                
-            }else{
-                
-            }
-            
-        }else if([responseType isEqualToString:@"AddFavourite"]){
-            
-            if([[data valueForKey:@"status"]intValue] == 1){
-                
-                if ([[data valueForKey:@"items"]boolValue] == true) {
+                    NSLog(@"data.. %@",detailsArr);
                     
-                    [self.view makeToast:@"The store has been added to your Favourites list" duration:4.0 position:CSToastPositionBottom];
+                    [self Setdata:detailsArr];
                     
-                    [addTofavouritesBtn setTitle:commonclass.addedtofavouritesIcon forState:UIControlStateNormal];
-                    
-                    //                    backBtn.enabled = true;
+                    [self getStoreCoupons];
                     
                 }else if([[data valueForKey:@"status"]intValue] == -1){
                     
@@ -901,41 +828,141 @@
                     
                 }else{
                     
-                    [self.view makeToast:@"The store has been removed from your Favourites list" duration:4.0 position:CSToastPositionBottom];
-                    
-                    [addTofavouritesBtn setTitle:commonclass.addtofavouritesIcon forState:UIControlStateNormal];
-                    
-                    //                    backBtn.enabled = true;
                     
                 }
                 
-            }else{
+            }
+            else if([responseType isEqualToString:@"StoreCoupons"]){
                 
+                // [offersArr rem ]
+                if([[data valueForKey:@"status"]intValue] == 1){
+                    
+                    offersArr = [data valueForKey:@"items"];
+                    _generateTableView.hidden = false;
+                    [_selectofferTappedButton setTitle:@"Generate Offers" forState:UIControlStateNormal];
+                    _borderLabel.hidden = true;
+                    _leftSideLabel.hidden = false;
+                    _rightSideLabel.hidden = false;
+                    _plusLabel.hidden = false;
+                    
+                    //                }else{
+                    //
+                    //                    [_selectofferTappedButton setTitle:@"Generate" forState:UIControlStateNormal];
+                    //
+                    //                    [_selectofferTappedButton setBackgroundColor:[UIColor redColor]];
+                    //
+                    //                    _leftSideLabel.hidden = true;
+                    //
+                    //                    _rightSideLabel.hidden = true;
+                    //
+                    //                    _plusLabel.hidden = true;
+                    //                }
+                    
+                    //
+                    
+                    NSLog(@"data.. %@",offersArr);
+                    [self.generateTableView reloadData];
+                    //    backBtn.enabled = true;
+                    
+                }else if([[data valueForKey:@"status"]intValue] == -1){
+                    
+                    [commonclass logoutFunction];
+                    
+                }else{
+                    _generateTableView.hidden = true;
+                    [_selectofferTappedButton setTitle:@"Generate Offer" forState:UIControlStateNormal];
+                    CGRect newFrame = _generateCouponsView.frame;
+                    newFrame.size.width = _generateCouponsView.frame.size.width;
+                    newFrame.size.height = 80;
+                    [_generateCouponsView setFrame:newFrame];
+                    UILabel * verificationHdr = [[UILabel alloc]initWithFrame:CGRectMake(_generateCouponsView.frame.origin.x + 50, 62, _generateCouponsView.frame.size.width - 105, 4)];
+                    verificationHdr.backgroundColor = [UIColor lightGrayColor];
+                    //[UIColor colorWithRed:239/255.0 green:239/255.0 blue:244/255.0 alpha:1];
+                    [_generateCouponsView addSubview:verificationHdr];
+                    
+                    [commonclass changeFrameWRT:_generateCouponsView ofview:reviewView];
+                    // [_generateCouponsView bringSubviewToFront:reviewView];
+                    DetailScroll.contentSize = CGSizeMake(DetailScroll.frame.size.width, (reviewView.frame.origin.y + reviewView.frame.size.height));
+                    
+                    [_selectofferTappedButton setTitle:@"Generate Offer" forState:UIControlStateNormal];
+                    
+                    [_selectofferTappedButton setBackgroundColor:[UIColor redColor]];
+                    [_selectofferTappedButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+                    _selectofferTappedButton.layer.cornerRadius = 5.0;
+                    _borderLabel.hidden = true;
+                    
+                }
+            }else if([responseType isEqualToString:@"GenerateOffers"]){
                 
+                if([[data valueForKey:@"status"]intValue] == 1){
+                    
+                    [self.view makeToast:@"Congratulations, your coupon has been generated successfully" duration:4.0 position:CSToastPositionBottom];
+                    
+                    [commonclass Redirect:self.navigationController Identifier:@"MyCouponsViewController"];
+                    
+                    //                backBtn.enabled = true;
+                    
+                }else if([[data valueForKey:@"status"]intValue] == -1){
+                    
+                    [commonclass logoutFunction];
+                    
+                }else{
+                    
+                }
+                
+            }else if([responseType isEqualToString:@"AddFavourite"]){
+                
+                if([[data valueForKey:@"status"]intValue] == 1){
+                    
+                    if ([[data valueForKey:@"items"]boolValue] == true) {
+                        
+                        [self.view makeToast:@"The store has been added to your Favourites list" duration:4.0 position:CSToastPositionBottom];
+                        
+                        [addTofavouritesBtn setTitle:commonclass.addedtofavouritesIcon forState:UIControlStateNormal];
+                        
+                        //                    backBtn.enabled = true;
+                        
+                    }else if([[data valueForKey:@"status"]intValue] == -1){
+                        
+                        [commonclass logoutFunction];
+                        
+                    }else{
+                        
+                        [self.view makeToast:@"The store has been removed from your Favourites list" duration:4.0 position:CSToastPositionBottom];
+                        
+                        [addTofavouritesBtn setTitle:commonclass.addtofavouritesIcon forState:UIControlStateNormal];
+                        
+                        //                    backBtn.enabled = true;
+                        
+                    }
+                    
+                }else{
+                    
+                    
+                    
+                }
+                
+            }else if([responseType isEqualToString:@"shareStore"]){
+                
+                if([[data valueForKey:@"status"]intValue] == 1){
+                    
+                    //                backBtn.enabled = true;
+                    
+                }else if([[data valueForKey:@"status"]intValue] == -1){
+                    
+                    [commonclass logoutFunction];
+                    
+                }else{
+                    
+                }
                 
             }
-            
-        }else if([responseType isEqualToString:@"shareStore"]){
-            
-            if([[data valueForKey:@"status"]intValue] == 1){
-                
-                //                backBtn.enabled = true;
-                
-            }else if([[data valueForKey:@"status"]intValue] == -1){
-                
-                [commonclass logoutFunction];
-                
-            }else{
-                
-            }
-            
-        }
             [indicator stopAnimating];
             [[UIApplication sharedApplication] endIgnoringInteractionEvents];
         }else{
             [indicator stopAnimating];
             [[UIApplication sharedApplication] endIgnoringInteractionEvents];
-           // [self.view makeToast:@"Server error occured Please wait"];
+            // [self.view makeToast:@"Server error occured Please wait"];
             [self getStoreDetails];
         }
     });
@@ -994,7 +1021,7 @@
     
     NSLog(@"deatils... %@",details);
     
-    
+    DetailScroll.contentSize = CGSizeMake(DetailScroll.frame.size.width, (reviewView.frame.origin.y + reviewView.frame.size.height) + 5);
     
     if([details valueForKey:@"images"] != [NSNull null]){
         dataDetails = details;
@@ -1225,18 +1252,18 @@
 
 - (void)scrollViewDidScroll:(UIScrollView *)sender {
     
-//  float scrollOffset = sender.contentOffset.y;
+    //  float scrollOffset = sender.contentOffset.y;
     
-//    if (scrollOffset <= 0 )
-//    {
-//        DtlcheckInBtn.hidden = false;
-//        //checkInBtn.hidden = false;
-//        
-//    }else{
-//        DtlcheckInBtn.hidden = true;
-//        //        checkInBtn.layer.backgroundColor = [[UIColor whiteColor] CGColor];
-//        //        [checkInBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-//    }
+    //    if (scrollOffset <= 0 )
+    //    {
+    //        DtlcheckInBtn.hidden = false;
+    //        //checkInBtn.hidden = false;
+    //
+    //    }else{
+    //        DtlcheckInBtn.hidden = true;
+    //        //        checkInBtn.layer.backgroundColor = [[UIColor whiteColor] CGColor];
+    //        //        [checkInBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    //    }
     
     if (!pageControlBeingUsed) {
         
@@ -1252,20 +1279,20 @@
 
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
-   // DtlcheckInBtn.hidden = true;
+    // DtlcheckInBtn.hidden = true;
     pageControlBeingUsed = NO;
 }
 
 
 -(void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate{
-   // DtlcheckInBtn.hidden = false;
+    // DtlcheckInBtn.hidden = false;
 }
 
 -(void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView{
-   // DtlcheckInBtn.hidden = true;
+    // DtlcheckInBtn.hidden = true;
 }
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-   // DtlcheckInBtn.hidden = false;
+    // DtlcheckInBtn.hidden = false;
     pageControlBeingUsed = NO;
 }
 
@@ -1279,16 +1306,210 @@
 
 - (IBAction)cameraTapped:(id)sender {
     
-    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
-    picker.delegate = self;
-    picker.allowsEditing = YES;
-    picker.sourceType = UIImagePickerControllerSourceTypeCamera;
-    [self presentViewController:picker animated:YES completion:NULL];
-    
-   // [self.view makeToast:@"In Progress"];
+    AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+    if(authStatus == AVAuthorizationStatusAuthorized)
+    {
+        
+        UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+        picker.delegate = self;
+        picker.allowsEditing = YES;
+        picker.sourceType = UIImagePickerControllerSourceTypeCamera;
+        [self presentViewController:picker animated:YES completion:NULL];
+    }
+    else if(authStatus == AVAuthorizationStatusNotDetermined)
+    {
+        NSLog(@"%@", @"Camera access not determined. Ask for permission.");
+        
+        [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted)
+         {
+             if(granted)
+             {
+                 
+                 UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+                 picker.delegate = self;
+                 picker.allowsEditing = YES;
+                 picker.sourceType = UIImagePickerControllerSourceTypeCamera;
+                 [self presentViewController:picker animated:YES completion:NULL];
+             }
+             else
+             {
+                 NSLog(@"Not granted access to %@", AVMediaTypeVideo);
+                 [self camDenied];
+             }
+         }];
+    }
+    else
+    {
+        [self camDenied];
+    }
     
 }
 
+- (void)camDenied
+{
+    NSLog(@"%@", @"Denied camera access");
+    
+//  NSString *alertText;
+//  NSString *alertButton;
+    
+    [self.view makeToast:@"Unlock Camera from Settings to Access it"];
+    
+//    BOOL canOpenSettings = (&UIApplicationOpenSettingsURLString != NULL);
+//    if (canOpenSettings)
+//    {
+//        alertText = @" privacy settings are preventing us from accessing your camera  fix this by doing the following: Click Go button below to open the Settings app. Touch Privacy. Turn the Camera on. Open this app and try again.";
+//        
+//        alertButton = @"Go";
+//        
+//    }
+//    else
+//    {
+//        alertText = @" privacy settings are preventing us from accessing your camera  fix this by doing the following: Click Go button below to open the Settings app. Touch Privacy. Turn the Camera on. Open this app and try again.";
+//        
+//        alertButton = @"Go";
+//        
+//    }
+    
+    
+//    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+//        UIAlertView *alert = [[UIAlertView alloc]
+//                              initWithTitle:@"Error"
+//                              message:alertText
+//                              delegate:self
+//                              cancelButtonTitle:alertButton
+//                              otherButtonTitles:nil];
+//        
+//        alert.tag = 5;
+//        alert.delegate = self;
+//        [alert show];
+//    }];
+    
+
+}
+
+//- (void)customIOS7dialogButtonTouchUpInside: (CustomIOSAlertView *)alertView clickedButtonAtIndex: (NSInteger)buttonIndex
+//{
+//    NSLog(@"Button at position %d is clicked on alertView %d.", buttonIndex, [alertView tag]);
+//}
+
+
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    if (alertView.tag == 5){
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"App-Prefs:root=Privacy"]];
+    }
+}
+
+
+
+# pragma mark - TableView Delegate and data source
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+    return [offersArr count];
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    return 1;
+}
+
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    if(isexpand==YES) {
+        if (selectedIndex == indexPath.section) {
+            return 72;
+        } else{
+            return 40;
+        }
+        
+    } else{
+        return 40;
+    }
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *cellIdentifier;
+    cellIdentifier = @"CheckInDealCell";
+    cell = (CheckInDealCell *)[tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    cell.backgroundColor = [UIColor whiteColor];
+    if (cell == nil) {
+        cell = [[CheckInDealCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+    }
+    
+    cell.shortDealTitleLbl.text = [offersArr[indexPath.section] valueForKey:@"short_name"];
+    [cell.ExpandBtn addTarget:self action:@selector(ExpandTapped:) forControlEvents:UIControlEventTouchUpInside];
+    cell.ExpandBtn.tag = indexPath.section;
+    cell.longDealTitleLbl.text = [NSString stringWithFormat:@" %@",[offersArr[indexPath.section] valueForKey:@"long_name"]];
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(Pro_BannerTapped:)];
+    tapGestureRecognizer.numberOfTapsRequired = 1;
+    cell.shortDealTitleLbl.userInteractionEnabled = true;
+    [cell.shortDealTitleLbl addGestureRecognizer:tapGestureRecognizer];
+    cell.shortDealTitleLbl.tag = indexPath.section;
+    
+    return cell;
+}
+
+-(void)Pro_BannerTapped:(UITapGestureRecognizer *)sender{
+    
+    CGPoint location = [sender locationInView: self.generateTableView];
+    NSIndexPath * indexPath = [self.generateTableView indexPathForRowAtPoint:location];
+    
+    if (count == -1){
+        count = (int)indexPath.section;
+    }
+    
+    
+    if (count == (int)indexPath.section){
+        isSelected = !isSelected;
+    }else{
+        if (selectedOffersArr.count > 1 || selectedOffersArr.count == 0){
+            if (isSelected == true){
+                isSelected = false;
+            }else{
+                isSelected = true;
+            }
+        }
+    }
+    
+    count = (int)indexPath.section;
+    
+    if (isSelected == true){
+        [selectedOffersArr addObject:[offersArr[indexPath.section] valueForKey:@"id"]];
+        [self.generateTableView cellForRowAtIndexPath:indexPath].backgroundColor = [UIColor lightGrayColor];
+    }else{
+        if (selectedOffersArr.count > 0 ){
+            [selectedOffersArr removeObject:[offersArr[indexPath.section] valueForKey:@"id"]];
+            [self.generateTableView cellForRowAtIndexPath:indexPath].backgroundColor = [UIColor whiteColor];
+        }
+    }
+    
+    
+    
+    
+    
+}
+
+-(void)ExpandTapped:(UIButton*)sender{
+    selectedIndex = (long)sender.tag;
+    isexpand = !isexpand;
+    if(isexpand == YES){
+        [sender setTitle:@"+" forState:UIControlStateNormal];
+    }else{
+        [sender setTitle:@"-" forState:UIControlStateNormal];
+    }
+    
+    if(isexpand == YES){
+        [sender setTitle:@"+" forState:UIControlStateNormal];
+    }else{
+        [sender setTitle:@"-" forState:UIControlStateNormal];
+    }
+    
+    NSLog(@"sender.tag..%ld",(long)sender.tag);
+    path = [NSIndexPath indexPathWithIndex:sender.tag];
+    [self tableView:_generateTableView heightForRowAtIndexPath:path];
+    [_generateTableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:sender.tag]] withRowAnimation:UITableViewRowAnimationFade];
+    
+}
 
 # pragma mark - Image picker controller delegate methods
 
@@ -1303,7 +1524,7 @@
         UIImage *image = chosenImage;
         
         NSMutableArray *objectsToShare= [NSMutableArray arrayWithObjects:image, nil];
-          UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:objectsToShare applicationActivities:nil];
+        UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:objectsToShare applicationActivities:nil];
         
         NSArray *excludeActivities = @[
                                        
@@ -1349,7 +1570,7 @@
         
         presentationController.sourceView = self.view;
     }];
-
+    
 }
 
 
@@ -1466,139 +1687,144 @@
 
 
 - (IBAction)viewReviewsTapped:(id)sender{
-    
+    [delegate.defaults setValue:@"fromCouponsPage" forKey:@"navigateFromSubmitReview"];
     [commonclass Redirect:self.navigationController Identifier:@"ViewReviewsViewController"];
     
 }
 
 
 
-- (IBAction)MoreOffersTapped:(id)sender {
-    
-    NSString * mobilenumber = [delegate.defaults valueForKey:@"mobile"];
-    
-    NSLog(@"mobilenumber %@",mobilenumber);
-    
-    NSLog(@"mobilenumber length %lu",(unsigned long)mobilenumber.length);
-    
-    if(mobilenumber.length == 0){
-        
-        Popupmainview.hidden = false;
-        
-    }else{
-        
-        if(offersArr.count>0){
-            
-            [selectedOffersArr removeAllObjects];
-            
-            CZPickerView *picker = [[CZPickerView alloc] initWithHeaderTitle:@"Select Offers" cancelButtonTitle:@"Cancel" confirmButtonTitle:@"Generate"];
-            
-            picker.delegate = self;
-            
-            picker.dataSource = self;
-            
-            picker.tag = 1;
-            
-            picker.allowMultipleSelection = YES;
-            
-            picker.needFooterView = YES;
-            
-            [picker show];
-            
-        }else{
-            
-            responseType = @"GenerateOffers";
-            
-            if([commonclass isActiveInternet] == YES){
-                
-                // NSString * cpns = [selectedOffersArr componentsJoinedByString:@","];
-                
-                NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%@&longitude=%@&store_id=%ld&coupon_id=%@",[delegate.defaults valueForKey:@"logid"],[delegate.defaults valueForKey:@"latitude"],[delegate.defaults valueForKey:@"longitude"],store_ID,exclusiveCoupon];
-                
-                NSLog(@"body.. %@",messageBody);
-                
-                NSLog(@"commonclass.searchListURL.. %@",commonclass.generateCouponsURL);
-                
-                [commonclass sendRequest:self.view mutableDta:generateData url:commonclass.generateCouponsURL msgBody:messageBody];
-                
-            }else{
-                
-                [commonclass Redirect:self.navigationController Identifier:@"InternetDisconnectViewController"];
-                
-                //[self.view makeToast:@"Check your internet connection"];
-                
-            }
-            
-        }
-        
-    }
-    
-}
-
-
-
-- (NSString *)czpickerView:(CZPickerView *)pickerView
-
-               titleForRow:(NSInteger)row{
-    
-    return [offersArr[row] valueForKey:@"short_name"];
-    
-}
-
-
-
-- (NSInteger)numberOfRowsInPickerView:(CZPickerView *)pickerView {
-    
-    return offersArr.count;
-    
-}
-
-
-
-//- (void)czpickerView:(CZPickerView *)pickerView didConfirmWithItemAtRow:(NSInteger)row {
-
-//    NSLog(@"%@ is chosen!",offersArr[row]);
-
-//    if(pickerView.tag == 1){
-
-//        NSLog(@"offer.. %@",[offersArr[row] valueForKey:@"short_name"]);
-
-//        [selectedOffersArr addObject:[offersArr[row] valueForKey:@"id"]];
-
+//- (IBAction)MoreOffersTapped:(id)sender {
+//
+//    NSString * mobilenumber = [delegate.defaults valueForKey:@"mobile"];
+//
+//    NSLog(@"mobilenumber %@",mobilenumber);
+//
+//    NSLog(@"mobilenumber length %lu",(unsigned long)mobilenumber.length);
+//
+//    if(mobilenumber.length == 0){
+//
+//        Popupmainview.hidden = false;
+//
+//    }else{
+//
+//        if(offersArr.count>0){
+//
+//            [selectedOffersArr removeAllObjects];
+//
+//            CZPickerView *picker = [[CZPickerView alloc] initWithHeaderTitle:@"Select Offers" cancelButtonTitle:@"Cancel" confirmButtonTitle:@"Generate"];
+//
+//            picker.delegate = self;
+//
+//            picker.dataSource = self;
+//
+//            picker.tag = 1;
+//
+//            picker.allowMultipleSelection = YES;
+//
+//            picker.needFooterView = YES;
+//
+//            [picker show];
+//
+//        }else{
+//
+//            responseType = @"GenerateOffers";
+//
+//            if([commonclass isActiveInternet] == YES){
+//
+//                // NSString * cpns = [selectedOffersArr componentsJoinedByString:@","];
+//
+//                NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%@&longitude=%@&store_id=%ld&coupon_id=%@",[delegate.defaults valueForKey:@"logid"],[delegate.defaults valueForKey:@"latitude"],[delegate.defaults valueForKey:@"longitude"],store_ID,exclusiveCoupon];
+//
+//                NSLog(@"body.. %@",messageBody);
+//
+//                NSLog(@"commonclass.searchListURL.. %@",commonclass.generateCouponsURL);
+//
+//                [commonclass sendRequest:self.view mutableDta:generateData url:commonclass.generateCouponsURL msgBody:messageBody];
+//
+//            }else{
+//
+//                [commonclass Redirect:self.navigationController Identifier:@"InternetDisconnectViewController"];
+//
+//                //[self.view makeToast:@"Check your internet connection"];
+//
+//            }
+//
+//        }
+//
 //    }
-
-//    [self.navigationController setNavigationBarHidden:YES];
-
+//
 //}
 
 
 
-- (void)czpickerView:(CZPickerView *)pickerView didConfirmWithItemsAtRows:(NSArray *)rows {
-    
-    for (NSNumber *n in rows) {
-        
-        NSInteger row = [n integerValue];
-        
-        NSLog(@"%@ is chosen!", [offersArr[row] valueForKey:@"short_name"]);
-        
-        [selectedOffersArr addObject:[offersArr[row] valueForKey:@"id"]];
-        
-    }
-    
-    [selectedOffersArr addObject:exclusiveCoupon];
-    
-    [self generateOffers];
-    
-}
+//- (NSString *)czpickerView:(CZPickerView *)pickerView
+//
+//               titleForRow:(NSInteger)row{
+//
+//    return [offersArr[row] valueForKey:@"short_name"];
+//
+//}
 
 
+
+//- (NSInteger)numberOfRowsInPickerView:(CZPickerView *)pickerView {
+//
+//    return offersArr.count;
+//
+//}
+
+//-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+//
+//
+//}
+//
+//-(void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath{
+//    [tableView cellForRowAtIndexPath:indexPath].backgroundColor = [UIColor whiteColor];
+//}
+//
+////- (void)czpickerView:(CZPickerView *)pickerView didConfirmWithItemAtRow:(NSInteger)row {
+//
+////    NSLog(@"%@ is chosen!",offersArr[row]);
+//
+////    if(pickerView.tag == 1){
+//
+////        NSLog(@"offer.. %@",[offersArr[row] valueForKey:@"short_name"]);
+//
+////        [selectedOffersArr addObject:[offersArr[row] valueForKey:@"id"]];
+//
+////    }
+//
+////    [self.navigationController setNavigationBarHidden:YES];
+//
+////}
+//
+//
+//
+//- (void)czpickerView:(CZPickerView *)pickerView didConfirmWithItemsAtRows:(NSArray *)rows {
+//
+//    for (NSNumber *n in rows) {
+//
+//        NSInteger row = [n integerValue];
+//
+//        NSLog(@"%@ is chosen!", [offersArr[row] valueForKey:@"short_name"]);
+//
+//        [selectedOffersArr addObject:[offersArr[row] valueForKey:@"id"]];
+//
+//    }
+//
+//    [selectedOffersArr addObject:exclusiveCoupon];
+//
+//    [self generateOffers];
+//
+//}
 
 -(void)generateOffers{
     
     responseType = @"GenerateOffers";
     
     if([commonclass isActiveInternet] == YES){
-        
+        [selectedOffersArr addObject:exclusiveCoupon];
         NSString * cpns = [selectedOffersArr componentsJoinedByString:@","];
         
         NSString *messageBody = [NSString stringWithFormat:@"log_id=%@&latitude=%@&longitude=%@&store_id=%ld&coupon_id=%@",[delegate.defaults valueForKey:@"logid"],[delegate.defaults valueForKey:@"latitude"],[delegate.defaults valueForKey:@"longitude"],store_ID,cpns];
@@ -1670,6 +1896,9 @@
     [self.navigationController pushViewController:addReview animated:YES];
 }
 
+- (IBAction)generateOffersTap:(id)sender {
+    [self generateOffers];
+}
 
 
 - (void)didReceiveMemoryWarning {

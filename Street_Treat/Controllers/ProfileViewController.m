@@ -10,7 +10,10 @@
 
 
 
-@interface ProfileViewController ()
+@interface ProfileViewController (){
+    UIView *contentView;
+    UPStackMenu *stack;
+}
 
 @end
 
@@ -50,6 +53,17 @@
                                    [[UIBarButtonItem alloc]initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(doneWithNumberPad)]];
     [numberToolbarTxtFlds sizeToFit];
     shoesTxtFld.inputAccessoryView = numberToolbarTxtFlds;
+}
+
+-(void)viewDidDisappear:(BOOL)animated{
+    [contentView removeFromSuperview];
+    [stack removeFromSuperview];
+    [flyoutView removeFromSuperview];
+}
+
+
+-(void)viewDidAppear:(BOOL)animated{
+    [self setUpstackMenu];
 }
 
 -(void)dismissKeyboard
@@ -268,7 +282,10 @@
     if (buttonIndex == 1) {
         locationenablerView.hidden = true;
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"prefs:root=Privacy&path=Contacts"]];
+    }else{
+        
     }
+    
 }
 
 -(void)EnterManualLocation{
@@ -531,18 +548,93 @@
         [self presentViewController:picker animated:YES completion:NULL];
         
     }
-    
     else if (buttonIndex == 1) {
         
-        NSLog(@"The %@ camera button was tapped.", [actionSheet buttonTitleAtIndex:buttonIndex]);
-        UIImagePickerController *picker = [[UIImagePickerController alloc] init];
-        picker.delegate = self;
-        picker.allowsEditing = YES;
-        picker.sourceType = UIImagePickerControllerSourceTypeCamera;
-        [self presentViewController:picker animated:YES completion:NULL];
-        
+        AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+        if(authStatus == AVAuthorizationStatusAuthorized)
+        {
+            NSLog(@"Granted access to %@", AVMediaTypeVideo);
+            NSLog(@"The %@ camera button was tapped.", [actionSheet buttonTitleAtIndex:buttonIndex]);
+            UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+            picker.delegate = self;
+            picker.allowsEditing = YES;
+            picker.sourceType = UIImagePickerControllerSourceTypeCamera;
+            [self presentViewController:picker animated:YES completion:NULL];
+        }
+        else if(authStatus == AVAuthorizationStatusNotDetermined)
+        {
+            NSLog(@"%@", @"Camera access not determined. Ask for permission.");
+            
+            [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted)
+             {
+                 if(granted)
+                 {
+                     NSLog(@"Granted access to %@", AVMediaTypeVideo);
+                     NSLog(@"The %@ camera button was tapped.", [actionSheet buttonTitleAtIndex:buttonIndex]);
+                     UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+                     picker.delegate = self;
+                     picker.allowsEditing = YES;
+                     picker.sourceType = UIImagePickerControllerSourceTypeCamera;
+                     [self presentViewController:picker animated:YES completion:NULL];
+                 }
+                 else
+                 {
+                     NSLog(@"Not granted access to %@", AVMediaTypeVideo);
+                     [self camDenied];
+                 }
+             }];
+        }
+        else
+        {
+            [self camDenied];
+        }  
     }
     
+}
+
+- (void)camDenied
+{
+//    NSLog(@"%@", @"Denied camera access");
+//    
+//    NSString *alertText;
+//    NSString *alertButton;
+    
+    [self.view makeToast:@"Unlock Camera from Settings to Access it"];
+    
+//    BOOL canOpenSettings = (&UIApplicationOpenSettingsURLString != NULL);
+//    if (canOpenSettings)
+//    {
+//        alertText = @" privacy settings are preventing us from accessing your camera  fix this by doing the following: Click Go button below to open the Settings app. Touch Privacy. Turn the Camera on. Open this app and try again.";
+//        
+//        alertButton = @"Go";
+//
+//    }
+//    else
+//    {
+//        alertText = @" privacy settings are preventing us from accessing your camera  fix this by doing the following: Click Go button below to open the Settings app. Touch Privacy. Turn the Camera on. Open this app and try again.";
+//        
+//        alertButton = @"Go";
+//        
+//    }
+//    
+//    UIAlertView *alert = [[UIAlertView alloc]
+//                          initWithTitle:@"Error"
+//                          message:alertText
+//                          delegate:self
+//                          cancelButtonTitle:alertButton
+//                          otherButtonTitles:nil];
+//    
+//    alert.tag = 5;
+//    alert.delegate = self;
+//    [alert show];
+}
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    if (alertView.tag == 5)
+    {
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+    }
 }
 
 -(void)setMyColors:(NSMutableArray*)data{
@@ -1200,8 +1292,90 @@
      // [self GetProfile];
         
     }
-    
-
 }
+
+-(void)setUpstackMenu{
+    contentView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width - 60, self.view.frame.size.height + 5, 35, 35)];
+    [contentView setBackgroundColor:[UIColor redColor]];
+    [contentView.layer setCornerRadius:18.0f];
+    UIImageView *icon = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"plus"]];
+    [icon setContentMode:UIViewContentModeScaleAspectFit];
+    [icon setFrame:CGRectMake(contentView.frame.size.width/6, contentView.frame.size.height/6, 25, 25)];
+    [contentView addSubview:icon];
+    
+    if(stack)
+        [stack removeFromSuperview];
+    
+    stack = [[UPStackMenu alloc] initWithContentView:contentView];
+    //[stack setCenter:CGPointMake(self.view.frame.size.width/2, self.view.frame.size.height/2 + 20)];
+    [stack setDelegate:self];
+    
+    UPStackMenuItem *squareItem = [[UPStackMenuItem alloc] initWithImage:[UIImage imageNamed:@"Download_Excel"] highlightedImage:[UIImage imageNamed:@"Download_Excel"] title:@"View Favourites"];
+    UPStackMenuItem *circleItem = [[UPStackMenuItem alloc] initWithImage:[UIImage imageNamed:@"Email_Excel"] highlightedImage:[UIImage imageNamed:@"Download_Excel"] title:@"Update Profile"];
+    UPStackMenuItem *viewItem = [[UPStackMenuItem alloc] initWithImage:[UIImage imageNamed:@"Email_Excel"] highlightedImage:[UIImage imageNamed:@"Download_Excel"] title:@"Add Reviews"];
+    
+    NSMutableArray *items = [[NSMutableArray alloc] initWithObjects:squareItem, nil];
+    [items enumerateObjectsUsingBlock:^(UPStackMenuItem *item, NSUInteger idx, BOOL *stop) {
+        [item setTitleColor:[UIColor redColor]];
+        //item.backgroundColor = [UIColor darkGrayColor];
+    }];
+    
+    [stack setAnimationType:UPStackMenuAnimationType_progressive];
+    [stack setStackPosition:UPStackMenuStackPosition_up];
+    [stack setOpenAnimationDuration:.4];
+    [stack setCloseAnimationDuration:.4];
+    [items enumerateObjectsUsingBlock:^(UPStackMenuItem *item, NSUInteger idx, BOOL *stop) {
+        [item setLabelPosition:UPStackMenuItemLabelPosition_left];
+        [item setLabelPosition:UPStackMenuItemLabelPosition_left];
+    }];
+    
+    [stack addItems:items];
+    
+    [self.tabBarController.view addSubview:stack];
+    
+    [self setStackIconClosed:YES];
+}
+
+
+#pragma mark - UPStackMenuDelegate
+- (void)setStackIconClosed:(BOOL)closed{
+    UIImageView *icon = [[contentView subviews] objectAtIndex:0];
+    float angle = closed ? 0 : (M_PI * (135) / 180.0);
+    [UIView animateWithDuration:0.3 animations:^{
+        [icon.layer setAffineTransform:CGAffineTransformRotate(CGAffineTransformIdentity, angle)];
+    }];
+}
+
+- (void)stackMenuWillOpen:(UPStackMenu *)menu{
+    flyoutView = [[UIView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height/1.2, self.view.frame.size.width, self.view.frame.size.height/4)];
+    flyoutView.backgroundColor = [UIColor lightTextColor];
+    [self.view addSubview:flyoutView];
+    if([[contentView subviews] count] == 0)
+        return;
+    [self setStackIconClosed:NO];
+}
+
+- (void)stackMenuWillClose:(UPStackMenu *)menu{
+    [flyoutView removeFromSuperview];
+    if([[contentView subviews] count] == 0)
+        return;
+    [self setStackIconClosed:YES];
+}
+
+- (void)stackMenu:(UPStackMenu *)menu didTouchItem:(UPStackMenuItem *)item atIndex:(NSUInteger)index{
+    NSString *message = [NSString stringWithFormat:@"Item touched : %@", item.title];
+    NSLog(@"index.. %lu",(unsigned long)index);
+    if(index == 0){
+        [delegate.defaults setValue:@"Favourites" forKey:@"route"];
+        [constant Redirect:self.navigationController Identifier:@"ResultsViewController"];
+    }else if(index == 1){
+        [constant Redirect:self.navigationController Identifier:@"ProfileViewController"];
+    }else if (index == 2){
+        
+    }
+    [stack closeStack];
+    
+}
+
 
 @end

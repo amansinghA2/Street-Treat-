@@ -28,8 +28,34 @@ int btnwt,btnht;
 @synthesize couponDetMainView,couponDtlSubview,couponValLbl,couponCloseBtn,couponDescLbl,couponSubmitBtn;
 
 -(void)viewDidAppear:(BOOL)animated{
-    
+
+    [constant setNavigationController:self.navigationController tabBarController:self.tabBarController viewController:self];
     [self setUpstackMenu];
+    for (UIView *view in couponScroll.subviews)  {
+        if ([view isKindOfClass:[UIView class]]) {
+            [view removeFromSuperview];
+        }
+    }
+    
+    [delegate.defaults setObject:@"" forKey:@"isFromBucket"];
+    [delegate.defaults setValue:@"" forKey:@"navigateFromReport"];
+    [delegate.defaults setValue:@"" forKey:@"navigateFromSubmitReview"];
+    
+    [self showLocName];
+    
+    //  currentLatitude = [[delegate.defaults valueForKey:@"user_latitude"] floatValue];
+    //  currentLongitude = [[delegate.defaults valueForKey:@"user_longitude"] floatValue];
+    userRadius = [[delegate.defaults valueForKey:@"radius"] floatValue];
+    
+    [delegate.defaults setObject:@"DashboardViewController" forKey:@"internetdisconnect"];
+    [delegate.defaults setValue:@"notShared" forKey:@"shareStore"];
+    self.rootNav = (CCKFNavDrawer *)self.navigationController;
+    [self.rootNav setCCKFNavDrawerDelegate:self];
+    self.tabBarController.tabBar.tintColor = [UIColor redColor];
+    [self getBanners];
+    
+    [delegate.defaults synchronize];
+    
 //    if([[NSUserDefaults standardUserDefaults] boolForKey:@"navigatefromprofiletohelp"]==YES){
 //        for (UIView *view in couponScroll.subviews)  {
 //            if ([view isKindOfClass:[UIView class]]) {
@@ -112,29 +138,8 @@ int btnwt,btnht;
 }
 
 -(void)viewWillAppear:(BOOL)animated{
-    [delegate.defaults setValue:@"" forKey:@"navigateFromReport"];
     [self CurrentLocationIdentifier];
-    [self showLocName];
     
-    for (UIView *view in couponScroll.subviews)  {
-        if ([view isKindOfClass:[UIView class]]) {
-            [view removeFromSuperview];
-        }
-    }
-    
-//    currentLatitude = [[delegate.defaults valueForKey:@"user_latitude"] floatValue];
-//    currentLongitude = [[delegate.defaults valueForKey:@"user_longitude"] floatValue];
-    userRadius = [[delegate.defaults valueForKey:@"radius"] floatValue];
-    
-    [delegate.defaults setObject:@"DashboardViewController" forKey:@"internetdisconnect"];
-    [delegate.defaults setValue:@"notShared" forKey:@"shareStore"];
-    self.rootNav = (CCKFNavDrawer *)self.navigationController;
-    [self.rootNav setCCKFNavDrawerDelegate:self];
-    self.tabBarController.tabBar.tintColor = [UIColor redColor];
-    [self getBanners];
-    
-    [delegate.defaults synchronize];
-    [constant setNavigationController:self.navigationController tabBarController:self.tabBarController viewController:self];
 }
 
 -(void)getParentCategories{
@@ -711,7 +716,10 @@ int btnwt,btnht;
 
 -(void)collectionTapped:(UIButton *)sender{
     [delegate.defaults setObject:@"High Street" forKey:@"verticalsCategory"];
+    [delegate.defaults setObject:@"fromBucket" forKey:@"isFromBucket"];
     long int bucketID = [[bucketsArr[sender.tag] valueForKey:@"id"] intValue];
+    NSString *bucketId1 = [bucketsArr[sender.tag] valueForKey:@"id"];
+    [delegate.defaults setValue:bucketId1 forKey:@"category"];
     NSString * title = [[bucketsArr[sender.tag] valueForKey:@"title"] uppercaseString];
     [delegate.defaults setInteger:bucketID forKey:@"bucketID"];
     [delegate.defaults setValue:title forKey:@"bucketName"];
@@ -1289,12 +1297,13 @@ int btnwt,btnht;
 // Handle the user's selection.
 - (void)viewController:(GMSAutocompleteViewController *)viewController
 didAutocompleteWithPlace:(GMSPlace *)place {
-    [self dismissViewControllerAnimated:YES completion:nil];
+
     search.text = place.name;
     currentLatitude = place.coordinate.latitude;
     currentLongitude = place.coordinate.longitude;
     NSString *userLatitude1 = [NSString stringWithFormat:@"%f",place.coordinate.latitude];
     NSString *userLongitude1 = [NSString stringWithFormat:@"%f",place.coordinate.longitude];
+    
     NSString *placename = place.name;
     NSLog(@"place name is... %@",placename);
     [delegate.defaults setValue:userLatitude1 forKey:@"user_latitude"];
@@ -1306,14 +1315,14 @@ didAutocompleteWithPlace:(GMSPlace *)place {
     userLatitude = [[delegate.defaults valueForKey:@"user_latitude"] floatValue];
     userLongitude = [[delegate.defaults valueForKey:@"user_longitude"] floatValue];
     
-    [self getNearbyDealsWithLatitude:currentLatitude longitude:currentLongitude radius:userRadius];
+//    [self getNearbyDealsWithLatitude:currentLatitude longitude:currentLongitude radius:userRadius];
     
     NSLog(@"Current latitude.. %f current longitude.. %f",currentLatitude,currentLongitude);
     NSLog(@"user latitude.. %f user longitude.. %f",userLatitude,userLongitude);
-    
     txfSearchField.text = placename;
     txfSearchField.textColor = [UIColor whiteColor];
-    
+    [self dismissViewControllerAnimated:YES completion:nil];
+  
 }
 
 - (void)viewController:(GMSAutocompleteViewController *)viewController

@@ -10,12 +10,14 @@
 #import "AppDelegate.h"
 #import "Common.h"
 #import "UIView+Toast.h"
+#import "NotificationsViewController.h"
 
 @interface SubmitReviewViewController : UIViewController<commonProtocol,UITextViewDelegate,UIGestureRecognizerDelegate>{
     Common * commonclass;
     AppDelegate * delegate;
     NSMutableData * addReviewforStoreData;
     long int ratings;
+    UIView *flyoutView;
 }
 @property (weak, nonatomic) IBOutlet UILabel *storeNameLbl;
 

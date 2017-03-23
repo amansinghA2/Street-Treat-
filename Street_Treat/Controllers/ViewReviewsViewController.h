@@ -11,6 +11,7 @@
 #import "NSString+FontAwesome.h"
 #import "UIImage+FontAwesome.h"
 #import "Common.h"
+#import "NotificationsViewController.h"
 
 @interface PositiveReviewCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UIImageView *userImg;
@@ -32,7 +33,7 @@
     NSArray * AllArr;
     long int allcnt,positivecnt,negativecnt;
    // UITableView* v1, *v2,*v3;
-    
+    UIView *flyoutView;
     NSString * typeStr;
 }
 
